@@ -654,3 +654,51 @@ class TestPurge:
         flow.portal.call(flow.oauth.purge_expired)
 
         assert (store.tokens, store.grants) == ({}, {})
+
+
+STALE_AGE = timedelta(days=30)
+
+
+def test_unused_client_older_than_30_days_is_purged(
+    flow: Flow, oauth: OAuthUseCases, clock: FakeClock, portal: BlockingPortal
+) -> None:
+    flow.register()
+    clock.advance(STALE_AGE + timedelta(seconds=1))
+
+    portal.call(oauth.purge_expired)
+
+    assert portal.call(oauth.find_client, CLIENT) is None
+
+
+def test_unused_client_younger_than_30_days_is_kept(
+    flow: Flow, oauth: OAuthUseCases, clock: FakeClock, portal: BlockingPortal
+) -> None:
+    flow.register()
+    clock.advance(STALE_AGE - timedelta(days=1))
+
+    portal.call(oauth.purge_expired)
+
+    assert portal.call(oauth.find_client, CLIENT) is not None
+
+
+def test_client_that_has_a_grant_is_never_purged(
+    flow: Flow, oauth: OAuthUseCases, clock: FakeClock, portal: BlockingPortal
+) -> None:
+    flow.authorize()
+    clock.advance(STALE_AGE * 3)
+
+    portal.call(oauth.purge_expired)
+
+    assert portal.call(oauth.find_client, CLIENT) is not None
+
+
+def test_registering_a_new_client_purges_the_stale_ones(
+    flow: Flow, oauth: OAuthUseCases, clock: FakeClock, portal: BlockingPortal
+) -> None:
+    flow.register()
+    clock.advance(STALE_AGE + timedelta(seconds=1))
+
+    flow.register(client_id=OTHER_CLIENT)
+
+    assert portal.call(oauth.find_client, CLIENT) is None
+    assert portal.call(oauth.find_client, OTHER_CLIENT) is not None

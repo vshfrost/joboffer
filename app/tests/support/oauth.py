@@ -21,6 +21,7 @@ from domain.oauth.ids import ClientId
 @dataclass(slots=True)
 class OAuthStore:
     clients: dict[ClientId, OAuthClient] = field(default_factory=dict)
+    registered_at: dict[ClientId, datetime] = field(default_factory=dict)
     grants: dict[GrantId, Grant] = field(default_factory=dict)
     tokens: dict[TokenDigest, StoredToken] = field(default_factory=dict)
     agents: dict[tuple[UserId, ClientId], UserAgent] = field(default_factory=dict)
@@ -30,6 +31,7 @@ class OAuthStore:
     def copy(self) -> OAuthStore:
         return OAuthStore(
             dict(self.clients),
+            dict(self.registered_at),
             dict(self.grants),
             dict(self.tokens),
             dict(self.agents),
@@ -38,14 +40,24 @@ class OAuthStore:
 
 
 class InMemoryOAuthClients:
-    def __init__(self, rows: dict[ClientId, OAuthClient]) -> None:
-        self._rows = rows
+    def __init__(self, store: OAuthStore) -> None:
+        self._store = store
+        self._rows = store.clients
 
-    async def add(self, client: OAuthClient) -> None:
+    async def add(self, client: OAuthClient, at: datetime | None = None) -> None:
         self._rows[client.id] = client
+        if at is not None:
+            self._store.registered_at[client.id] = at
 
     async def get(self, client_id: ClientId) -> OAuthClient | None:
         return self._rows.get(client_id)
+
+    async def delete_unused(self, registered_before: datetime) -> None:
+        granted = {grant.client_id for grant in self._store.grants.values()}
+        for client_id, at in list(self._store.registered_at.items()):
+            if at < registered_before and client_id not in granted:
+                self._rows.pop(client_id, None)
+                del self._store.registered_at[client_id]
 
 
 class InMemoryGrants:
@@ -134,7 +146,7 @@ class InMemoryOAuthUnitOfWork:
 
     @property
     def oauth_clients(self) -> InMemoryOAuthClients:
-        return InMemoryOAuthClients(self._open().clients)
+        return InMemoryOAuthClients(self._open())
 
     @property
     def grants(self) -> InMemoryGrants:
@@ -163,6 +175,7 @@ class InMemoryOAuthUnitOfWork:
     async def commit(self) -> None:
         staged = self._open()
         self._store.clients = staged.clients
+        self._store.registered_at = staged.registered_at
         self._store.grants = staged.grants
         self._store.tokens = staged.tokens
         self._store.agents = staged.agents
