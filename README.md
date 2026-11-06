@@ -215,7 +215,12 @@ GET/HEAD/OPTIONS) вимагають заголовок `X-CSRF-Token`. Назо
 | `JOBOFFER_TRUSTED_PROXIES` | `0` | скільки reverse proxy перед застосунком; `0` — `X-Forwarded-For` ігнорується |
 | `JOBOFFER_CLIENT_IP_HEADER` | не задано | заголовок з адресою клієнта від Cloudflare (`cf-connecting-ip`); береться лише коли сокет-peer локальний (loopback/приватна адреса), від решти ігнорується; має перевагу над `X-Forwarded-For` |
 
-Ліміт спроб входу: 5 невдач за 15 хвилин для пари «клієнт + email» (не глобальний), далі 429 з `Retry-After`.
+Ліміт спроб входу: 5 невдач за 15 хвилин для пари «клієнт + email» і 20 невдач за 15 хвилин для email з усіх клієнтів
+разом (розподілений підбір), далі 429 з `Retry-After`. Спроби під час блоку не записуються, тож блок знімається за
+15 хвилин після останньої невдачі, що його викликала, і не буває вічним.
+З `JOBOFFER_ENVIRONMENT=prod` застосунок не стартує, якщо `JOBOFFER_COOKIE_SECURE=false`, `web_public_url` чи адреси
+Google не https, `agent_allowed_hosts` містить `*` або `agent_redirect_allowlist` має не-https запис; `/docs`, `/redoc` і
+`/openapi.json` у проді не віддаються.
 За reverse proxy (Caddy) став `JOBOFFER_TRUSTED_PROXIES=1`, інакше всі клієнти матимуть одну адресу.
 
 ### Altcha (захист реєстрації)
@@ -300,7 +305,8 @@ Google лише пускає, але не реєструє: потрібен п�
 (streamable HTTP) на `<origin вебу>/mcp` і OAuth 2.1-сервер на MCP SDK (DCR лише публічних клієнтів, PKCE S256, resource
 RFC 8707, scope рівно `joboffer`). Токени й коди — лише sha256-дайджести в БД; код і refresh одноразові,
 повторне пред'явлення відкликає грант. Тул отримує `Actor(channel=mcp, grant_id, scopes={read, write})` із токена
-через `infrastructure.mcp.actor.current_actor()`.
+через `infrastructure.mcp.actor.current_actor()`. Публічний `/register` (DCR) без автентифікації: 10 запитів за годину з
+клієнта (429), тіло до 16 КіБ (413), клієнти без гранту старші за 30 днів видаляються (`oauth_clients.registered_at`).
 
 Логін-гейт `/login`: екран згоди (хто просить доступ і куди піде код) + **email і пароль** користувача з `users`
 (`python -m bootstrap.create_user`); ліміт спроб той самий «клієнт + email», що й у вебі. HTML — файли
