@@ -321,3 +321,38 @@ class TestTokens:
                 )
 
         assert portal.call(run) == (None, live)
+
+
+class TestUnusedClients:
+    def test_old_clients_without_a_grant_are_deleted_and_the_rest_kept(
+        self, portal: BlockingPortal, uow: UnitOfWorkFactory
+    ) -> None:
+        stale = make_client(ClientId(UUID(int=11)))
+        fresh = make_client(ClientId(UUID(int=12)))
+        granted = make_client(ClientId(UUID(int=13)))
+        grant = Grant(
+            id=GrantId(UUID(int=113)),
+            user_id=USER,
+            client_id=granted.id,
+            resource=RESOURCE,
+            created_at=NOW,
+        )
+
+        async def run() -> tuple[bool, bool, bool]:
+            async with uow() as tx:
+                await tx.oauth_clients.add(stale, NOW - timedelta(days=40))
+                await tx.oauth_clients.add(fresh, NOW - timedelta(days=1))
+                await tx.oauth_clients.add(granted, NOW - timedelta(days=40))
+                await tx.grants.add(grant)
+                await tx.commit()
+            async with uow() as tx:
+                await tx.oauth_clients.delete_unused(NOW - timedelta(days=30))
+                await tx.commit()
+            async with uow() as tx:
+                return (
+                    await tx.oauth_clients.get(stale.id) is not None,
+                    await tx.oauth_clients.get(fresh.id) is not None,
+                    await tx.oauth_clients.get(granted.id) is not None,
+                )
+
+        assert portal.call(run) == (False, True, True)

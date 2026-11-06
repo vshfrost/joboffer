@@ -9,7 +9,10 @@ from datetime import datetime
 from domain.photos.ids import PhotoId
 from domain.shared.errors import InvalidValue
 
-MAX_UPLOAD_BYTES = 15 * 1024 * 1024
+# Веб вантажить кадр до 900 px заввишки (менше 1 МБ), тож 5 МБ — запас для прямих клієнтів API.
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024
+# Стеля декодування: RGB-кадр займає 3 байти на піксель, тож 16 МП — десятки мегабайтів, а не гігабайт.
+MAX_PHOTO_PIXELS = 16_000_000
 MAX_LABEL_LENGTH = 100
 # Рамка фото в шапці CV — пропорції зразка (858 × 960): ширина / висота.
 PHOTO_ASPECT = 858 / 960

@@ -39,7 +39,7 @@ BAD_FRAME = "Фото має бути в пропорціях рамки CV (858
 TOO_NARROW = "Обрана область вужча за 300 px — візьми більшу або фото кращої якості."
 NOT_AN_IMAGE = "Фото — JPEG, PNG або WebP."
 EMPTY = "Файл порожній — вибери фото."
-TOO_BIG = "Фото — до 15 МБ."
+TOO_BIG = "Фото — до 5 МБ."
 MB = 1024 * 1024
 
 
@@ -281,8 +281,8 @@ def test_a_label_over_100_characters_is_422_and_nothing_is_saved(
     assert alice.numbers() == []
 
 
-def test_a_file_over_15_mb_is_422_and_nothing_is_saved(alice: PhotosSession) -> None:
-    problem(alice.upload(b"\xff\xd8" + b"0" * (15 * MB)), "file", TOO_BIG)
+def test_a_file_over_5_mb_is_422_and_nothing_is_saved(alice: PhotosSession) -> None:
+    problem(alice.upload(b"\xff\xd8" + b"0" * (5 * MB + 1)), "file", TOO_BIG)
     assert alice.numbers() == []
 
 
@@ -408,7 +408,7 @@ async def test_an_oversized_upload_is_cut_off_while_it_is_still_being_read(
     )
 
     problem(response, "file", TOO_BIG)
-    assert upload.read <= 17  # 15 МБ + рамка форми; решту 60 МБ сервер не читав
+    assert upload.read <= 7  # 5 МБ + рамка форми; решту 60 МБ сервер не читав
 
 
 @pytest.mark.anyio

@@ -17,9 +17,15 @@ from domain.oauth.ids import ClientId
 
 
 class OAuthClients(Protocol):
-    async def add(self, client: OAuthClient) -> None: ...
+    async def add(self, client: OAuthClient, at: datetime | None = None) -> None:
+        """`at` — коли клієнта зареєстровано; без нього час ставить база."""
+        ...
 
     async def get(self, client_id: ClientId) -> OAuthClient | None: ...
+
+    async def delete_unused(self, registered_before: datetime) -> None:
+        """Прибирає клієнтів, зареєстрованих раніше за `registered_before`, що так і не отримали жодного гранту."""
+        ...
 
 
 class Grants(Protocol):

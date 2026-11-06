@@ -5,7 +5,13 @@ from io import BytesIO
 
 from PIL import Image, ImageOps, UnidentifiedImageError
 
-from domain.photos.photo import MAX_PHOTO_SIDE, NewPhoto, check_frame
+from domain.photos.errors import photo_too_many_pixels
+from domain.photos.photo import (
+    MAX_PHOTO_PIXELS,
+    MAX_PHOTO_SIDE,
+    NewPhoto,
+    check_frame,
+)
 from domain.shared.errors import InvalidValue
 
 FORMATS = ("JPEG", "PNG", "WEBP")
@@ -24,6 +30,9 @@ class PillowPhotos:
     def _normalize(self, data: bytes) -> NewPhoto:
         try:
             with Image.open(BytesIO(data), formats=FORMATS) as source:
+                # Розмір відомий із заголовка: завелике не декодуємо взагалі.
+                if source.width * source.height > MAX_PHOTO_PIXELS:
+                    raise photo_too_many_pixels()
                 image = ImageOps.exif_transpose(source)
                 image.load()
         except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as error:

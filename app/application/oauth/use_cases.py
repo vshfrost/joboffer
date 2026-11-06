@@ -7,6 +7,7 @@
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import timedelta
 
 from application.contracts.oauth import (
     AccessView,
@@ -53,6 +54,9 @@ from domain.oauth.rules import (
     ensure_resource,
 )
 from domain.shared.errors import InvalidValue
+
+# Клієнт DCR, що за цей час так і не отримав гранту, більше не потрібен: `/register` відкритий усім.
+UNUSED_CLIENT_AGE = timedelta(days=30)
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -105,8 +109,11 @@ class OAuthUseCases:
         if not self._redirects_allowed(client):
             self._audit("register_rejected", client_name=command.name)
             raise InvalidRedirectUri("Адреса повернення не в allowlist цього сервера")
+        now = self._services.clock.now()
         async with self._unit_of_work() as uow:
-            await uow.oauth_clients.add(client)
+            # Прибирання під час реєстрації: окремого планувальника для цього не потрібно.
+            await uow.oauth_clients.delete_unused(now - UNUSED_CLIENT_AGE)
+            await uow.oauth_clients.add(client, now)
             await uow.commit()
         self._audit("register", client_id=command.client_id, client_name=command.name)
         return _client_view(client)
@@ -302,11 +309,12 @@ class OAuthUseCases:
             await uow.commit()
 
     async def purge_expired(self) -> None:
-        """Прибирає прострочені коди й токени та гранти, що лишились без них."""
+        """Прибирає прострочені коди й токени, гранти, що лишились без них, і клієнтів DCR без гранту."""
         now = self._services.clock.now()
         async with self._unit_of_work() as uow:
             await uow.oauth_tokens.delete_expired(now)
             await uow.grants.delete_without_tokens()
+            await uow.oauth_clients.delete_unused(now - UNUSED_CLIENT_AGE)
             await uow.commit()
 
     # --- внутрішнє ---------------------------------------------------------

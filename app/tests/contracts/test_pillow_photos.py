@@ -1,5 +1,7 @@
 """PillowPhotos: кадр, який обрав користувач, → JPEG без метаданих. Усі зображення згенеровані."""
 
+from io import BytesIO
+
 import pytest
 from anyio.from_thread import BlockingPortal
 from PIL import ExifTags, Image
@@ -128,3 +130,27 @@ def test_an_image_too_big_to_decode_safely_is_not_an_image(
 ) -> None:
     monkeypatch.setattr(Image, "MAX_IMAGE_PIXELS", 1000)
     assert rejected(portal, jpeg(*FRAME)).message == NOT_AN_IMAGE
+
+
+def test_a_frame_over_16_megapixels_is_refused_before_it_is_decoded(
+    portal: BlockingPortal,
+) -> None:
+    # 6000 × 6720 = 40 MP у пропорціях рамки: сірий, тож у тесті це 40 МБ, а не 120.
+    out = BytesIO()
+    Image.new("L", (6000, 6720)).save(out, "JPEG")
+
+    error = rejected(portal, out.getvalue())
+
+    assert (error.field, error.message) == (
+        "file",
+        "Фото завелике: до 16 мегапікселів.",
+    )
+
+
+def test_a_frame_of_16_megapixels_is_accepted(portal: BlockingPortal) -> None:
+    out = BytesIO()
+    Image.new("L", (3770, 4218)).save(out, "JPEG")  # 15,9 MP у пропорціях рамки
+
+    photo = normalize(portal, out.getvalue())
+
+    assert photo.height == 900

@@ -1,6 +1,7 @@
-"""Ключ ліміту спроб входу: пара «клієнт + email», а не глобальний лічильник.
+"""Ключі лімітів входу: пара «клієнт + email» і окремо email, а не глобальний лічильник.
 
-Так зловмисник не заблокує вхід усім, а чужий IP не заблокує власника. У ключі лише дайджест:
+Пара: зловмисник не заблокує вхід усім, а чужий IP не заблокує власника. Email: верхня межа для
+розподіленого підбору з багатьох IP; блок тимчасовий (див. `SessionUseCases`). У ключі лише дайджест:
 IP та email не лежать у базі відкритим текстом.
 """
 
@@ -11,6 +12,13 @@ import json
 def attempt_key(client: str, email: str) -> str:
     # JSON-список однозначно відокремлює поля: ("a|b", "c") ≠ ("a", "b|c").
     payload = json.dumps([client, email.strip().lower()], ensure_ascii=False)
+    return hashlib.sha256(payload.encode()).hexdigest()
+
+
+def login_email_key(email: str) -> str:
+    # Невдалі входи на цей email з УСІХ клієнтів: ліміт проти розподіленого підбору пароля. Окремий
+    # простір ключів від пари «клієнт + email»; у ключі лише дайджест.
+    payload = json.dumps(["login-email", email.strip().lower()], ensure_ascii=False)
     return hashlib.sha256(payload.encode()).hexdigest()
 
 
