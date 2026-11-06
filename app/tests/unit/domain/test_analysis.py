@@ -91,7 +91,7 @@ def test_items_lose_spaces_empties_and_case_insensitive_repeats() -> None:
 
 
 def test_candidate_asks_are_kept_and_empty_when_the_posting_asks_nothing() -> None:
-    asks = ["Send your GitHub", "One thing you built with AI"]
+    asks = ["Send your GitHub", "Describe a project you are proud of"]
     assert parse(candidate_asks=asks).candidate_asks == tuple(asks)
     assert parse().candidate_asks == ()
 

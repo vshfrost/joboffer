@@ -404,7 +404,7 @@ def test_letter_brief_carries_what_the_employer_asks_of_candidates(
     world: World,
 ) -> None:
     number = world.seed(world.alice)
-    asks = ["Tell us about one thing you built with AI"]
+    asks = ["Describe a project you are proud of"]
 
     world.analyse(world.alice, number, candidate_asks=asks)
     brief = world.prepare_letter(world.alice, number)

@@ -539,7 +539,7 @@ def test_an_https_url_in_a_letter_paragraph_is_an_active_link(
     portal: BlockingPortal, renderer: WeasyPrintRenderer
 ) -> None:
     letter = letter_with(
-        "One thing I built with AI is https://github.com/alex-example/ai-tool (see the README)."
+        "One project I am proud of is https://github.com/alex-example/ai-tool (see the README)."
     )
 
     pdf = portal.call(renderer.render_cover_letter, letter, NO_LINKS)

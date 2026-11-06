@@ -456,7 +456,7 @@ def test_what_the_employer_asks_of_candidates_is_saved_and_read_back(
     world: World,
 ) -> None:
     number = world.seed(world.alice)
-    asks = ["Send your GitHub", "Tell us about one time AI got in your way"]
+    asks = ["Send your GitHub", "Describe a project you are proud of"]
 
     saved = world.save(world.alice, number, candidate_asks=[*asks, " send your github"])
 

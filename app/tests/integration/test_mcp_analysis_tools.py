@@ -194,7 +194,7 @@ async def test_candidate_asks_are_saved_and_shown_as_the_previous_analysis_of_th
 ) -> None:
     token = await taras(agent)
     number = await seed(agent)
-    asks = ["Send your GitHub", "Tell us about one time AI got in your way"]
+    asks = ["Send your GitHub", "Describe a project you are proud of"]
 
     saved = await save(agent, token, number, candidate_asks=asks)
     brief = data(await call(agent, token, "prepare_analysis", {"job_id": number}))

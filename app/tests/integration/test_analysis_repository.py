@@ -163,7 +163,7 @@ def test_candidate_asks_keep_their_order_and_an_old_row_without_them_reads_empty
     portal: BlockingPortal, uow: UnitOfWorkFactory, engine: AsyncEngine
 ) -> None:
     job = portal.call(_add, uow, ALICE, "job")
-    asks = ("Tell us about one time AI got in your way", "Send your GitHub")
+    asks = ("Describe a project you are proud of", "Send your GitHub")
     portal.call(_analyse, uow, ALICE, job, JobAnalysis(5, "s", candidate_asks=asks))
     saved = portal.call(_get, uow, ALICE, job)
     assert saved is not None
