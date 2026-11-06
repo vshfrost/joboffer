@@ -56,6 +56,7 @@ FULL = JobAnalysis(
     relocation=False,
     reasons=("Fits",),
     gaps=(Gap("No Go", "Do you have Go experience? Where, how long?"),),
+    candidate_asks=("Send your GitHub", "Skip the list of frameworks"),
 )
 
 
@@ -156,6 +157,26 @@ def test_the_fact_map_keeps_its_order_and_an_old_row_without_it_reads_none(
     old = portal.call(_get, uow, ALICE, job)
     assert old is not None
     assert old.analysis.keyword_facts is None
+
+
+def test_candidate_asks_keep_their_order_and_an_old_row_without_them_reads_empty(
+    portal: BlockingPortal, uow: UnitOfWorkFactory, engine: AsyncEngine
+) -> None:
+    job = portal.call(_add, uow, ALICE, "job")
+    asks = ("Tell us about one time AI got in your way", "Send your GitHub")
+    portal.call(_analyse, uow, ALICE, job, JobAnalysis(5, "s", candidate_asks=asks))
+    saved = portal.call(_get, uow, ALICE, job)
+    assert saved is not None
+    assert saved.analysis.candidate_asks == asks
+
+    portal.call(
+        _execute,
+        engine,
+        "UPDATE job_analyses SET details = details - 'candidate_asks'",
+    )
+    old = portal.call(_get, uow, ALICE, job)
+    assert old is not None
+    assert old.analysis.candidate_asks == ()
 
 
 def test_an_analysis_stored_with_string_gaps_reads_with_null_questions(

@@ -20,6 +20,7 @@ from domain.shared.errors import NotFound
 from domain.shared.local_time import local_day
 from tests.integration.test_agent_http import BASE, PUBLIC, Agent
 from tests.integration.test_mcp_analysis_tools import add_fact, seed
+from tests.integration.test_mcp_analysis_tools import save as save_analysis
 from tests.integration.test_mcp_job_tools import data, error_text
 from tests.integration.test_mcp_photo_tools import add_photo
 from tests.integration.test_mcp_profile_tools import (
@@ -181,6 +182,21 @@ async def test_the_cv_brief_has_the_job_analysis_profile_facts_rules_and_photos(
         TOOLS.parent.parent / "documents" / "cv_rules.md"
     ).read_text(encoding="utf-8")
     assert brief["previous"] is None
+
+
+async def test_the_cv_and_letter_briefs_carry_candidate_asks_of_the_analysis(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number, _ = await ready(agent, token)
+    asks = ["Send your GitHub", "Skip the list of frameworks"]
+    await save_analysis(agent, token, number, candidate_asks=asks)
+
+    cv = data(await call(agent, token, "prepare_cv", {"job_id": number}))
+    letter = data(await call(agent, token, "prepare_cover_letter", {"job_id": number}))
+
+    assert cv["analysis"]["candidate_asks"] == asks
+    assert letter["analysis"]["candidate_asks"] == asks
 
 
 async def test_the_letter_brief_works_without_a_cv_and_then_has_the_last_one(

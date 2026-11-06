@@ -96,12 +96,25 @@ async def test_the_brief_has_the_job_its_gaps_the_topics_and_the_rules(
         "summary": "S.",
         "must_have": [],
         "nice_to_have": [],
+        "candidate_asks": [],
         "gaps": ["MySQL", "STAR"],
     }
     assert brief["topics"] == []
     assert brief["rules"].startswith(
         "Propose interview-prep topics that close this job's gaps."
     )
+
+
+async def test_the_brief_job_carries_candidate_asks(agent: Agent) -> None:
+    token = await taras(agent)
+    number = await seed(agent, "Python role asks.")
+    await save_analysis(
+        agent, token, number, candidate_asks=["Send your GitHub"], gaps=["MySQL"]
+    )
+
+    brief = data(await call(agent, token, "prepare_prep_topics", {"job_id": number}))
+
+    assert brief["job"]["candidate_asks"] == ["Send your GitHub"]
 
 
 async def test_a_missing_job_and_a_job_without_analysis_are_tool_errors(

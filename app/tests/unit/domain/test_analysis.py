@@ -90,6 +90,19 @@ def test_items_lose_spaces_empties_and_case_insensitive_repeats() -> None:
     assert analysis.must_have == ("Python", "Go lang")
 
 
+def test_candidate_asks_are_kept_and_empty_when_the_posting_asks_nothing() -> None:
+    asks = ["Send your GitHub", "One thing you built with AI"]
+    assert parse(candidate_asks=asks).candidate_asks == tuple(asks)
+    assert parse().candidate_asks == ()
+
+
+def test_candidate_asks_lose_spaces_empties_and_case_insensitive_repeats() -> None:
+    analysis = parse(
+        candidate_asks=["  Send your GitHub ", "", "send your github", "A\n B"]
+    )
+    assert analysis.candidate_asks == ("Send your GitHub", "A B")
+
+
 def test_enums_are_read_without_case_and_spaces() -> None:
     analysis = parse(seniority=" Senior ", work_mode="HYBRID")
     assert (analysis.seniority, analysis.work_mode) == (
@@ -138,14 +151,17 @@ def test_a_location_over_200_characters_is_rejected() -> None:
     assert message(location="x" * 201) == "location — до 200 символів."
 
 
-@pytest.mark.parametrize("name", ["must_have", "nice_to_have", "languages", "reasons"])
+LISTS = ["must_have", "nice_to_have", "languages", "reasons", "candidate_asks"]
+
+
+@pytest.mark.parametrize("name", LISTS)
 def test_30_items_are_valid_and_31_are_not(name: str) -> None:
     ok = [f"item {n}" for n in range(30)]
     assert len(getattr(parse(**{name: ok}), name)) == 30
     assert message(**{name: [*ok, "one more"]}) == f"{name} — не більше 30 пунктів."
 
 
-@pytest.mark.parametrize("name", ["must_have", "nice_to_have", "languages", "reasons"])
+@pytest.mark.parametrize("name", LISTS)
 def test_an_item_over_300_characters_is_rejected(name: str) -> None:
     assert len(getattr(parse(**{name: ["x" * 300]}), name)[0]) == 300
     assert message(**{name: ["x" * 301]}) == (

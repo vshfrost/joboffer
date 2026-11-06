@@ -38,6 +38,7 @@ FULL = JobAnalysis(
     relocation=False,
     reasons=("Fits",),
     gaps=(Gap("No Go", "Do you have Go experience? Where, how long?"),),
+    candidate_asks=("Send your GitHub",),
 )
 
 
@@ -163,6 +164,7 @@ def test_the_analysis_has_every_field_the_flags_and_no_stale_mark(
         "salary_max_eur": 80000,
         "relocation": False,
         "reasons": ["Fits"],
+        "candidate_asks": ["Send your GitHub"],
         "gaps": [
             {
                 "number": 1,
@@ -313,7 +315,12 @@ def test_nothing_stated_comes_back_as_nulls_and_empty_lists(
         None,
         None,
     )
-    assert (body["must_have"], body["gaps"], body["flags"]) == ([], [], [])
+    assert (body["must_have"], body["candidate_asks"], body["gaps"], body["flags"]) == (
+        [],
+        [],
+        [],
+        [],
+    )
     assert body["filters_passed"] is True
 
 

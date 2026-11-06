@@ -55,6 +55,7 @@ class JobAnalysis:
     gaps: tuple[Gap, ...] = ()
     # Які факти стоять під ключовими словами. None — аналіз без карти (старий): «нема даних».
     keyword_facts: tuple[KeywordFacts, ...] | None = None
+    candidate_asks: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not 0 <= self.score <= MAX_SCORE:
@@ -106,6 +107,7 @@ class JobAnalysis:
         reasons: Sequence[str] = (),
         gaps: Sequence[str | Gap] = (),
         keyword_facts: Mapping[str, Sequence[int]] | None = None,
+        candidate_asks: Sequence[str] = (),
     ) -> Self:
         """Сирі значення з транспорту: рядки чистяться, пункти без порожніх і повторів."""
         cleaned = _items([tidy(_one_line(keyword)) for keyword in keywords])
