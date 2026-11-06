@@ -236,7 +236,7 @@ async def test_review_without_a_job_says_the_mail_is_not_about_an_application(
 
 async def test_review_errors_have_the_v1_texts(agent: Agent) -> None:
     token = await taras(agent)
-    await add(agent, token, title="Data", company="Bolt")
+    await add(agent, token, title="Data", company="Tidewell")
     await arrive(agent, token, mail_from("m1"))
     reply = one(await listed(agent, token))
 
