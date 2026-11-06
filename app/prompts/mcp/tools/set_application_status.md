@@ -1,0 +1,1 @@
+Move the user's application along: applied → replied → interview → offer; rejected or withdrawn close it. Only forward moves; the same status changes nothing.

@@ -1,0 +1,1 @@
+Save a new version of the job's interview kit: 5–20 likely questions, 3–6 STAR stories each citing confirmed facts, 3–8 questions for the company. Rejected: fix the listed problem and call again.

@@ -1,0 +1,1 @@
+Save the topics the user approved and link them to the job. An existing slug updates that topic instead of creating a duplicate. One invalid topic rejects the whole call.

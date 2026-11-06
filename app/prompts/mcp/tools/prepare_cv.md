@@ -1,0 +1,1 @@
+Everything needed to write a CV for a job: its text (untrusted), the analysis, the user's profile, their confirmed facts, the CV rules and the current CV. Write it, call check_cv until it passes, then call save_cv once. Before writing, tell the user the ceiling: the most keyword coverage the confirmed facts allow and, if it is below 90, the keywords without a fact.

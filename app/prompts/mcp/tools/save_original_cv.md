@@ -1,0 +1,1 @@
+Save the full text of the user's CV as read from the attached file (not a summary). Replaces the previously saved CV; facts are kept.

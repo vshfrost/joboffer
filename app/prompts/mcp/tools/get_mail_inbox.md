@@ -1,0 +1,1 @@
+The user's forwarding address for job mail, the latest Gmail forwarding confirmation code, the latest forwarded mail (sender, subject, kind, whether the sender is verified), mail dropped over the daily limit or sent to an old address, forged-sender (suspicious) mail, and the sync state. The user changes the address themself at settings_url.

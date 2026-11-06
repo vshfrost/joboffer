@@ -1,0 +1,1 @@
+Save the triage of up to 5 jobs: all or nothing, an error names the failing item (1-based). A job's earlier triage, the server's keyword rating included, is overwritten; unknown, foreign, already analysed, text-less or rejected / withdrawn jobs and a repeated job_id are errors. Returns the job_ids per verdict.

@@ -1,0 +1,17 @@
+<h1>Доступ до joboffer</h1>
+<p><strong>$client_name</strong> просить доступ до твого облікового запису. Код авторизації піде на <strong>$redirect_host</strong>.</p>
+<p class="warning">Якщо ти щойно сам не підключав цей конектор — не вводь пароль.</p>
+$error
+<form method="post" action="login">
+<input type="hidden" name="rid" value="$rid">
+<div>
+<label for="email">Email</label>
+<input id="email" type="email" name="email" value="$email" autocomplete="username" required autofocus>
+</div>
+<div>
+<label for="password">Пароль</label>
+<input id="password" type="password" name="password" autocomplete="current-password" required>
+</div>
+<button type="submit">Увійти</button>
+</form>
+$google

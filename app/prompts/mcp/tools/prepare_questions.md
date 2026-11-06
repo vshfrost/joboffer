@@ -1,0 +1,1 @@
+A topic with its plan and the user's notes, its existing quiz questions and the rules for writing new ones. Then call save_questions.

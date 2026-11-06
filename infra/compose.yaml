@@ -1,0 +1,154 @@
+# Dev-стек joboffer. Запуск із кореня репо:
+#   docker compose -f infra/compose.yaml up -d --build
+# Усі порти опубліковані тільки на 127.0.0.1.
+# Пароль БД — з infra/.env (шаблон .env.example); файл не комітиться.
+name: joboffer-dev
+
+services:
+  postgres:
+    image: postgres:18.6-trixie
+    environment:
+      POSTGRES_DB: joboffer
+      POSTGRES_USER: joboffer
+      POSTGRES_PASSWORD: ${JOBOFFER_POSTGRES_PASSWORD:?задай JOBOFFER_POSTGRES_PASSWORD в infra/.env}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    ports: ["127.0.0.1:5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U joboffer -d joboffer"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  app:
+    build:
+      context: ..
+      dockerfile: infra/docker/app.Dockerfile
+    image: joboffer-app:dev
+    environment:
+      JOBOFFER_ENVIRONMENT: dev
+      JOBOFFER_COOKIE_SECURE: "false"  # dev по http://localhost; у проді cookie лише по HTTPS
+      JOBOFFER_SIGNUP_MODE: ${JOBOFFER_SIGNUP_MODE:-closed}  # closed | invite
+      # Вхід через Google: порожні значення = вимкнено (див. infra/.env.example).
+      JOBOFFER_GOOGLE_CLIENT_ID: ${JOBOFFER_GOOGLE_CLIENT_ID:-}
+      JOBOFFER_GOOGLE_CLIENT_SECRET: ${JOBOFFER_GOOGLE_CLIENT_SECRET:-}
+      JOBOFFER_GOOGLE_REDIRECT_URI: ${JOBOFFER_GOOGLE_REDIRECT_URI:-}
+      JOBOFFER_AUTH_STATE_SECRET: ${JOBOFFER_AUTH_STATE_SECRET:-}
+      # Altcha (proof-of-work при реєстрації): без ключа (≥ 32 символи) реєстрація закрита.
+      JOBOFFER_ALTCHA_HMAC_KEY: ${JOBOFFER_ALTCHA_HMAC_KEY:-}
+      JOBOFFER_ALTCHA_MAXNUMBER: ${JOBOFFER_ALTCHA_MAXNUMBER:-100000}
+      JOBOFFER_DATABASE_URL: postgresql+psycopg://joboffer:${JOBOFFER_POSTGRES_PASSWORD}@postgres:5432/joboffer
+      # Адреса скриньки застосунку (не секрет): з неї будується особиста адреса для пересилання.
+      JOBOFFER_MAIL_ADDRESS: ${JOBOFFER_MAIL_ADDRESS:-}
+      # Відправка листів (код реєстрації): лише тут, окремий токен зі scope gmail.send. Токена синку
+      # тут нема, а токена відправки нема в mailsync. Без токена реєстрація закрита.
+      JOBOFFER_GMAIL_CLIENT_ID: ${JOBOFFER_GMAIL_CLIENT_ID:-}
+      JOBOFFER_GMAIL_CLIENT_SECRET: ${JOBOFFER_GMAIL_CLIENT_SECRET:-}
+      JOBOFFER_GMAIL_SEND_REFRESH_TOKEN: ${JOBOFFER_GMAIL_SEND_REFRESH_TOKEN:-}
+      JOBOFFER_MAIL_SEND_DAILY_LIMIT: ${JOBOFFER_MAIL_SEND_DAILY_LIMIT:-50}
+    # PDF документів лише читаємо (пише агент); тека — спільний volume.
+    volumes:
+      - documents-data:/data/documents:ro
+    depends_on:
+      postgres: { condition: service_healthy }
+    ports: ["127.0.0.1:8797:8797"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8797/healthz')"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  # Агент (MCP + OAuth): окремий процес на тому ж образі. Міграції застосовує `app`, тож чекаємо на нього.
+  agent:
+    build:
+      context: ..
+      dockerfile: infra/docker/app.Dockerfile
+    image: joboffer-app:dev
+    command: ["uvicorn", "--factory", "bootstrap.agent:create_agent_app", "--host", "0.0.0.0", "--port", "8798"]
+    environment:
+      JOBOFFER_ENVIRONMENT: dev
+      JOBOFFER_COOKIE_SECURE: "false"
+      JOBOFFER_DATABASE_URL: postgresql+psycopg://joboffer:${JOBOFFER_POSTGRES_PASSWORD}@postgres:5432/joboffer
+      JOBOFFER_MAIL_ADDRESS: ${JOBOFFER_MAIL_ADDRESS:-}
+      # Адреса агента (resource OAuth) = JOBOFFER_WEB_PUBLIC_URL + /mcp (нижче); Vite у dev проксіює /mcp сюди.
+      # Дозволені Host-и й redirect — типові (налаштування JOBOFFER_AGENT_*).
+      # Вхід через Google: ті самі значення, що в app, + адреса повернення логін-гейта (див. infra/.env.example).
+      JOBOFFER_GOOGLE_CLIENT_ID: ${JOBOFFER_GOOGLE_CLIENT_ID:-}
+      JOBOFFER_GOOGLE_CLIENT_SECRET: ${JOBOFFER_GOOGLE_CLIENT_SECRET:-}
+      JOBOFFER_GOOGLE_REDIRECT_URI: ${JOBOFFER_GOOGLE_REDIRECT_URI:-}
+      JOBOFFER_GOOGLE_GATE_REDIRECT_URI: ${JOBOFFER_GOOGLE_GATE_REDIRECT_URI:-}
+      JOBOFFER_AUTH_STATE_SECRET: ${JOBOFFER_AUTH_STATE_SECRET:-}
+      # Адреса вебу, з якої відкриваються PDF (`pdf_url` у відповідях MCP); у dev — Vite.
+      JOBOFFER_WEB_PUBLIC_URL: http://localhost:5174
+    # Агент пише PDF версій документів.
+    volumes:
+      - documents-data:/data/documents
+    depends_on:
+      app: { condition: service_healthy }
+    ports: ["127.0.0.1:8798:8798"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8798/healthz')"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  # Синк пошти (B9): одноразовий запуск, з `up` не стартує. Читає скриньку застосунку в Gmail і
+  # розкладає листи по користувачах. Креди Gmail є лише тут (infra/.env); app і agent їх не мають.
+  #   docker compose -f infra/compose.yaml run --rm mailsync
+  # Міграції застосовує `app`, тож чекаємо на нього. Код виходу 1 — скринька недоступна.
+  mailsync:
+    profiles: ["mailsync"]
+    build:
+      context: ..
+      dockerfile: infra/docker/app.Dockerfile
+    image: joboffer-app:dev
+    command: ["python", "-m", "bootstrap.sync_mail"]
+    restart: "no"
+    environment:
+      JOBOFFER_ENVIRONMENT: dev
+      JOBOFFER_DATABASE_URL: postgresql+psycopg://joboffer:${JOBOFFER_POSTGRES_PASSWORD}@postgres:5432/joboffer
+      JOBOFFER_MAIL_ADDRESS: ${JOBOFFER_MAIL_ADDRESS:-}
+      JOBOFFER_GMAIL_CLIENT_ID: ${JOBOFFER_GMAIL_CLIENT_ID:-}
+      JOBOFFER_GMAIL_CLIENT_SECRET: ${JOBOFFER_GMAIL_CLIENT_SECRET:-}
+      JOBOFFER_GMAIL_REFRESH_TOKEN: ${JOBOFFER_GMAIL_REFRESH_TOKEN:-}
+    depends_on:
+      app: { condition: service_healthy }
+
+  # Прогін джерел вакансій (B10): одноразовий запуск, з `up` не стартує. Читає всі увімкнені компанії
+  # ATS і RSS-стрічки всіх користувачів і імпортує вакансії кожному за його профілем. Секретів нема.
+  #   docker compose -f infra/compose.yaml run --rm sources
+  # Міграції застосовує `app`, тож чекаємо на нього. Збій окремого джерела записано в його стан.
+  sources:
+    profiles: ["sources"]
+    build:
+      context: ..
+      dockerfile: infra/docker/app.Dockerfile
+    image: joboffer-app:dev
+    command: ["python", "-m", "bootstrap.refresh_sources"]
+    restart: "no"
+    environment:
+      JOBOFFER_ENVIRONMENT: dev
+      JOBOFFER_DATABASE_URL: postgresql+psycopg://joboffer:${JOBOFFER_POSTGRES_PASSWORD}@postgres:5432/joboffer
+    depends_on:
+      app: { condition: service_healthy }
+
+  # Vite dev-сервер. Спершу встановити залежності: scripts/web.sh ci
+  web:
+    image: node:24.21.0-alpine
+    user: node
+    working_dir: /app
+    volumes:
+      - ../web:/app
+    command: ["npm", "run", "dev"]
+    environment:
+      API_PROXY_TARGET: http://app:8797  # Vite проксіює /api на бекенд
+      AGENT_PROXY_TARGET: http://agent:8798  # … а /mcp і /.well-known/oauth-* — на агента: dev = один origin, як у проді
+    ports: ["127.0.0.1:5174:5174"]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:5174/"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  postgres-data:
+  documents-data:

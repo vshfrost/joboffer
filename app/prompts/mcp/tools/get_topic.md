@@ -1,0 +1,1 @@
+A topic with its plan, progress and the next pending step — start a study session from here.

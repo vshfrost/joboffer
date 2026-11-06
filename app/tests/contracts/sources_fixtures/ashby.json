@@ -1,0 +1,288 @@
+{
+ "apiVersion": "1",
+ "jobs": [
+  {
+   "id": "b990f480-4001-5363-a9b8-bf1acb905832",
+   "title": "Sales Development Representative - German Market 🇩🇪",
+   "department": "Growth",
+   "team": "Sales - Germany 🇩🇪",
+   "employmentType": "FullTime",
+   "location": "Barcelona, Spain",
+   "secondaryLocations": [],
+   "publishedAt": "2026-10-08T12:59:24.669+00:00",
+   "isListed": true,
+   "isRemote": true,
+   "workplaceType": "Hybrid",
+   "address": {
+    "postalAddress": {
+     "postalCode": "08010",
+     "addressRegion": "Catalonia",
+     "streetAddress": "Carrer d'Exemple, 1",
+     "addressCountry": "Spain",
+     "addressLocality": "Barcelona"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/cobaltledger/b990f480-4001-5363-a9b8-bf1acb905832",
+   "applyUrl": "https://jobs.ashbyhq.com/cobaltledger/b990f480-4001-5363-a9b8-bf1acb905832/application",
+   "descriptionHtml": "<ul style=\"min-height:1.5em\"><li><p style=\"min-height:1.5em\"><strong>Our mission and customers: </strong>We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.</p></li><li><p style=\"min-height:1.5em\"><strong>Your role: </strong>You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.</p></li><li><p style=\"min-height:1.5em\"><strong>Your profile: </strong>You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.</p></li><li><p style=\"min-height:1.5em\"><strong>Hiring process: </strong>a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.</p></li><li><p style=\"min-height:1.5em\"><strong>Benefits: </strong>flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests.</p></li></ul>",
+   "descriptionPlain": " - Our mission and customers: We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.\n - Your role: You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.\n - Your profile: You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.\n - Hiring process: a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.\n - Benefits: flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests."
+  },
+  {
+   "id": "1e6cbcfc-916f-5c54-8f0a-fe2238b99b1e",
+   "title": "Staff Data Analyst - Ops & Compliance",
+   "department": "Tech & Data",
+   "team": "Data Analysis",
+   "employmentType": "FullTime",
+   "location": "Paris, France",
+   "secondaryLocations": [
+    {
+     "location": "Berlin, Germany",
+     "address": {
+      "postalAddress": {
+       "postalCode": "10115",
+       "addressRegion": "Berlin",
+       "streetAddress": "Beispielstraße 1",
+       "addressCountry": "Germany",
+       "addressLocality": "Berlin"
+      }
+     }
+    },
+    {
+     "location": "Milan, Italy",
+     "address": {
+      "postalAddress": {
+       "postalCode": "MI 20123",
+       "addressRegion": "Lombardy",
+       "streetAddress": "Via Esempio, 1",
+       "addressCountry": "Italy",
+       "addressLocality": "Milan"
+      }
+     }
+    },
+    {
+     "location": "Barcelona, Spain",
+     "address": {
+      "postalAddress": {
+       "postalCode": "08010",
+       "addressRegion": "Catalonia",
+       "streetAddress": "Carrer d'Exemple, 1",
+       "addressCountry": "Spain",
+       "addressLocality": "Barcelona"
+      }
+     }
+    },
+    {
+     "location": "Belgrade, Serbia",
+     "address": {
+      "postalAddress": {
+       "postalCode": "11000",
+       "addressRegion": "Belgrade",
+       "streetAddress": "Primerna ulica 1",
+       "addressCountry": "Serbia",
+       "addressLocality": "Belgrade"
+      }
+     }
+    }
+   ],
+   "publishedAt": "2026-10-05T08:34:44.787+00:00",
+   "isListed": true,
+   "isRemote": true,
+   "workplaceType": "Hybrid",
+   "address": {
+    "postalAddress": {
+     "postalCode": "75010",
+     "addressRegion": "Ile-De-France",
+     "streetAddress": "1 Rue de l'Exemple",
+     "addressCountry": "France",
+     "addressLocality": "Paris"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/cobaltledger/1e6cbcfc-916f-5c54-8f0a-fe2238b99b1e",
+   "applyUrl": "https://jobs.ashbyhq.com/cobaltledger/1e6cbcfc-916f-5c54-8f0a-fe2238b99b1e/application",
+   "descriptionHtml": "<ul style=\"min-height:1.5em\"><li><p style=\"min-height:1.5em\"><strong>Our mission and customers: </strong>We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.</p></li><li><p style=\"min-height:1.5em\"><strong>Your role: </strong>You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.</p></li><li><p style=\"min-height:1.5em\"><strong>Your profile: </strong>You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.</p></li><li><p style=\"min-height:1.5em\"><strong>Hiring process: </strong>a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.</p></li><li><p style=\"min-height:1.5em\"><strong>Benefits: </strong>flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests.</p></li></ul>",
+   "descriptionPlain": " - Our mission and customers: We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.\n - Your role: You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.\n - Your profile: You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.\n - Hiring process: a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.\n - Benefits: flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests."
+  },
+  {
+   "id": "d46fa8af-4bf8-544a-95d8-fcc9fb1517af",
+   "title": "Senior/Staff - Go Backend Engineer - remote friendly",
+   "department": "Tech & Data",
+   "team": "Backend",
+   "employmentType": "FullTime",
+   "location": "Barcelona, Spain",
+   "secondaryLocations": [],
+   "publishedAt": "2026-10-19T07:57:05.800+00:00",
+   "isListed": true,
+   "isRemote": true,
+   "workplaceType": "Remote",
+   "address": {
+    "postalAddress": {
+     "postalCode": "08010",
+     "addressRegion": "Catalonia",
+     "streetAddress": "Carrer d'Exemple, 1",
+     "addressCountry": "Spain",
+     "addressLocality": "Barcelona"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/cobaltledger/d46fa8af-4bf8-544a-95d8-fcc9fb1517af",
+   "applyUrl": "https://jobs.ashbyhq.com/cobaltledger/d46fa8af-4bf8-544a-95d8-fcc9fb1517af/application",
+   "descriptionHtml": "<ul style=\"min-height:1.5em\"><li><p style=\"min-height:1.5em\"><strong>Our mission and customers: </strong>We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.</p></li><li><p style=\"min-height:1.5em\"><strong>Your role: </strong>You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.</p></li><li><p style=\"min-height:1.5em\"><strong>Your profile: </strong>You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.</p></li><li><p style=\"min-height:1.5em\"><strong>Hiring process: </strong>a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.</p></li><li><p style=\"min-height:1.5em\"><strong>Benefits: </strong>flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests.</p></li></ul>",
+   "descriptionPlain": " - Our mission and customers: We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.\n - Your role: You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.\n - Your profile: You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.\n - Hiring process: a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.\n - Benefits: flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests."
+  },
+  {
+   "id": "d60afc73-f72f-5922-b82c-867a92a476bd",
+   "title": "Senior/Staff - Go Backend Engineer - remote friendly",
+   "department": "Tech & Data",
+   "team": "Backend",
+   "employmentType": "FullTime",
+   "location": "Milan, Italy",
+   "secondaryLocations": [],
+   "publishedAt": "2026-10-19T07:57:19.889+00:00",
+   "isListed": true,
+   "isRemote": true,
+   "workplaceType": "Remote",
+   "address": {
+    "postalAddress": {
+     "postalCode": "MI 20123",
+     "addressRegion": "Lombardy",
+     "streetAddress": "Via Esempio, 1",
+     "addressCountry": "Italy",
+     "addressLocality": "Milan"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/cobaltledger/d60afc73-f72f-5922-b82c-867a92a476bd",
+   "applyUrl": "https://jobs.ashbyhq.com/cobaltledger/d60afc73-f72f-5922-b82c-867a92a476bd/application",
+   "descriptionHtml": "<ul style=\"min-height:1.5em\"><li><p style=\"min-height:1.5em\"><strong>Our mission and customers: </strong>We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.</p></li><li><p style=\"min-height:1.5em\"><strong>Your role: </strong>You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.</p></li><li><p style=\"min-height:1.5em\"><strong>Your profile: </strong>You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.</p></li><li><p style=\"min-height:1.5em\"><strong>Hiring process: </strong>a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.</p></li><li><p style=\"min-height:1.5em\"><strong>Benefits: </strong>flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests.</p></li></ul>",
+   "descriptionPlain": " - Our mission and customers: We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.\n - Your role: You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.\n - Your profile: You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.\n - Hiring process: a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.\n - Benefits: flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests."
+  },
+  {
+   "id": "757cb67b-f3ff-5277-90bd-0086dd31f658",
+   "title": "Senior Product Engineer - iOS/Swift",
+   "department": "Tech & Data",
+   "team": "Mobile - iOS",
+   "employmentType": "FullTime",
+   "location": "Berlin, Germany",
+   "secondaryLocations": [],
+   "publishedAt": "2026-10-13T16:02:39.102+00:00",
+   "isListed": true,
+   "isRemote": true,
+   "workplaceType": "Remote",
+   "address": {
+    "postalAddress": {
+     "postalCode": "10115",
+     "addressRegion": "Berlin",
+     "streetAddress": "Beispielstraße 1",
+     "addressCountry": "Germany",
+     "addressLocality": "Berlin"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/cobaltledger/757cb67b-f3ff-5277-90bd-0086dd31f658",
+   "applyUrl": "https://jobs.ashbyhq.com/cobaltledger/757cb67b-f3ff-5277-90bd-0086dd31f658/application",
+   "descriptionHtml": "<ul style=\"min-height:1.5em\"><li><p style=\"min-height:1.5em\"><strong>Our mission and customers: </strong>We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.</p></li><li><p style=\"min-height:1.5em\"><strong>Your role: </strong>You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.</p></li><li><p style=\"min-height:1.5em\"><strong>Your profile: </strong>You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.</p></li><li><p style=\"min-height:1.5em\"><strong>Hiring process: </strong>a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.</p></li><li><p style=\"min-height:1.5em\"><strong>Benefits: </strong>flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests.</p></li></ul>",
+   "descriptionPlain": " - Our mission and customers: We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.\n - Your role: You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.\n - Your profile: You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.\n - Hiring process: a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.\n - Benefits: flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests."
+  },
+  {
+   "id": "6004e60a-09f0-526b-aa4f-b47a505b6d2a",
+   "title": "Growth Ops Intern",
+   "department": "Growth",
+   "team": "Growth Central - Acquisition",
+   "employmentType": "Intern",
+   "location": "Paris, France",
+   "secondaryLocations": [],
+   "publishedAt": "2026-10-15T12:31:39.058+00:00",
+   "isListed": true,
+   "isRemote": true,
+   "workplaceType": "Hybrid",
+   "address": {
+    "postalAddress": {
+     "postalCode": "75010",
+     "addressRegion": "Ile-De-France",
+     "streetAddress": "1 Rue de l'Exemple",
+     "addressCountry": "France",
+     "addressLocality": "Paris"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/cobaltledger/6004e60a-09f0-526b-aa4f-b47a505b6d2a",
+   "applyUrl": "https://jobs.ashbyhq.com/cobaltledger/6004e60a-09f0-526b-aa4f-b47a505b6d2a/application",
+   "descriptionHtml": "<ul style=\"min-height:1.5em\"><li><p style=\"min-height:1.5em\"><strong>Our mission and customers: </strong>We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.</p></li><li><p style=\"min-height:1.5em\"><strong>Your role: </strong>You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.</p></li><li><p style=\"min-height:1.5em\"><strong>Your profile: </strong>You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.</p></li><li><p style=\"min-height:1.5em\"><strong>Hiring process: </strong>a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.</p></li><li><p style=\"min-height:1.5em\"><strong>Benefits: </strong>flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests.</p></li></ul>",
+   "descriptionPlain": " - Our mission and customers: We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.\n - Your role: You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.\n - Your profile: You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.\n - Hiring process: a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.\n - Benefits: flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests."
+  },
+  {
+   "id": "11c3c1fa-507a-516e-bc6e-abee94c0617e",
+   "title": "Senior Product Engineer - iOS/Swift",
+   "department": "Tech & Data",
+   "team": "Mobile - iOS",
+   "employmentType": "FullTime",
+   "location": "Barcelona, Spain",
+   "secondaryLocations": [],
+   "publishedAt": "2026-10-08T11:55:13.696+00:00",
+   "isListed": true,
+   "isRemote": true,
+   "workplaceType": "Remote",
+   "address": {
+    "postalAddress": {
+     "postalCode": "08010",
+     "addressRegion": "Catalonia",
+     "streetAddress": "Carrer d'Exemple, 1",
+     "addressCountry": "Spain",
+     "addressLocality": "Barcelona"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/cobaltledger/11c3c1fa-507a-516e-bc6e-abee94c0617e",
+   "applyUrl": "https://jobs.ashbyhq.com/cobaltledger/11c3c1fa-507a-516e-bc6e-abee94c0617e/application",
+   "descriptionHtml": "<ul style=\"min-height:1.5em\"><li><p style=\"min-height:1.5em\"><strong>Our mission and customers: </strong>We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.</p></li><li><p style=\"min-height:1.5em\"><strong>Your role: </strong>You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.</p></li><li><p style=\"min-height:1.5em\"><strong>Your profile: </strong>You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.</p></li><li><p style=\"min-height:1.5em\"><strong>Hiring process: </strong>a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.</p></li><li><p style=\"min-height:1.5em\"><strong>Benefits: </strong>flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests.</p></li></ul>",
+   "descriptionPlain": " - Our mission and customers: We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.\n - Your role: You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.\n - Your profile: You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.\n - Hiring process: a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.\n - Benefits: flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests."
+  },
+  {
+   "id": "5ed9a985-b6e9-53b1-b5dc-c8053f65cdee",
+   "title": "Site Reliability Engineer (Storage) - remote friendly",
+   "department": "Tech & Data",
+   "team": "SRE",
+   "employmentType": "FullTime",
+   "location": "Paris, France",
+   "secondaryLocations": [],
+   "publishedAt": "2026-10-07T08:23:29.394+00:00",
+   "isListed": true,
+   "isRemote": true,
+   "workplaceType": "Remote",
+   "address": {
+    "postalAddress": {
+     "postalCode": "75010",
+     "addressRegion": "Ile-De-France",
+     "streetAddress": "1 Rue de l'Exemple",
+     "addressCountry": "France",
+     "addressLocality": "Paris"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/cobaltledger/5ed9a985-b6e9-53b1-b5dc-c8053f65cdee",
+   "applyUrl": "https://jobs.ashbyhq.com/cobaltledger/5ed9a985-b6e9-53b1-b5dc-c8053f65cdee/application",
+   "descriptionHtml": "<ul style=\"min-height:1.5em\"><li><p style=\"min-height:1.5em\"><strong>Our mission and customers: </strong>We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.</p></li><li><p style=\"min-height:1.5em\"><strong>Your role: </strong>You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.</p></li><li><p style=\"min-height:1.5em\"><strong>Your profile: </strong>You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.</p></li><li><p style=\"min-height:1.5em\"><strong>Hiring process: </strong>a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.</p></li><li><p style=\"min-height:1.5em\"><strong>Benefits: </strong>flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests.</p></li></ul>",
+   "descriptionPlain": " - Our mission and customers: We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.\n - Your role: You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.\n - Your profile: You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.\n - Hiring process: a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.\n - Benefits: flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests."
+  },
+  {
+   "id": "b7972d4b-9ffa-5634-ba78-644a0b4696bd",
+   "title": "Senior Product Engineer - Android/Kotlin",
+   "department": "Tech & Data",
+   "team": "Mobile - Android",
+   "employmentType": "FullTime",
+   "location": "Barcelona, Spain",
+   "secondaryLocations": [],
+   "publishedAt": "2026-10-14T08:50:26.962+00:00",
+   "isListed": true,
+   "isRemote": true,
+   "workplaceType": "Remote",
+   "address": {
+    "postalAddress": {
+     "postalCode": "08010",
+     "addressRegion": "Catalonia",
+     "streetAddress": "Carrer d'Exemple, 1",
+     "addressCountry": "Spain",
+     "addressLocality": "Barcelona"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/cobaltledger/b7972d4b-9ffa-5634-ba78-644a0b4696bd",
+   "applyUrl": "https://jobs.ashbyhq.com/cobaltledger/b7972d4b-9ffa-5634-ba78-644a0b4696bd/application",
+   "descriptionHtml": "<ul style=\"min-height:1.5em\"><li><p style=\"min-height:1.5em\"><strong>Our mission and customers: </strong>We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.</p></li><li><p style=\"min-height:1.5em\"><strong>Your role: </strong>You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.</p></li><li><p style=\"min-height:1.5em\"><strong>Your profile: </strong>You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.</p></li><li><p style=\"min-height:1.5em\"><strong>Hiring process: </strong>a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.</p></li><li><p style=\"min-height:1.5em\"><strong>Benefits: </strong>flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests.</p></li></ul>",
+   "descriptionPlain": " - Our mission and customers: We are building a friendly finance workspace for small businesses, with everyday banking at its core and simple tools around it. Customers rate us 4.7 out of 5 on a fictional review site (https://reviews.example/cobaltledger). Our culture (https://example.com/cobaltledger/culture) puts customer satisfaction at the core of what we do, and we are proud of the people behind it.\n - Your role: You join a small team that owns a slice of the product from idea to production. You work with designers and product managers, review code and keep quality high.\n - Your profile: You enjoy clear communication, honest estimates and learning from mistakes. You have solid professional experience in your area and speak fluent English.\n - Hiring process: a short intro call, a take-home exercise, a technical conversation and a final chat with the team lead (https://example.com/cobaltledger/team). We reply to every candidate.\n - Benefits: flexible hours, a learning budget, private health insurance and a yearly team meeting. This is a made-up posting used only for tests."
+  }
+ ]
+}

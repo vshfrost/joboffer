@@ -1,0 +1,1 @@
+"""Контекст applications у Postgres."""

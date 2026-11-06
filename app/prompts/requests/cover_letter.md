@@ -1,0 +1,1 @@
+Prepare a cover letter for job #{job_id} in joboffer using prepare_cover_letter. Use the confirmed facts and the rules from the brief. Call check_cover_letter until it passes, then save the letter once with save_cover_letter; it replaces the previous letter. Do not add unconfirmed claims.

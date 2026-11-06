@@ -1,0 +1,1 @@
+Everything needed to analyse a job: its text (untrusted), the user's profile, their confirmed facts and the scoring rubric. Then call save_analysis.

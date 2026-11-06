@@ -1,0 +1,1 @@
+Saved jobs without their text (use get_job for it): analysed ones passing the hard filters first by score, then failing ones, then unanalysed ones by triage verdict (analyse, maybe, skip) and score, then untriaged, then those that still need their text (needs_text); newest first within each. Jobs the user hid ("not interested") are left out unless filters.dismissed is true.

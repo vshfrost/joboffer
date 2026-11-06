@@ -1,0 +1,170 @@
+Delivered-To: mailroom+abcdefghijkl@example.com
+Received: by 2001:db8::3 with SMTP id k14csp567795qvo;
+        Sat, 17 Oct 2026 16:37:38 -0700 (PDT)
+X-Forwarded-Encrypted: x
+X-Received: x
+ARC-Seal: i=5; a=rsa-sha256; t=1792280258; cv=pass;
+        d=google.com; s=arc-20260327;
+        b=QUJDRA==
+ARC-Message-Signature: i=5; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature
+         :feedback-id:dkim-signature:dkim-signature:delivered-to;
+        bh=QUJDRA==;
+        fh=QUJDRA==;
+        b=QUJDRA==;
+        dara=google.com
+ARC-Authentication-Results: i=5; mx.google.com;
+       dkim=pass header.i=@example.com header.s=cf2024-1 header.b=QUJDRA==;
+       dkim=pass header.i=@cloudflare-email.net header.s=cf2024-1 header.b=QUJDRA==;
+       dkim=pass header.i=@gmail.com header.s=20251104 header.b=QUJDRA==;
+       arc=pass (i=4 spf=pass spfdomain=example.com dkim=pass dkdomain=example.com dkim=pass dkdomain=cloudflare-email.net dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of addr1@gmail.com designates 192.0.2.1 as permitted sender) smtp.mailfrom="addr1@gmail.com";
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;
+       dara=neutral header.i=@gmail.com
+Return-Path: <addr1@gmail.com>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [192.0.2.1])
+        by mx.google.com with SMTPS id 2adb3069b0e04-5be4a2c36b7sor500546e87.3.2026.10.17.16.37.38
+        for <mailroom+abcdefghijkl@example.com>
+        (Google Transport Security);
+        Sat, 17 Oct 2026 16:37:38 -0700 (PDT)
+Received-SPF: pass (google.com: domain of addr1@gmail.com designates 192.0.2.1 as permitted sender) client-ip=192.0.2.1;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@example.com header.s=cf2024-1 header.b=QUJDRA==;
+       dkim=pass header.i=@cloudflare-email.net header.s=cf2024-1 header.b=QUJDRA==;
+       dkim=pass header.i=@gmail.com header.s=20251104 header.b=QUJDRA==;
+       arc=pass (i=4 spf=pass spfdomain=example.com dkim=pass dkdomain=example.com dkim=pass dkdomain=cloudflare-email.net dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of addr1@gmail.com designates 192.0.2.1 as permitted sender) smtp.mailfrom="addr1@gmail.com";
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;
+       dara=neutral header.i=@gmail.com
+Authentication-Results: mx.cloudflare.net;
+	dkim=pass header.d=gmail.com header.s=20251104 header.b=QUJDRA==;
+	dmarc=pass header.from=gmail.com policy.dmarc=none;
+	spf=none (mx.cloudflare.net: no SPF records found for addr2@mail-ed1-x52e.google.com) smtp.helo=mail-ed1-x52e.google.com;
+	spf=pass (mx.cloudflare.net: domain of candidate@gmail.com designates 2001:db8::4 as permitted sender) smtp.mailfrom=candidate@gmail.com;
+	arc=pass smtp.remote-ip="2001:db8::4"
+ARC-Seal: i=4; a=rsa-sha256; t=1792280258; cv=pass;
+        d=google.com; s=arc-20260327;
+        b=QUJDRA==
+ARC-Message-Signature: i=4; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature
+         :feedback-id:dkim-signature:dkim-signature:delivered-to;
+        bh=QUJDRA==;
+        fh=QUJDRA==;
+        b=QUJDRA==;
+        dara=google.com
+ARC-Authentication-Results: i=4; mx.google.com;
+       dkim=pass header.i=@example.com header.s=cf2024-1 header.b=QUJDRA==;
+       dkim=pass header.i=@cloudflare-email.net header.s=cf2024-1 header.b=QUJDRA==;
+       dkim=pass header.i=@gmail.com header.s=20251104 header.b=QUJDRA==;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of addr3@example.com designates 192.0.2.2 as permitted sender) smtp.mailfrom="addr3@example.com";
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;
+       dara=neutral header.i=@gmail.com
+X-Google-DKIM-Signature: x
+X-Forwarded-Encrypted: x
+X-Gm-Message-State: x
+X-Received: x
+X-Forwarded-To: mailroom+abcdefghijkl@example.com
+X-Forwarded-For: owner@gmail.com mailroom+abcdefghijkl@example.com
+Delivered-To: owner@gmail.com
+Received: by 2001:db8::5 with SMTP id m25csp4323123laa;
+        Sat, 17 Oct 2026 16:37:37 -0700 (PDT)
+X-Forwarded-Encrypted: x
+X-Received: x
+ARC-Seal: i=3; a=rsa-sha256; t=1792280256; cv=pass;
+        d=google.com; s=arc-20260327;
+        b=QUJDRA==
+ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature
+         :feedback-id:dkim-signature:dkim-signature;
+        bh=QUJDRA==;
+        fh=QUJDRA==;
+        b=QUJDRA==;
+        dara=google.com
+ARC-Authentication-Results: i=3; mx.google.com;
+       dkim=pass header.i=@example.com header.s=cf2024-1 header.b=QUJDRA==;
+       dkim=pass header.i=@cloudflare-email.net header.s=cf2024-1 header.b=QUJDRA==;
+       dkim=pass header.i=@gmail.com header.s=20251104 header.b=QUJDRA==;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of addr3@example.com designates 192.0.2.2 as permitted sender) smtp.mailfrom="addr3@example.com";
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;
+       dara=neutral header.i=@gmail.com
+Return-Path: <addr3@example.com>
+Received: from ba-bgj.cloudflare-email.net (ba-bgj.cloudflare-email.net. [192.0.2.2])
+        by mx.google.com with ESMTPS id 4fb4d7f45d1cf-6b38a1f7436si6182330a12.214.2026.10.17.16.37.35
+        for <owner@gmail.com>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 17 Oct 2026 16:37:36 -0700 (PDT)
+Received-SPF: pass (google.com: domain of addr3@example.com designates 192.0.2.2 as permitted sender) client-ip=192.0.2.2;
+DKIM-Signature: v=1; a=rsa-sha256; s=cf2024-1; d=example.com; c=relaxed/relaxed;
+	h=To:Subject:Date:From:Feedback-ID:from:reply-to:cc:resent-date
+	:resent-from:resent-to:resent-cc:in-reply-to:references:list-id:list-help
+	:list-unsubscribe:list-unsubscribe-post:list-subscribe:list-post
+	:list-owner:list-archive; t=1792280256; x=1792885056; bh=QUJDRA==; b=QUJDRA==;
+DKIM-Signature: v=1; a=rsa-sha256; s=cf2024-1; d=cloudflare-email.net; c=relaxed/relaxed;
+	h=To:Subject:Date:From:Feedback-ID:from:reply-to:cc:resent-date
+	:resent-from:resent-to:resent-cc:in-reply-to:references:list-id:list-help
+	:list-unsubscribe:list-unsubscribe-post:list-subscribe:list-post
+	:list-owner:list-archive; t=1792280256; x=1792885056; bh=QUJDRA==; b=QUJDRA==;
+X-Forwarded-To: owner@gmail.com
+X-X-Forwarded-For: taras@example.com owner@gmail.com
+Feedback-ID: x
+Received: from mail-ed1-x52e.google.com (2001:db8::4)
+        by cloudflare-email.net (cloudflare) id TfpVMrhAGKU5
+        for <taras@example.com>; Sat, 17 Oct 2026 23:37:34 +0000
+ARC-Seal: i=2; a=rsa-sha256; s=cf2024-1; d=cloudflare-email.net; cv=pass;
+	b=QUJDRA==;
+ARC-Message-Signature: i=2; a=rsa-sha256; s=cf2024-1; d=cloudflare-email.net; c=relaxed/relaxed;
+	h=To:Subject:Date:From:from:reply-to:cc:resent-date:resent-from:resent-to
+	:resent-cc:in-reply-to:references:list-id:list-help:list-subscribe
+	:list-post:list-owner:list-archive; t=1792280254; x=1792885054; bh=QUJDRA==; b=QUJDRA==;
+ARC-Authentication-Results: i=2; mx.cloudflare.net;
+	dkim=pass header.d=gmail.com header.s=20251104 header.b=QUJDRA==;
+	dmarc=pass header.from=gmail.com policy.dmarc=none;
+	spf=none (mx.cloudflare.net: no SPF records found for addr2@mail-ed1-x52e.google.com) smtp.helo=mail-ed1-x52e.google.com;
+	spf=pass (mx.cloudflare.net: domain of candidate@gmail.com designates 2001:db8::4 as permitted sender) smtp.mailfrom=candidate@gmail.com;
+	arc=pass smtp.remote-ip="2001:db8::4"
+Received-SPF: pass (mx.cloudflare.net: domain of candidate@gmail.com designates 2001:db8::4 as permitted sender)
+	receiver=mx.cloudflare.net; client-ip=2001:db8::4; envelope-from="candidate@gmail.com"; helo=mail-ed1-x52e.google.com;
+X-CF-SpamH-Score: x
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-6b1a86c0316so1344493a12.0
+        for <taras@example.com>; Sat, 17 Oct 2026 16:37:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792280254; cv=none;
+        d=google.com; s=arc-20260327;
+        b=QUJDRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=QUJDRA==;
+        fh=QUJDRA==;
+        b=QUJDRA==;
+        darn=example.com
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792280254; x=1792885054; darn=example.com;
+        h=content-type:to:subject:message-id:date:from:mime-version:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=QUJDRA==;
+        b=QUJDRA==
+X-Gm-Gg: x
+X-Received: x
+MIME-Version: 1.0
+From: Test Candidate <candidate@gmail.com>
+Date: Sun, 18 Oct 2026 01:37:22 +0200
+X-Gm-Features: x
+Message-ID: <addr4@mail.gmail.com>
+Subject: joboffer test M0b 2
+To: taras@example.com
+Content-Type: multipart/alternative; boundary="000000000000e1730a065e11c3c0"
+
+--000000000000e1730a065e11c3c0
+Content-Type: text/plain; charset="UTF-8"
+
+joboffer test M0b 2
+
+--000000000000e1730a065e11c3c0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="font-size:inherit">joboffer test M0b 2</div>
+
+--000000000000e1730a065e11c3c0--
+

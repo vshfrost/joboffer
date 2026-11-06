@@ -1,0 +1,1 @@
+Bring a hidden job back into the user's list. A job that is not hidden stays as it is.

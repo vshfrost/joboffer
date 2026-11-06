@@ -1,0 +1,1 @@
+Analyse job #{job_id} in joboffer again: my profile or facts changed after the last analysis. Call prepare_analysis, which returns the previous analysis and the answers I gave to its gaps, score the job strictly by the returned rubric using only the confirmed facts, and save the result with save_analysis. Show me what changed against the previous score and gaps.

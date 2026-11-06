@@ -1,0 +1,1 @@
+Mark facts as confirmed — confirm only the facts the user explicitly approved. Any unknown id rejects the whole call.

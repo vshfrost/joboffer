@@ -1,0 +1,28 @@
+Delivered-To: mailroom+abcdefghijkl@example.com
+Delivered-To: taras@example.com
+From: Acme Hiring Team <no-reply@us.greenhouse-mail.io>
+Reply-To: no-reply@us.greenhouse-mail.io
+To: taras@example.com
+Subject: Thank you for applying to Acme
+Date: Mon, 12 Oct 2026 09:02:11 +0000
+Message-ID: <gh-confirm-1@us.greenhouse-mail.io>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="b1"
+
+--b1
+Content-Type: text/plain; charset="utf-8"
+
+Hi Taras,
+
+Thanks for applying to Acme! Your application for the Senior Backend Engineer
+role has been received. Our team will review it and reach out if your
+experience is a match.
+
+Best,
+Acme Recruiting
+
+--b1
+Content-Type: text/html; charset="utf-8"
+
+<p>Hi Taras,</p><p>Thanks for applying to Acme! Your application for the Senior Backend Engineer role has been received.</p>
+--b1--

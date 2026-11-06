@@ -1,0 +1,1 @@
+The user's facts grouped by kind. Each fact has source (cv, chat or manual) and job_id (the number of the job it belongs to, or null for a general fact). confirmed=true/false filters by confirmation; omit for all.

@@ -1,0 +1,249 @@
+/*
+ * Тема Pine — джерело правди: brain/projects/joboffer/design-system-pine.
+ * Значення в :root — семантичні токени shadcn/ui; @theme лише відкриває їх Tailwind-класам.
+ * Нові кольори, радіуси й відступи спершу додаються до дизайн-системи, а не сюди.
+ */
+@import "tailwindcss";
+
+:root {
+  /* Поверхні й текст */
+  --background: #f7f8f7;
+  --foreground: #202624;
+  --card: #ffffff;
+  --card-foreground: #202624;
+  --popover: #ffffff;
+  --popover-foreground: #202624;
+  --muted: #eef1ef;
+  --muted-foreground: #626b66;
+  --secondary: #eef1ef;
+  --secondary-foreground: #202624;
+  --accent: #edf2ef;
+  --accent-foreground: #202624;
+  --border: #dce2de;
+  --input: #849089;
+
+  /* Акцент і focus */
+  --primary: #356859;
+  --primary-foreground: #ffffff;
+  --ring: #356859;
+  --destructive: #a23d3d;
+  --destructive-foreground: #ffffff;
+
+  /* Pine-специфічні */
+  --jo-primary-hover: #2c584b;
+  --jo-selected: #e7f0eb;
+  --jo-selected-foreground: #2c584b;
+  --jo-disabled: #eef1ef;
+  --jo-disabled-foreground: #626b66;
+  --jo-counter: #b8ef70;
+  --jo-counter-foreground: #21462e;
+  /* Цифри лічильників імпорту й статистики джерел: не успадковують колір тексту */
+  --jo-metric: #2c584b;
+
+  /* Навігація */
+  --sidebar: #f1f4f2;
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--jo-selected);
+  --sidebar-accent-foreground: var(--jo-selected-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+
+  /* Статуси: текст + фон; колір ніколи не єдиний носій змісту */
+  --jo-status-neutral-foreground: #626b66;
+  --jo-status-neutral-background: #eef1ef;
+  --jo-status-info-foreground: #405d86;
+  --jo-status-info-background: #eef2f8;
+  --jo-status-warning-foreground: #805b20;
+  --jo-status-warning-background: #fbf4e7;
+  --jo-status-success-foreground: #286044;
+  --jo-status-success-background: #edf5ef;
+  --jo-status-danger-foreground: #a23d3d;
+  --jo-status-danger-background: #faeeee;
+
+  /* Агенти: текст, поверхня й рамка кнопки агента (світла тема). «Інший агент» — шавлія Pine */
+  --jo-agent-claude: #a84e32;
+  --jo-agent-claude-surface: #fbf2ed;
+  --jo-agent-claude-border: #eadbd2;
+  --jo-agent-chatgpt: #286044;
+  --jo-agent-chatgpt-surface: #edf5ef;
+  --jo-agent-chatgpt-border: #d7e6dc;
+  --jo-agent-codex: #35434a;
+  --jo-agent-codex-surface: #eef1f2;
+  --jo-agent-codex-border: #dce2e4;
+  --jo-agent-other: var(--primary);
+  --jo-agent-other-surface: var(--jo-selected);
+  --jo-agent-other-border: var(--border);
+
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --font-sans: "Inter Variable", system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-primary-hover: var(--jo-primary-hover);
+  --color-selected: var(--jo-selected);
+  --color-selected-foreground: var(--jo-selected-foreground);
+  --color-disabled: var(--jo-disabled);
+  --color-disabled-foreground: var(--jo-disabled-foreground);
+  --color-counter: var(--jo-counter);
+  --color-counter-foreground: var(--jo-counter-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-status-neutral: var(--jo-status-neutral-background);
+  --color-status-neutral-foreground: var(--jo-status-neutral-foreground);
+  --color-status-info: var(--jo-status-info-background);
+  --color-status-info-foreground: var(--jo-status-info-foreground);
+  --color-status-warning: var(--jo-status-warning-background);
+  --color-status-warning-foreground: var(--jo-status-warning-foreground);
+  --color-status-success: var(--jo-status-success-background);
+  --color-status-success-foreground: var(--jo-status-success-foreground);
+  --color-status-danger: var(--jo-status-danger-background);
+  --color-status-danger-foreground: var(--jo-status-danger-foreground);
+  --color-agent-claude: var(--jo-agent-claude);
+  --color-agent-claude-surface: var(--jo-agent-claude-surface);
+  --color-agent-claude-border: var(--jo-agent-claude-border);
+  --color-agent-chatgpt: var(--jo-agent-chatgpt);
+  --color-agent-chatgpt-surface: var(--jo-agent-chatgpt-surface);
+  --color-agent-chatgpt-border: var(--jo-agent-chatgpt-border);
+  --color-agent-codex: var(--jo-agent-codex);
+  --color-agent-codex-surface: var(--jo-agent-codex-surface);
+  --color-agent-codex-border: var(--jo-agent-codex-border);
+  --color-agent-other: var(--jo-agent-other);
+  --color-agent-other-surface: var(--jo-agent-other-surface);
+  --color-agent-other-border: var(--jo-agent-other-border);
+
+  /* Радіуси: позначки 4–6 px, базовий 8 px, панелі 12 px */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: var(--radius);
+  --radius-xl: 0.75rem;
+
+  /* Типографіка: розмір / інтервал за таблицею дизайн-системи */
+  --text-nav: 0.9375rem;
+  --text-nav--line-height: 1.25rem;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.125rem;
+  --text-page-title: 1.75rem;
+  --text-page-title--line-height: 2.25rem;
+  --text-section: 1rem;
+  --text-section--line-height: 1.5rem;
+  --text-metric: 2rem;
+  --text-metric--line-height: 2.5rem;
+
+  /* Тіні: поверхні без тіней; лише меню, накладені панелі й вибраний таб */
+  --shadow-menu: 0 4px 16px rgb(20 30 25 / 8%);
+  --shadow-overlay: 0 12px 40px rgb(20 30 25 / 12%);
+  --shadow-tab: 0 1px 2px rgb(20 30 25 / 6%);
+
+  --animate-overlay-in: overlay-in 180ms ease-out;
+  --animate-sheet-in: sheet-in 220ms ease-out;
+
+  @keyframes overlay-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes sheet-in {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--border);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-variant-numeric: lining-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Числа в таблицях і лічильниках не стрибають між рядками */
+  .tabular {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::after,
+    ::before {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Лічильники «Джерел»: темний Pine, вага 600, цифри однієї ширини (контраст на білому 8.06:1) */
+  .sr-count,
+  .sr-stats dd {
+    color: var(--jo-metric);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Логотип агента: монохромний SVG із public/agents як маска — колір бере з currentColor (токени --jo-agent-*) */
+  .agent-logo {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: currentColor;
+    mask: var(--agent-logo) center / contain no-repeat;
+    -webkit-mask: var(--agent-logo) center / contain no-repeat;
+  }
+
+  /* Popover на вузькому екрані — картка внизу: перекриваємо позицію, яку Radix ставить обгортці вмісту */
+  [data-radix-popper-content-wrapper]:has(> [data-layout="bottom-card"]) {
+    position: fixed !important;
+    inset: auto 1rem 1rem 1rem !important;
+    transform: none !important;
+    min-width: 0 !important;
+  }
+}

@@ -1,0 +1,1 @@
+Confirm a reply's type and job (job_id null: not about any of the user's applications). The application moves forward by the type: rejection → rejected, invitation and assignment → interview, other → replied, auto_confirmation → no change; never backwards.

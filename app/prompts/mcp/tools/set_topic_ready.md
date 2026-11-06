@@ -1,0 +1,1 @@
+Only when the user says the topic is ready for interviews; ready=false takes it back.

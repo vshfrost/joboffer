@@ -1,0 +1,46 @@
+# Edge веба: SPA з кореня origin, /api → app, /mcp і OAuth-discovery → agent.
+# Upstream-и — змінні оточення з типовими значеннями compose-мережі (ім'я сервісу : порт).
+{
+	admin off
+	auto_https off
+}
+
+:8080 {
+	# Заголовки безпеки на всі відповіді, зокрема проксійовані. worker-src blob: потрібен воркеру ALTCHA;
+	# style 'unsafe-inline' — style-атрибути React. Префікс `?` = ставити лише коли upstream сам не задав:
+	# HTML логіна MCP (агент) має власні CSP (без form-action: Chrome застосовує його й до 302 після POST на адресу
+	# клієнта MCP) і Referrer-Policy: no-referrer (rid не витікає) — суворіші за наші, їх не перекриваємо.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		?X-Content-Type-Options "nosniff"
+		?Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+		?Referrer-Policy "strict-origin-when-cross-origin"
+	}
+
+	@spa not path /api/* /mcp* /.well-known/*
+	handle @spa {
+		root * /srv/app
+		try_files {path} /index.html
+		file_server
+	}
+
+	# Host і CF-Connecting-IP reverse_proxy передає як є: застосунок бере IP клієнта з CF-Connecting-IP,
+	# а Host звіряє з JOBOFFER_AGENT_ALLOWED_HOSTS.
+	# Маршрути app лежать у корені процесу: /api/x → /x (як rewrite у Vite).
+	handle_path /api/* {
+		reverse_proxy {$APP_UPSTREAM:app:8797}
+	}
+
+	# Шлях не змінюється: агент сам зрізає префікс /mcp. flush_interval -1 — стрімінг SSE без буфера.
+	@agent path /mcp* /.well-known/oauth-*
+	handle @agent {
+		reverse_proxy {$AGENT_UPSTREAM:agent:8798} {
+			flush_interval -1
+		}
+	}
+
+	# Решта /.well-known — не SPA: 404, а не index.html.
+	handle /.well-known/* {
+		respond 404
+	}
+}

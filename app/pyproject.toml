@@ -1,0 +1,151 @@
+# Версії — з hexpy-boilerplate (copier.yml, політика: ≥14 днів від релізу). Оновлення — `copier update`.
+[project]
+name = "joboffer"
+version = "0.0.0"
+description = "Сервіс генерації CV та Cover Letter для подачі на вакансію"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    "fastapi==0.142.2",
+    "pydantic==2.13.5",
+    "pydantic-settings==2.15.0",
+    "uvicorn==0.54.0",
+    "sqlalchemy[asyncio]==2.1.3",
+    "alembic==1.20.0",
+    "psycopg[binary]==3.3.6",
+    "argon2-cffi==25.1.0",
+    "mcp==2.3.0",
+    "authlib==1.8.0",
+    "httpx2==2.13.1",  # HTTP-клієнт Authlib (він віддає перевагу httpx2; `httpx` — застарілий запасний)
+    "itsdangerous==2.2.0",
+    "weasyprint==70.0",  # HTML → PDF; системні pango і шрифти — в образі та CI
+    "pypdf==6.19.0",  # текстовий шар PDF для ATS-lint
+    "pillow==12.3.0",  # і так тягне WeasyPrint; фото для шапки CV (B7b)
+    "python-multipart==0.0.32",  # multipart-форми Starlette: завантаження фото (B7b), як у v1
+    "defusedxml==0.7.1",  # безпечний розбір RSS-стрічок джерел (без DTD і сутностей)
+]
+
+[dependency-groups]
+# Core-only набір: без infra-пакетів проєкту (scripts/test-core.sh).
+core-test = [
+    "pytest==9.1.1",
+    "pytest-bdd==9.0.0",
+    "anyio==4.15.1",
+    "coverage==7.16.2",
+    "hypothesis==6.168.5",
+]
+dev = [
+    "ruff==0.16.10",
+    "mypy==2.4.0",
+    "import-linter==2.15",
+    "testcontainers[postgres]==4.15.0",  # integration: справжній Postgres
+    "pytest-xdist==3.8.0",  # паралельний прогін у CI: scripts/ci.sh app (-n auto)
+    "pytest-cov==7.1.0",  # покриття з воркерів xdist (coverage run їх не бачить)
+]
+
+[tool.uv]
+default-groups = ["core-test", "dev"]
+# Зріз версій: і transitive-залежності не новіші за знімок шаблону.
+exclude-newer = "2026-10-06T00:00:00Z"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13"]
+build-backend = "uv_build"
+
+# Шари — пакети верхнього рівня в app/ (модуля проєкту нема).
+[tool.uv.build-backend]
+module-name = ["domain", "application", "infrastructure", "bootstrap"]
+module-root = ""
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--import-mode=importlib"]
+# Корінь app/ у sys.path: core-only середовище не встановлює сам проєкт.
+pythonpath = ["."]
+xfail_strict = true
+filterwarnings = ["error"]
+
+# Межі шарів. TYPE_CHECKING-імпорти теж рахуються.
+[tool.importlinter]
+root_packages = ["domain", "application", "infrastructure", "bootstrap"]
+include_external_packages = true
+exclude_type_checking_imports = false
+
+[[tool.importlinter.contracts]]
+id = "layers"
+name = "Шари: bootstrap → infrastructure → application → domain (лише всередину)"
+type = "layers"
+layers = ["bootstrap", "infrastructure", "application", "domain"]
+
+[[tool.importlinter.contracts]]
+id = "core-no-frameworks"
+name = "Core (domain, application) не імпортує фреймворки та інфраструктурні бібліотеки"
+type = "forbidden"
+source_modules = ["domain", "application"]
+forbidden_modules = [
+    "fastapi", "starlette", "pydantic", "pydantic_settings", "uvicorn",
+    "sqlalchemy", "alembic", "psycopg", "mcp", "authlib", "joserfc", "itsdangerous", "httpx2",
+    "weasyprint", "pypdf", "PIL",
+]
+
+[[tool.importlinter.contracts]]
+id = "shared-kernel-isolated"
+name = "domain.shared не імпортує контексти домену"
+type = "forbidden"
+source_modules = ["domain.shared"]
+forbidden_modules = ["domain.identity", "domain.jobs", "domain.profile", "domain.facts"]
+
+# Явний набір правил, щоб оновлення ruff не міняло його мовчки.
+[tool.ruff]
+target-version = "py314"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "F", "E", "W", "I", "UP", "B", "SIM", "C4", "RUF", "DTZ", "PT", "PL", "PIE", "PERF",
+    "ASYNC", "S", "TRY", "FURB", "LOG", "G", "PTH", "FA", "YTT", "EXE", "T20",
+]
+ignore = [
+    "E501",   # довжину рядків стереже formatter
+    "TRY003", # довгі повідомлення в exceptions — свідомо, українською
+    "RUF001", "RUF002", "RUF003",  # кирилиця — наша мова
+]
+
+[tool.ruff.lint.per-file-ignores]
+# assert і «магічні» числа — нормальні в тестах; PLR0913 / PLR0917 — фікстури й кроки pytest-bdd
+# отримують аргументи за іменем від pytest, тож «забагато аргументів» там не про читабельність виклику;
+# S105 / S106 — у тестах «паролі» це навмисні заглушки, справжніх секретів у репо нема.
+"tests/**" = ["S101", "S105", "S106", "PLR2004", "PLR0913", "PLR0917"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+files = ["domain", "application", "infrastructure", "bootstrap", "tests"]
+plugins = ["pydantic.mypy"]
+mypy_path = "."
+explicit_package_bases = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+# WeasyPrint без типів (py.typed і stubs нема): весь доступ до нього — в infrastructure/pdf/render.py.
+module = ["weasyprint", "weasyprint.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# defusedxml без типів (py.typed і stubs нема): весь доступ до нього — в infrastructure/sources/rss.py.
+module = ["defusedxml", "defusedxml.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Authlib без типів (py.typed і stubs нема): весь доступ до нього — в infrastructure/http/google.py.
+module = ["authlib", "authlib.*"]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+branch = true
+source = ["domain", "application", "infrastructure", "bootstrap"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = false
+exclude_also = ["if TYPE_CHECKING:"]

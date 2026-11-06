@@ -1,0 +1,1 @@
+The analysed job's requirements and gaps, the user's existing prep topics and the rules for proposing new ones. Show the user the proposal, then call save_prep_topics.

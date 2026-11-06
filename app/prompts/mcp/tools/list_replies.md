@@ -1,0 +1,1 @@
+Company emails from the user's forwarded mail, matched (or not) to the jobs they applied to, newest first: not yet reviewed by default. Review them with the user by the returned rules, then call review_reply.

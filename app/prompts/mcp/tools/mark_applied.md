@@ -1,0 +1,1 @@
+Record that the user applied to a saved job (status applied). Calling it again replaces the details and keeps the status. Company domains and addresses let joboffer match the company's replies in the user's forwarded mail: ask the user for them when unsure.

@@ -1,0 +1,1 @@
+Save atomic facts, in a batch. source says where the facts come from: cv (default; read from the user's CV), chat (stated in conversation) or manual (typed by the user). Every saved fact is unconfirmed whatever the source; confirming is a separate step. Already saved texts are skipped. One invalid fact rejects the whole call. An unknown source is rejected too.

@@ -1,0 +1,1 @@
+Prepare a CV for job #{job_id} in joboffer using prepare_cv. Use the confirmed facts and the rules from the brief. Call check_cv until it passes, then save the CV once with save_cv; it replaces the previous CV. Do not add unconfirmed claims.

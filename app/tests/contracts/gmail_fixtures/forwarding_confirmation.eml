@@ -1,0 +1,82 @@
+Delivered-To: mailroom+abcdefghijkl@example.com
+ARC-Seal: i=2; a=rsa-sha256; t=1792080070; cv=pass;
+        d=google.com; s=arc-20260327;
+        b=QUJDRA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:from:subject:message-id:date:mime-version:dkim-signature;
+        bh=QUJDRA==;
+        fh=QUJDRA==;
+        b=QUJDRA==;
+        dara=google.com
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=pass header.i=@google.com header.s=20251104 header.b=QUJDRA==;
+       arc=pass (i=1);
+       spf=pass (google.com: domain of forwarding-noreply@google.com designates 192.0.2.1 as permitted sender) smtp.mailfrom=forwarding-noreply@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com;
+       dara=pass header.i=@gmail.com
+Return-Path: <forwarding-noreply@google.com>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [192.0.2.1])
+        by mx.google.com with SMTPS id 2adb3069b0e04-5be41e55bddsor141280e87.0.2026.10.15.09.01.08
+        for <mailroom+abcdefghijkl@example.com>
+        (Google Transport Security);
+        Thu, 15 Oct 2026 09:01:10 -0700 (PDT)
+Received-SPF: pass (google.com: domain of forwarding-noreply@google.com designates 192.0.2.1 as permitted sender) client-ip=192.0.2.1;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@google.com header.s=20251104 header.b=QUJDRA==;
+       arc=pass (i=1);
+       spf=pass (google.com: domain of forwarding-noreply@google.com designates 192.0.2.1 as permitted sender) smtp.mailfrom=forwarding-noreply@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com;
+       dara=pass header.i=@gmail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1792080068; cv=none;
+        d=google.com; s=arc-20260327;
+        b=QUJDRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:from:subject:message-id:date:mime-version:dkim-signature;
+        bh=QUJDRA==;
+        fh=QUJDRA==;
+        b=QUJDRA==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+From: Gmail Team <forwarding-noreply@google.com>
+To: mailroom+abcdefghijkl@example.com
+Subject: (Gmail Forwarding Confirmation - Receive Mail from taras@example.com
+Date: Thu, 15 Oct 2026 18:01:07 +0200
+Message-ID: <forwarding-confirmation-1@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+
+taras@example.com has requested to automatically forward mail
+to your email
+address mailroom+abcdefghijkl@example.com.
+
+To allow taras@example.com to automatically forward mail to
+your address,
+please click the link below to confirm the request:
+
+https://mail.google.com/mail/vf-%5BLINK%5D
+
+If you click the link and it appears to be broken, please copy and paste it
+into a new browser window.
+
+Thanks for using Gmail!
+
+Sincerely,
+
+The Gmail Team
+
+If you do not approve of this request, no further action is required.
+taras@example.com cannot automatically forward messages to
+your email address
+unless you confirm the request by clicking the link above. If you accidentally
+clicked the link, but you do not want to allow taras@example.com to
+automatically forward messages to your address, click this link to cancel this
+verification:
+https://mail.google.com/mail/vf-%5BLINK%5D
+
+To learn more about why you might have received this message, please
+visit: https://mail.google.com/mail/vf-%5BLINK%5D
+
+Please do not respond to this message. If you'd like to contact the
+Google.com Team, please log in to your account and click 'Help' at
+the top of any page. Then, click 'Contact Us' along the bottom of the
+Help Center.

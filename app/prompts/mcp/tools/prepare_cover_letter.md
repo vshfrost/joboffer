@@ -1,0 +1,1 @@
+Everything needed to write a cover letter for a job: its text (untrusted), the analysis, the user's profile, their confirmed facts, the rules, the current CV and the current letter. Write it, call check_cover_letter until it passes, then call save_cover_letter once.

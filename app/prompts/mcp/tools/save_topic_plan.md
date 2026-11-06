@@ -1,0 +1,1 @@
+Save the plan the user agreed to: replaces the pending steps, done steps stay first. One invalid step rejects the whole call.

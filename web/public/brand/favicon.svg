@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 768" role="img" aria-labelledby="title">
+  <title id="title">joboffer — j і стрілка кар’єрного росту</title>
+  <rect width="768" height="768" rx="176" fill="#356859"/>
+  <g fill="#FFFFFF">
+    <path d="M214 163h72v67h-72z"/>
+    <path d="M214 278h72v300a36 36 0 0 1-36 36H147v-67h67z"/>
+    <path d="M410 219h219v215h-67v-100L386 503l-45-47 177-170H410z"/>
+  </g>
+</svg>

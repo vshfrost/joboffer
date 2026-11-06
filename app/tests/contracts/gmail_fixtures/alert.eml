@@ -1,0 +1,12 @@
+From: Jobs <jobs-noreply@linkedin.example>
+To: taras@example.com
+Subject: New jobs for you
+Date: Wed, 14 Oct 2026 08:00:00 -0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+
+<html><head><title>Alert</title><style>p {color: red}</style></head>
+<body><h1>New   jobs</h1>
+<p>Senior&nbsp;Backend at <b>Acme</b><br>Valencia</p>
+<script>alert(1)</script>
+<div>Fintech &amp; payments</div></body></html>

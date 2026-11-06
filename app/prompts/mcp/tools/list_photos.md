@@ -1,0 +1,1 @@
+The user's photos for the CV header and the one to suggest. The user uploads them at photo_upload_url.

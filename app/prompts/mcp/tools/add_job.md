@@ -1,0 +1,1 @@
+Save a job posting: the full description text as the user pasted it; url, title and company are optional. The same URL or the same text returns the existing job instead of a duplicate. A LinkedIn job URL (any jobs/view/<id> form) of a job that came from an alert email and needs its text gets the text added to that job (title and company stay) and returns its job_id.

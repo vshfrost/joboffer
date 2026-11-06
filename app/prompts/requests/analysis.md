@@ -1,0 +1,1 @@
+Analyse job #{job_id} in joboffer

@@ -1,0 +1,74 @@
+Delivered-To: mailroom+abcdefghijkl@example.com
+Received: by 2001:db8::3 with SMTP id k14csp567795qvo;
+        Mon, 19 Oct 2026 07:55:41 -0700 (PDT)
+X-Forwarded-Encrypted: x
+X-Received: x
+ARC-Seal: i=1; a=rsa-sha256; t=1792421741; cv=none;
+        d=google.com; s=arc-20260327;
+        b=QUJDRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=QUJDRA==;
+        b=QUJDRA==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@owner.example header.s=default header.b=QUJDRA==;
+       spf=pass (google.com: domain of owner@owner.example designates 192.0.2.7 as permitted sender) smtp.mailfrom=owner@owner.example;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=owner.example
+Return-Path: <owner@owner.example>
+Received: from mail.owner.example (mail.owner.example. [192.0.2.7])
+        by mx.google.com with ESMTPS id 2adb3069b0e04-5be4a2c36b7sor500546e87.3.2026.10.19.07.55.41
+        for <mailroom+abcdefghijkl@example.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2026 07:55:41 -0700 (PDT)
+Received-SPF: pass (google.com: domain of owner@owner.example designates 192.0.2.7 as permitted sender) client-ip=192.0.2.7;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@owner.example header.s=default header.b=QUJDRA==;
+       spf=pass (google.com: domain of owner@owner.example designates 192.0.2.7 as permitted sender) smtp.mailfrom=owner@owner.example;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=owner.example
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=owner.example; s=default;
+        h=to:subject:message-id:date:from:mime-version;
+        bh=QUJDRA==;
+        b=QUJDRA==
+From: Owner Name <Owner@Owner.example>
+Date: Mon, 19 Oct 2026 16:55:02 +0200
+Message-ID: <fwd-1@owner.example>
+Subject: Fwd: Message replied: Senior Backend Developer | ACME
+To: Owner Name <owner@owner.example>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="000000000000a1b2c3"
+
+--000000000000a1b2c3
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+---------- Forwarded message ---------
+From: Ana Recruiter <ana.recruiter@acme.example>
+Date: Mon, Oct 19, 2026 at 10:15=E2=80=AFAM
+Subject: Message replied: Senior Backend Developer | ACME
+To: Owner Name <owner@owner.example>
+
+
+Message replied: Senior Backend Developer | ACME
+
+Hola!
+
+En este caso es necesaria la experiencia con Java y el nivel fluido de
+espa=C3=B1ol. Quedamos en contacto para otras posiciones.
+
+--------------------
+
+Esto es un mensaje de prueba para los tests.
+--000000000000a1b2c3
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gm=
+ail_attr">---------- Forwarded message ---------<br>From: <b class=3D"gmai=
+l_sendername" dir=3D"auto">Ana Recruiter</b> <span dir=3D"auto">&lt;<a href=
+=3D"mailto:ana.recruiter@acme.example">ana.recruiter@acme.example</a>&gt;</s=
+pan><br>Date: Mon, Oct 19, 2026 at 10:15=E2=80=AFAM<br>Subject: Message rep=
+lied: Senior Backend Developer | ACME<br>To: Owner Name &lt;<a href=3D"mailt=
+o:owner@owner.example">owner@owner.example</a>&gt;<br></div><br><br><p>Hola=
+!</p></div></div>
+--000000000000a1b2c3--

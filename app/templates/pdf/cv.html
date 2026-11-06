@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>$name — CV</title>
+<style>
+  /* Стиль зразка власника (CV 2026-09-26): A4, DejaVu Sans, темна шапка #191919 із золотою
+     смугою #DA9F1A; з 2-ї сторінки — вузька шапка з ім'ям і посадою (колонтитул для lint). */
+  @page {
+    size: A4;
+    margin: 70pt 48pt 54pt;
+    @top-left {
+      content: string(name);
+      vertical-align: top; padding-top: 19pt;
+      font: bold 11pt "DejaVu Sans", sans-serif; color: #fff; text-transform: uppercase;
+    }
+    @top-right {
+      content: string(headline);
+      vertical-align: top; padding-top: 21.5pt;
+      font: 8pt "DejaVu Sans", sans-serif; color: #FFCB55; text-transform: uppercase;
+    }
+    @bottom-right {
+      content: counter(page);
+      vertical-align: bottom; padding-bottom: 20pt;
+      font: 7pt "DejaVu Sans", sans-serif; color: #5C5C5C;
+    }
+  }
+  @page :first {
+    margin-top: 0;
+    @top-left { content: none; }
+    @top-right { content: none; }
+  }
+  /* Смуги — блоки position: fixed (повторюються на кожній сторінці; фон @page WeasyPrint
+     малює лише в межах поля сторінки). На 1-й сторінці вузька смуга поза аркушем. */
+  .band { position: fixed; top: -70pt; left: -48pt; width: 595.3pt; height: 49pt; background: #191919; border-bottom: 4pt solid #DA9F1A; }
+  .footer-rule { position: fixed; bottom: -18pt; left: 0; right: 0; border-top: 0.5pt solid #D9D9D9; }
+  body { font-family: "DejaVu Sans", sans-serif; font-kerning: none; font-size: 9.15pt; line-height: 13.6pt; color: #191919; margin: 0; }
+  header { height: 149pt; box-sizing: border-box; margin: 0 -48pt 17pt; padding: 25pt 48pt 0; background: #191919; border-bottom: 4pt solid #DA9F1A; color: #fff; }
+  /* Рамка фото — пропорції зразка (858 × 960); кадр під неї користувач обирає в редакторі на /profile.
+     Позиція — від поля 1-ї сторінки: позиціонована шапка малювалася б після тексту сторінки,
+     і парсер читав би її текст останнім. */
+  .photo { position: absolute; top: 19pt; right: 0; width: 101pt; height: 113pt; }
+  .with-photo > h1, .with-photo > p { padding-right: 115pt; }
+  h1 { font-size: 20.5pt; line-height: 24pt; margin: 0; text-transform: uppercase; string-set: name content(text); }
+  .headline { font-size: 10.2pt; font-weight: bold; color: #FFCB55; text-transform: uppercase; margin: 6pt 0 9pt; string-set: headline content(text); }
+  .contacts { font-size: 8pt; line-height: 16pt; margin: 0; }
+  .contacts span { white-space: nowrap; }
+  .sep { margin: 0 4pt; }
+  h2 { font-size: 10.6pt; text-transform: uppercase; margin: 12pt 0 7pt; padding-bottom: 5pt; border-bottom: 0.6pt solid #DA9F1A; break-after: avoid; }
+  section:first-of-type h2 { margin-top: 0; }
+  .summary { font-size: 9.4pt; line-height: 13.8pt; margin: 0; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { padding: 0; text-align: left; vertical-align: baseline; }
+  .skills th { width: 1%; white-space: nowrap; padding: 2pt 10pt 4pt 0; font-size: 8pt; text-transform: uppercase; }
+  .skills td { padding: 2pt 0 4pt 10pt; border-left: 0.8pt solid #DA9F1A; font-size: 8.8pt; line-height: 12.7pt; }
+  .entry { margin-bottom: 7pt; }
+  .row { break-after: avoid; }
+  .title { font-size: 10.2pt; font-weight: bold; }
+  .meta { white-space: nowrap; text-align: right; padding-left: 12pt; font-size: 8.4pt; color: #5C5C5C; }
+  .subtitle { font-size: 8.8pt; line-height: 12.7pt; color: #5C5C5C; margin: 2pt 0 0; break-after: avoid; }
+  ul { margin: 3pt 0 0; padding-left: 13pt; }
+  li { margin: 0 0 2.2pt; break-inside: avoid; }
+  .line { margin: 0 0 3pt; font-size: 8.8pt; }
+</style>
+</head>
+<body>
+<div class="band"></div>
+<div class="footer-rule"></div>
+<header$photo_class>
+  $photo<h1>$name</h1>
+  <p class="headline">$headline</p>
+$contacts</header>
+<section>
+  <h2>$summary_heading</h2>
+  <p class="summary">$summary</p>
+</section>
+$sections</body>
+</html>

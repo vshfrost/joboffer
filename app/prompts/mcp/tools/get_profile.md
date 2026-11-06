@@ -1,0 +1,1 @@
+What job the user is looking for (roles, work modes, search locations with synonyms and work modes per place, whether postings with an unknown work mode are taken, relocation, target domains (examples for the analysis rubric), seniority, minimum salary, stop words, job-title keywords and exclusions used to filter jobs from sources) and their contacts for the CV header.

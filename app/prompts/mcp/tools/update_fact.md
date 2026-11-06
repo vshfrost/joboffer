@@ -1,0 +1,1 @@
+Replace a fact's kind and text. The fact becomes unconfirmed until the user approves it again.

@@ -1,0 +1,375 @@
+{
+ "jobs": [
+  {
+   "absolute_url": "https://www.harborpay.example/jobs/9100100001?gh_jid=9100100001",
+   "internal_job_id": 9200000021,
+   "location": {
+    "name": "Barcelona, Barcelona, Spain"
+   },
+   "metadata": null,
+   "id": 9100100001,
+   "updated_at": "2026-10-01T05:30:16-04:00",
+   "requisition_id": "1434",
+   "title": "Business Intelligence Analyst",
+   "company_name": "Harborpay",
+   "first_published": "2026-08-04T07:06:26-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div&gt;&lt;strong&gt;About Harborpay&lt;/strong&gt;&lt;br&gt;Harborpay is a global, fast-growing fintech scale-up that builds payment tooling for imaginary marketplaces.&lt;br&gt;We ship small changes every day and review each other&#39;s work in the open. Offices are optional, and most colleagues work from home a few days per week. Our engineering group is split into compact teams that own a service from design to operation. The company was founded by a handful of friends who disliked slow, noisy tooling.&lt;/div&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;You will take part in on-call rotations and help the team keep alerts quiet and useful. You will help migrate older modules to the new platform without downtime. You will own the quality of your changes from the first commit to the production dashboard.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;What we look for&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Habit of writing small pull requests with clear descriptions&lt;/li&gt;&lt;li&gt;Comfort with HTTP APIs, queues and background jobs&lt;/li&gt;&lt;li&gt;Several years of professional experience building backend services&lt;/li&gt;&lt;li&gt;Good command of one mainstream language and its testing tools&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;What we offer&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Flexible working hours and a home-office budget&lt;/li&gt;&lt;li&gt;Private health insurance for you and your family&lt;/li&gt;&lt;li&gt;Equal opportunity: we welcome people of every background&lt;/li&gt;&lt;/ul&gt;",
+   "departments": [
+    {
+     "id": 9300000003,
+     "name": "Product",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 9400000003,
+     "name": "Barcelona",
+     "location": "Barcelona, Barcelona, Spain",
+     "child_ids": [],
+     "parent_id": 9400000003
+    }
+   ],
+   "include_ai_disclaimer": true,
+   "ai_opt_out_request_url": "http://app3.greenhouse.io/ai_opt_out_request/job_post/9100100001/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://www.harborpay.example/jobs/9100100017?gh_jid=9100100017",
+   "internal_job_id": 9200000022,
+   "location": {
+    "name": "Paris, Paris, France"
+   },
+   "metadata": null,
+   "id": 9100100017,
+   "updated_at": "2026-08-31T09:58:37-04:00",
+   "requisition_id": "998",
+   "title": "Golang Software Engineer",
+   "company_name": "Harborpay",
+   "first_published": "2025-05-13T14:30:24-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div&gt;&lt;strong&gt;About Harborpay&lt;/strong&gt;&lt;br&gt;Harborpay is a global, fast-growing fintech scale-up that builds payment tooling for imaginary marketplaces.&lt;br&gt;Our engineering group is split into compact teams that own a service from design to operation. The company was founded by a handful of friends who disliked slow, noisy tooling. We ship small changes every day and review each other&#39;s work in the open. Harborpay builds software that helps small teams run their daily work without spreadsheets.&lt;/div&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;You will design, build and run services that handle bookings, payments and notifications. You will review code, mentor colleagues and keep the test suite fast and trustworthy. You will work with product managers and designers to turn rough ideas into small, testable steps.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;What we look for&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Habit of writing small pull requests with clear descriptions&lt;/li&gt;&lt;li&gt;Several years of professional experience building backend services&lt;/li&gt;&lt;li&gt;Willingness to learn the domain and ask questions early&lt;/li&gt;&lt;li&gt;Experience with relational databases, migrations and query tuning&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;What we offer&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Private health insurance for you and your family&lt;/li&gt;&lt;li&gt;Paid time off above the legal minimum&lt;/li&gt;&lt;li&gt;Equal opportunity: we welcome people of every background&lt;/li&gt;&lt;/ul&gt;",
+   "departments": [
+    {
+     "id": 9300000003,
+     "name": "Technology",
+     "child_ids": [
+      9300000003,
+      9300000003,
+      9300000003
+     ],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 9400000003,
+     "name": "Barcelona",
+     "location": "Barcelona, Barcelona, Spain",
+     "child_ids": [],
+     "parent_id": 9400000003
+    },
+    {
+     "id": 9400000003,
+     "name": "Paris",
+     "location": "Paris, Paris, France",
+     "child_ids": [],
+     "parent_id": 9400000003
+    }
+   ],
+   "include_ai_disclaimer": true,
+   "ai_opt_out_request_url": "http://app3.greenhouse.io/ai_opt_out_request/job_post/9100100017/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://www.harborpay.example/jobs/9100100033?gh_jid=9100100033",
+   "internal_job_id": 9200000023,
+   "location": {
+    "name": "Barcelona, Barcelona, Spain"
+   },
+   "metadata": null,
+   "id": 9100100033,
+   "updated_at": "2026-08-31T09:58:37-04:00",
+   "requisition_id": "998",
+   "title": "Golang Software Engineer",
+   "company_name": "Harborpay",
+   "first_published": "2025-02-17T06:57:16-05:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div&gt;&lt;strong&gt;About Harborpay&lt;/strong&gt;&lt;br&gt;Harborpay is a global, fast-growing fintech scale-up that builds payment tooling for imaginary marketplaces.&lt;br&gt;The company was founded by a handful of friends who disliked slow, noisy tooling. Decisions are written down so that newcomers can follow how the system got its shape. We value clear writing, short meetings and honest estimates. Offices are optional, and most colleagues work from home a few days per week.&lt;/div&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;You will design, build and run services that handle bookings, payments and notifications. You will review code, mentor colleagues and keep the test suite fast and trustworthy. You will work with product managers and designers to turn rough ideas into small, testable steps.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;What we look for&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Several years of professional experience building backend services&lt;/li&gt;&lt;li&gt;Fluent written and spoken English&lt;/li&gt;&lt;li&gt;Experience with relational databases, migrations and query tuning&lt;/li&gt;&lt;li&gt;Comfort with HTTP APIs, queues and background jobs&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;What we offer&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Learning budget for books and courses&lt;/li&gt;&lt;li&gt;Paid time off above the legal minimum&lt;/li&gt;&lt;li&gt;Flexible working hours and a home-office budget&lt;/li&gt;&lt;/ul&gt;",
+   "departments": [
+    {
+     "id": 9300000003,
+     "name": "Technology",
+     "child_ids": [
+      9300000003,
+      9300000003,
+      9300000003
+     ],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 9400000003,
+     "name": "Barcelona",
+     "location": "Barcelona, Barcelona, Spain",
+     "child_ids": [],
+     "parent_id": 9400000003
+    },
+    {
+     "id": 9400000003,
+     "name": "Paris",
+     "location": "Paris, Paris, France",
+     "child_ids": [],
+     "parent_id": 9400000003
+    }
+   ],
+   "include_ai_disclaimer": true,
+   "ai_opt_out_request_url": "http://app3.greenhouse.io/ai_opt_out_request/job_post/9100100033/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://www.harborpay.example/jobs/9100100049?gh_jid=9100100049",
+   "internal_job_id": 9200000024,
+   "location": {
+    "name": "Manila, Manila, Philippines"
+   },
+   "metadata": null,
+   "id": 9100100049,
+   "updated_at": "2026-10-16T06:50:24-04:00",
+   "requisition_id": "1502",
+   "title": "Junior Vendor Manager",
+   "company_name": "Harborpay",
+   "first_published": "2026-10-16T06:50:24-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div&gt;&lt;strong&gt;About Harborpay&lt;/strong&gt;&lt;br&gt;Harborpay is a global, fast-growing fintech scale-up that builds payment tooling for imaginary marketplaces.&lt;br&gt;Our engineering group is split into compact teams that own a service from design to operation. The company was founded by a handful of friends who disliked slow, noisy tooling. Harborpay is a made-up company used only for tests, so none of this text describes a real employer. Every team keeps its own roadmap and shares it with the rest of the company each month.&lt;/div&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;You will improve observability: structured logs, metrics and traces that answer real questions. You will write documentation that a new colleague can follow on the first day. You will design, build and run services that handle bookings, payments and notifications.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;What we look for&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Willingness to learn the domain and ask questions early&lt;/li&gt;&lt;li&gt;Several years of professional experience building backend services&lt;/li&gt;&lt;li&gt;Fluent written and spoken English&lt;/li&gt;&lt;li&gt;Comfort with HTTP APIs, queues and background jobs&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;What we offer&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;A yearly team meeting in a different fictional city&lt;/li&gt;&lt;li&gt;Learning budget for books and courses&lt;/li&gt;&lt;li&gt;Private health insurance for you and your family&lt;/li&gt;&lt;/ul&gt;",
+   "departments": [
+    {
+     "id": 9300000003,
+     "name": "Finance",
+     "child_ids": [],
+     "parent_id": 9300000003
+    }
+   ],
+   "offices": [
+    {
+     "id": 9400000003,
+     "name": "Manila",
+     "location": "Manila, Manila, Philippines",
+     "child_ids": [],
+     "parent_id": 9400000003
+    }
+   ],
+   "include_ai_disclaimer": true,
+   "ai_opt_out_request_url": "http://app3.greenhouse.io/ai_opt_out_request/job_post/9100100049/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://www.harborpay.example/jobs/9100100065?gh_jid=9100100065",
+   "internal_job_id": 9200000025,
+   "location": {
+    "name": "Barcelona, Barcelona, Spain"
+   },
+   "metadata": null,
+   "id": 9100100065,
+   "updated_at": "2026-09-29T08:24:19-04:00",
+   "requisition_id": "1448",
+   "title": "Python Software Engineer",
+   "company_name": "Harborpay",
+   "first_published": "2026-09-29T08:14:18-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div&gt;&lt;strong&gt;About Harborpay&lt;/strong&gt;&lt;br&gt;Harborpay is a global, fast-growing fintech scale-up that builds payment tooling for imaginary marketplaces.&lt;br&gt;We value clear writing, short meetings and honest estimates. Offices are optional, and most colleagues work from home a few days per week. Harborpay is a made-up company used only for tests, so none of this text describes a real employer. The company was founded by a handful of friends who disliked slow, noisy tooling.&lt;/div&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;You will help migrate older modules to the new platform without downtime. You will work with product managers and designers to turn rough ideas into small, testable steps. You will design, build and run services that handle bookings, payments and notifications.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;What we look for&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Experience with containers and a major cloud provider&lt;/li&gt;&lt;li&gt;Several years of professional experience building backend services&lt;/li&gt;&lt;li&gt;Willingness to learn the domain and ask questions early&lt;/li&gt;&lt;li&gt;Comfort with HTTP APIs, queues and background jobs&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;What we offer&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Paid time off above the legal minimum&lt;/li&gt;&lt;li&gt;Equal opportunity: we welcome people of every background&lt;/li&gt;&lt;li&gt;Flexible working hours and a home-office budget&lt;/li&gt;&lt;/ul&gt;",
+   "departments": [
+    {
+     "id": 9300000003,
+     "name": "Technology",
+     "child_ids": [
+      9300000003,
+      9300000003,
+      9300000003
+     ],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 9400000003,
+     "name": "Barcelona",
+     "location": "Barcelona, Barcelona, Spain",
+     "child_ids": [],
+     "parent_id": 9400000003
+    }
+   ],
+   "include_ai_disclaimer": true,
+   "ai_opt_out_request_url": "http://app3.greenhouse.io/ai_opt_out_request/job_post/9100100065/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://www.harborpay.example/jobs/9100100081?gh_jid=9100100081",
+   "internal_job_id": 9200000026,
+   "location": {
+    "name": "São Paulo, São Paulo, Brazil"
+   },
+   "metadata": null,
+   "id": 9100100081,
+   "updated_at": "2026-09-21T05:54:02-04:00",
+   "requisition_id": "1309",
+   "title": "React Software Engineer ",
+   "company_name": "Harborpay",
+   "first_published": "2026-04-07T03:18:59-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div&gt;&lt;strong&gt;About Harborpay&lt;/strong&gt;&lt;br&gt;Harborpay is a global, fast-growing fintech scale-up that builds payment tooling for imaginary marketplaces.&lt;br&gt;The product is used by thousands of imaginary customers across several fictional markets. We ship small changes every day and review each other&#39;s work in the open.&lt;/div&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;You will work with product managers and designers to turn rough ideas into small, testable steps. You will take part in on-call rotations and help the team keep alerts quiet and useful.&lt;/p&gt;",
+   "departments": [
+    {
+     "id": 9300000003,
+     "name": "Technology",
+     "child_ids": [
+      9300000003,
+      9300000003,
+      9300000003
+     ],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 9400000003,
+     "name": "São Paulo",
+     "location": "São Paulo, São Paulo, Brazil",
+     "child_ids": [],
+     "parent_id": 9400000003
+    }
+   ],
+   "include_ai_disclaimer": true,
+   "ai_opt_out_request_url": "http://app3.greenhouse.io/ai_opt_out_request/job_post/9100100081/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://www.harborpay.example/jobs/9100100097?gh_jid=9100100097",
+   "internal_job_id": 9200000027,
+   "location": {
+    "name": "Barcelona, Barcelona, Spain"
+   },
+   "metadata": null,
+   "id": 9100100097,
+   "updated_at": "2026-10-10T07:07:12-04:00",
+   "requisition_id": "1483",
+   "title": "Senior Software Engineer",
+   "company_name": "Harborpay",
+   "first_published": "2026-10-10T07:06:44-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div&gt;&lt;strong&gt;About Harborpay&lt;/strong&gt;&lt;br&gt;Harborpay is a global, fast-growing fintech scale-up that builds payment tooling for imaginary marketplaces.&lt;br&gt;Every team keeps its own roadmap and shares it with the rest of the company each month. The company was founded by a handful of friends who disliked slow, noisy tooling. Our engineering group is split into compact teams that own a service from design to operation. Harborpay is a made-up company used only for tests, so none of this text describes a real employer.&lt;/div&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;You will work with product managers and designers to turn rough ideas into small, testable steps. You will own the quality of your changes from the first commit to the production dashboard. You will design, build and run services that handle bookings, payments and notifications.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;What we look for&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Habit of writing small pull requests with clear descriptions&lt;/li&gt;&lt;li&gt;Good command of one mainstream language and its testing tools&lt;/li&gt;&lt;li&gt;Experience with relational databases, migrations and query tuning&lt;/li&gt;&lt;li&gt;Willingness to learn the domain and ask questions early&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;What we offer&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Learning budget for books and courses&lt;/li&gt;&lt;li&gt;Equal opportunity: we welcome people of every background&lt;/li&gt;&lt;li&gt;A yearly team meeting in a different fictional city&lt;/li&gt;&lt;/ul&gt;",
+   "departments": [
+    {
+     "id": 9300000003,
+     "name": "Engineering",
+     "child_ids": [],
+     "parent_id": 9300000003
+    }
+   ],
+   "offices": [
+    {
+     "id": 9400000003,
+     "name": "Barcelona",
+     "location": "Barcelona, Barcelona, Spain",
+     "child_ids": [],
+     "parent_id": 9400000003
+    },
+    {
+     "id": 9400000003,
+     "name": "London",
+     "location": "London, England, United Kingdom",
+     "child_ids": [],
+     "parent_id": 9400000003
+    }
+   ],
+   "include_ai_disclaimer": true,
+   "ai_opt_out_request_url": "http://app3.greenhouse.io/ai_opt_out_request/job_post/9100100097/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://www.harborpay.example/jobs/9100100113?gh_jid=9100100113",
+   "internal_job_id": 9200000028,
+   "location": {
+    "name": "Barcelona, Barcelona, Spain; London, England, United Kingdom"
+   },
+   "metadata": null,
+   "id": 9100100113,
+   "updated_at": "2026-10-10T07:08:52-04:00",
+   "requisition_id": "1482",
+   "title": "Software Engineer",
+   "company_name": "Harborpay",
+   "first_published": "2026-10-10T07:08:38-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div&gt;&lt;strong&gt;About Harborpay&lt;/strong&gt;&lt;br&gt;Harborpay is a global, fast-growing fintech scale-up that builds payment tooling for imaginary marketplaces.&lt;br&gt;We value clear writing, short meetings and honest estimates. The product is used by thousands of imaginary customers across several fictional markets. Our engineering group is split into compact teams that own a service from design to operation. Harborpay is a made-up company used only for tests, so none of this text describes a real employer.&lt;/div&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;You will review code, mentor colleagues and keep the test suite fast and trustworthy. You will improve observability: structured logs, metrics and traces that answer real questions. You will help migrate older modules to the new platform without downtime.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;What we look for&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Good command of one mainstream language and its testing tools&lt;/li&gt;&lt;li&gt;Fluent written and spoken English&lt;/li&gt;&lt;li&gt;Experience with relational databases, migrations and query tuning&lt;/li&gt;&lt;li&gt;Several years of professional experience building backend services&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;What we offer&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Private health insurance for you and your family&lt;/li&gt;&lt;li&gt;Learning budget for books and courses&lt;/li&gt;&lt;li&gt;A yearly team meeting in a different fictional city&lt;/li&gt;&lt;/ul&gt;",
+   "departments": [
+    {
+     "id": 9300000003,
+     "name": "Engineering",
+     "child_ids": [],
+     "parent_id": 9300000003
+    }
+   ],
+   "offices": [
+    {
+     "id": 9400000003,
+     "name": "Barcelona",
+     "location": "Barcelona, Barcelona, Spain",
+     "child_ids": [],
+     "parent_id": 9400000003
+    },
+    {
+     "id": 9400000003,
+     "name": "London",
+     "location": "London, England, United Kingdom",
+     "child_ids": [],
+     "parent_id": 9400000003
+    }
+   ],
+   "include_ai_disclaimer": true,
+   "ai_opt_out_request_url": "http://app3.greenhouse.io/ai_opt_out_request/job_post/9100100113/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://www.harborpay.example/jobs/9100100129?gh_jid=9100100129",
+   "internal_job_id": 9200000029,
+   "location": {
+    "name": "Riyadh, Saudi Arabia"
+   },
+   "metadata": null,
+   "id": 9100100129,
+   "updated_at": "2026-10-08T04:45:33-04:00",
+   "requisition_id": "1476",
+   "title": "Account Manager",
+   "company_name": "Harborpay",
+   "first_published": "2026-10-08T04:41:56-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div&gt;&lt;strong&gt;About Harborpay&lt;/strong&gt;&lt;br&gt;Harborpay is a global, fast-growing fintech scale-up that builds payment tooling for imaginary marketplaces.&lt;br&gt;We ship small changes every day and review each other&#39;s work in the open. The product is used by thousands of imaginary customers across several fictional markets. The company was founded by a handful of friends who disliked slow, noisy tooling. Harborpay is a made-up company used only for tests, so none of this text describes a real employer.&lt;/div&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;You will own the quality of your changes from the first commit to the production dashboard. You will take part in on-call rotations and help the team keep alerts quiet and useful. You will help migrate older modules to the new platform without downtime.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;What we look for&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Comfort with HTTP APIs, queues and background jobs&lt;/li&gt;&lt;li&gt;Several years of professional experience building backend services&lt;/li&gt;&lt;li&gt;Habit of writing small pull requests with clear descriptions&lt;/li&gt;&lt;li&gt;Fluent written and spoken English&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;What we offer&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Learning budget for books and courses&lt;/li&gt;&lt;li&gt;Equal opportunity: we welcome people of every background&lt;/li&gt;&lt;li&gt;Private health insurance for you and your family&lt;/li&gt;&lt;/ul&gt;",
+   "departments": [
+    {
+     "id": 9300000003,
+     "name": "Account Management",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 9400000003,
+     "name": "Riyadh",
+     "location": "Riyadh, Saudi Arabia",
+     "child_ids": [],
+     "parent_id": 9400000003
+    }
+   ],
+   "include_ai_disclaimer": true,
+   "ai_opt_out_request_url": "http://app3.greenhouse.io/ai_opt_out_request/job_post/9100100129/ai_opt_out"
+  }
+ ],
+ "meta": {
+  "total": 9
+ }
+}

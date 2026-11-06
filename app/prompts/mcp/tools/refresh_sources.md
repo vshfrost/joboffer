@@ -1,0 +1,1 @@
+Ask the server to refresh all sources now. This only queues the request (nothing is fetched here): the server picks it up within about a minute — then call get_sources to see the result and list_jobs for new jobs. At most 2 requests per 30 minutes.

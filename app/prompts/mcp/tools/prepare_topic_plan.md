@@ -1,0 +1,1 @@
+A topic with its jobs, gaps and current plan, plus the rules for writing the plan. Show the user the plan, then call save_topic_plan.

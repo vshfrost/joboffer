@@ -1,0 +1,1 @@
+Save the CV for a job and render its PDF, once, after check_cv has passed. The server repeats the same checks and refuses the whole save on any issue: nothing is saved, so fix it and call again. A successful save replaces the previous CV of this job (its PDF and download links are deleted); the cover letter and other jobs stay. Give the user the pdf_url.

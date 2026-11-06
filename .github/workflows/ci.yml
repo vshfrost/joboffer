@@ -1,0 +1,50 @@
+# Той самий scripts/ci.sh, що й локально: три паралельні job запускають його частини app / web / infra
+# (без аргументу локально він проганяє всі три). Секретів не використовує.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      # Actions закріплені за SHA: версії приходять із hexpy-boilerplate.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: "0.12.23"
+      # Рендер PDF у тестах (WeasyPrint): pango, harfbuzz і шрифти — ті самі, що в образі.
+      - name: PDF libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core poppler-utils
+      - name: CI app
+        run: scripts/ci.sh app
+
+  web:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: CI web
+        run: scripts/ci.sh web
+
+  infra:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: CI infra
+        run: scripts/ci.sh infra

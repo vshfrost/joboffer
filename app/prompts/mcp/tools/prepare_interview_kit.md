@@ -1,0 +1,1 @@
+Everything needed for an interview kit for a job: its text (untrusted), the analysis, the user's prep topics for it, their confirmed facts, the kit rules and the previous version. Then call save_interview_kit.

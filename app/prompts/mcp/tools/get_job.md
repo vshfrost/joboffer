@@ -1,0 +1,1 @@
+A saved job posting and the user's application to it. Its text comes back as untrusted_job_text.

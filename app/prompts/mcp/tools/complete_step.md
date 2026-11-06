@@ -1,0 +1,1 @@
+Mark a step done when the user says they finished it; note: what they did or learned (a repo link for practice). Calling again keeps the date and replaces a non-empty note.

@@ -1,0 +1,12 @@
+# Білий список: у контекст потрапляє лише потрібне для образу backend.
+*
+!app/pyproject.toml
+!app/uv.lock
+!app/.python-version
+!app/domain
+!app/application
+!app/infrastructure
+!app/bootstrap
+!app/prompts
+!app/templates
+**/__pycache__
