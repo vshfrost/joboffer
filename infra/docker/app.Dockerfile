@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Образ backend (app/). Контекст збірки — корінь репо.
-FROM ghcr.io/astral-sh/uv:0.12.23 AS uv
+FROM ghcr.io/astral-sh/uv:0.13.7 AS uv
 
 FROM python:3.14.8-slim-trixie AS build
 COPY --from=uv /uv /usr/local/bin/uv
