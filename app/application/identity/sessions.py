@@ -23,9 +23,13 @@ from domain.identity.errors import (
 )
 from domain.identity.ids import SessionId, UserId
 from domain.identity.session import Session, SessionPolicy, TokenDigest
-from domain.identity.throttle import attempt_key
+from domain.identity.throttle import attempt_key, login_email_key
 
 LOGIN_MAX_FAILURES = 5
+# Усі клієнти разом: підбір пароля до одного акаунта з багатьох IP. Блок тимчасовий: спроби під
+# час блоку не записуються, тож він знімається, щойно з вікна вийдуть старі невдачі, і нікого
+# не блокує назавжди.
+LOGIN_EMAIL_MAX_FAILURES = 20
 LOGIN_WINDOW = timedelta(minutes=15)
 TOKEN_MAX = 256
 
@@ -59,7 +63,8 @@ class SessionUseCases:
         """Перевіряє email і пароль з лімітом спроб; сесії не видає (вхід без cookie, наприклад OAuth-гейт)."""
         now = self._services.clock.now()
         key = attempt_key(command.client, command.email)
-        await self._ensure_not_throttled(key, now)
+        email_key = login_email_key(command.email)
+        await self._ensure_not_throttled(key, email_key, now)
         try:
             user = await self._identity.authenticate(
                 Authenticate(email=command.email, password=command.password)
@@ -67,6 +72,7 @@ class SessionUseCases:
         except InvalidCredentials:
             async with self._unit_of_work() as uow:
                 await uow.login_failures.record(key, now)
+                await uow.login_failures.record(email_key, now)
                 await uow.commit()
             raise
         async with self._unit_of_work() as uow:
@@ -128,14 +134,26 @@ class SessionUseCases:
                 await uow.sessions.delete(session.id)
             await uow.commit()
 
-    async def _ensure_not_throttled(self, key: str, now: datetime) -> None:
+    async def _ensure_not_throttled(
+        self, key: str, email_key: str, now: datetime
+    ) -> None:
+        since = now - LOGIN_WINDOW
         async with self._unit_of_work() as uow:
-            failures = await uow.login_failures.since(key, now - LOGIN_WINDOW)
-        if len(failures) < LOGIN_MAX_FAILURES:
-            return
-        # Блок знімається, коли з вікна вийде найстаріша з останніх п'яти невдач.
-        unblocked_at = failures[-LOGIN_MAX_FAILURES] + LOGIN_WINDOW
-        retry_after = max(1, math.ceil((unblocked_at - now).total_seconds()))
-        raise TooManyAttempts(
-            "Забагато невдалих спроб входу. Спробуй пізніше", retry_after=retry_after
-        )
+            checks = (
+                (await uow.login_failures.since(key, since), LOGIN_MAX_FAILURES),
+                (
+                    await uow.login_failures.since(email_key, since),
+                    LOGIN_EMAIL_MAX_FAILURES,
+                ),
+            )
+        waits = [
+            math.ceil((failures[-maximum] + LOGIN_WINDOW - now).total_seconds())
+            for failures, maximum in checks
+            if len(failures) >= maximum
+        ]
+        if waits:
+            # Блок знімається, коли з вікна вийде найстаріша з останніх `maximum` невдач.
+            raise TooManyAttempts(
+                "Забагато невдалих спроб входу. Спробуй пізніше",
+                retry_after=max(1, *waits),
+            )
