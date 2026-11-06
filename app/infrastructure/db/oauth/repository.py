@@ -75,14 +75,15 @@ class PostgresOAuthClients:
         self._session = session
 
     async def add(self, client: OAuthClient, at: datetime | None = None) -> None:
-        self._session.add(
-            OAuthClientRow(
-                id=client.id.value,
-                name=client.name,
-                redirect_uris=list(client.redirect_uris),
-                registration=dict(client.metadata),
-            )
+        row = OAuthClientRow(
+            id=client.id.value,
+            name=client.name,
+            redirect_uris=list(client.redirect_uris),
+            registration=dict(client.metadata),
         )
+        if at is not None:
+            row.registered_at = at
+        self._session.add(row)
         await self._session.flush()
 
     async def get(self, client_id: ClientId) -> OAuthClient | None:
@@ -90,7 +91,12 @@ class PostgresOAuthClients:
         return None if row is None else _client_to_domain(row)
 
     async def delete_unused(self, registered_before: datetime) -> None:
-        return None
+        has_grant = exists().where(OAuthGrantRow.client_id == OAuthClientRow.id)
+        await self._session.execute(
+            delete(OAuthClientRow).where(
+                OAuthClientRow.registered_at < registered_before, ~has_grant
+            )
+        )
 
 
 class PostgresGrants:
