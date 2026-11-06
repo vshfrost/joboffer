@@ -16,6 +16,7 @@ ALTCHA_KEY_MIN = 32
 # Шлях MCP-ендпоінта на origin вебу.
 MCP_PATH = "/mcp"
 GATE_CALLBACK_PATH = "/auth/google/callback"
+LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
 
 
 class Settings(BaseSettings):
@@ -213,4 +214,32 @@ class Settings(BaseSettings):
             raise ValueError(
                 "session_idle_hours не може перевищувати session_absolute_days"
             )
+        return self
+
+    @model_validator(mode="after")
+    def _prod_is_not_weakened(self) -> Self:
+        """У проді старт відмовляє на послаблених значеннях: так помилка в оточенні видна одразу, а не
+        після того, як сервіс уже відкритий назовні. Типові значення (loopback у web_public_url тощо)
+        лишаються: ними живуть службові контейнери, яким задано лише адресу бази."""
+        if self.environment != "prod":
+            return self
+        problems: list[str] = []
+        if not self.cookie_secure:
+            problems.append("JOBOFFER_COOKIE_SECURE має бути true")
+        web = urlsplit(self.web_public_url)
+        if web.scheme != "https" and web.hostname not in LOCAL_HOSTS:
+            problems.append("web_public_url має бути https")
+        for name in ("google_redirect_uri", "google_gate_redirect_uri"):
+            uri = getattr(self, name)
+            if uri is not None and urlsplit(uri).scheme != "https":
+                problems.append(f"{name} має бути https")
+        if "*" in self.agent_allowed_hosts:
+            problems.append("agent_allowed_hosts не може містити «*»")
+        if any(
+            entry != "loopback" and not entry.startswith("https://")
+            for entry in self.agent_redirect_allowlist
+        ):
+            problems.append("agent_redirect_allowlist: лише https або «loopback»")
+        if problems:
+            raise ValueError("prod: " + "; ".join(problems))
         return self
