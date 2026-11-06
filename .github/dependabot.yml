@@ -16,3 +16,9 @@ updates:
     directory: /infra/docker
     schedule:
       interval: weekly
+    # Python 3.15 ломить `uv sync --locked` (exit 2); потрібен окремий свідомий апгрейд.
+    ignore:
+      - dependency-name: python
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
