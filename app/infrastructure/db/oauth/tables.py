@@ -12,6 +12,7 @@ from sqlalchemy import (
     String,
     Text,
     Uuid,
+    func,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
@@ -27,6 +28,9 @@ class OAuthClientRow(Base):
     redirect_uris: Mapped[list[str]] = mapped_column(JSONB)
     # Документ реєстрації (RFC 7591) без секретів: усі DCR-клієнти публічні.
     registration: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    registered_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
 
 class OAuthGrantRow(Base):

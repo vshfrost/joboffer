@@ -34,8 +34,8 @@ def photo(
     )
 
 
-def test_the_limits_are_the_v1_ones() -> None:
-    assert MAX_UPLOAD_BYTES == 15 * 1024 * 1024
+def test_the_limits_are_the_v1_ones_except_the_upload_size() -> None:
+    assert MAX_UPLOAD_BYTES == 5 * 1024 * 1024
     assert MAX_LABEL_LENGTH == 100
     assert MAX_PHOTO_SIDE == 900
     assert MIN_PHOTO_WIDTH == 300

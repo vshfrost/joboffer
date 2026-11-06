@@ -121,16 +121,16 @@ def test_an_empty_file_is_rejected_and_nothing_is_stored(world: World) -> None:
     assert world.processor.calls == []
 
 
-def test_a_file_over_15_mb_is_rejected_before_it_is_processed(world: World) -> None:
+def test_a_file_over_5_mb_is_rejected_before_it_is_processed(world: World) -> None:
     with pytest.raises(InvalidValue) as error:
-        world.add(world.alice, b"x" * (15 * MB + 1))
-    assert (error.value.field, error.value.message) == ("file", "Фото — до 15 МБ.")
+        world.add(world.alice, b"x" * (5 * MB + 1))
+    assert (error.value.field, error.value.message) == ("file", "Фото — до 5 МБ.")
     assert world.numbers(world.alice) == []
     assert world.processor.calls == []
 
 
-def test_a_file_of_exactly_15_mb_is_processed(world: World) -> None:
-    world.add(world.alice, b"x" * (15 * MB))
+def test_a_file_of_exactly_5_mb_is_processed(world: World) -> None:
+    world.add(world.alice, b"x" * (5 * MB))
     assert world.numbers(world.alice) == [1]
 
 

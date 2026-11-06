@@ -58,9 +58,14 @@ def create_app(
         yield
         await container.engine.dispose()
 
+    # Документація й схема OpenAPI показують усі маршрути: у проді вони не віддаються.
+    public = container.settings.environment != "prod"
     app = FastAPI(
         title="joboffer",
         lifespan=lifespan,
+        docs_url="/docs" if public else None,
+        redoc_url="/redoc" if public else None,
+        openapi_url="/openapi.json" if public else None,
     )
     app.state.container = container
     app.add_middleware(CorrelationIdMiddleware)

@@ -10,4 +10,9 @@ RUN npm run build
 FROM caddy:2.11.7-alpine
 COPY infra/web/Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /web/dist /srv/app
+# Не root: Caddy слухає 8080 (> 1024, привілеїв не треба), а стан пише лише у /config і /data.
+RUN addgroup -S -g 10002 web \
+    && adduser -S -u 10002 -G web -H web \
+    && chown -R web:web /config /data
+USER web
 EXPOSE 8080
