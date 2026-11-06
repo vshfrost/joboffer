@@ -155,10 +155,10 @@ def test_a_mail_gets_one_reply_even_when_added_twice(
 
 
 async def _seed_jobs(factory: UnitOfWorkFactory) -> None:
-    """Alice: вакансії 1 (Acme, domain, подана 2026-01-01), 2 (Bolt, подана 2026-01-05), 3 (без подачі).
+    """Alice: вакансії 1 (Acme, domain, подана 2026-01-01), 2 (Tidewell, подана 2026-01-05), 3 (без подачі).
     Bob: вакансія 1 (Acme)."""
     await _add(factory, ALICE, posting("one", title="Backend", company="Acme"))
-    await _add(factory, ALICE, posting("two", title="Data", company="Bolt"))
+    await _add(factory, ALICE, posting("two", title="Data", company="Tidewell"))
     await _add(factory, ALICE, posting("three", title="Ops", company="Cobalt"))
     await _add(factory, BOB, posting("bob", title="Backend", company="Acme"))
     await _save(
@@ -190,7 +190,7 @@ def test_applied_jobs_are_the_users_applications_with_titles_newest_first(
     alice, bob = portal.call(run)
 
     assert alice == [
-        AppliedJob(2, "Data", "Bolt", S.APPLIED),
+        AppliedJob(2, "Data", "Tidewell", S.APPLIED),
         AppliedJob(
             1,
             "Backend",
@@ -303,7 +303,7 @@ def test_review_saves_the_type_the_job_and_the_time_and_replaces_the_previous(
     again = portal.call(review, None, ReplyType.INVITATION, LATER + timedelta(hours=1))
 
     assert first.type is ReplyType.REJECTION
-    assert first.job == ReplyJob(2, "Data", "Bolt", S.APPLIED)
+    assert first.job == ReplyJob(2, "Data", "Tidewell", S.APPLIED)
     assert first.reviewed_at == LATER
     assert again.type is ReplyType.INVITATION
     assert again.job is None

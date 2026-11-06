@@ -502,7 +502,7 @@ def test_the_preview_of_a_bad_type_is_422_with_the_text(acme: MailSession) -> No
 def test_the_preview_of_a_job_without_an_application_is_404(
     acme: MailSession,
 ) -> None:
-    acme.client.post("/jobs", json={"text": "Data at Bolt"}, headers=acme.csrf)
+    acme.client.post("/jobs", json={"text": "Data at Tidewell"}, headers=acme.csrf)
     target = reply_id(acme, "matched", "Acme call")
 
     assert preview(acme, target, "other", 3).status_code == 404
@@ -589,7 +589,7 @@ def test_a_bad_type_is_422_with_the_text_and_the_reply_stays_open(
 def test_a_job_without_an_application_is_404_and_the_reply_stays_open(
     acme: MailSession,
 ) -> None:
-    acme.client.post("/jobs", json={"text": "Data at Bolt"}, headers=acme.csrf)
+    acme.client.post("/jobs", json={"text": "Data at Tidewell"}, headers=acme.csrf)
     target = reply_id(acme, "matched", "Acme call")
 
     response = review(acme, target, "other", 3)

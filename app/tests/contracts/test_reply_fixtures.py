@@ -28,20 +28,31 @@ APPLIED = ApplicationStatus.APPLIED
 ACME = AppliedJob(
     1, "Senior Backend Engineer", "Acme Inc.", APPLIED, AtsPlatform.GREENHOUSE
 )
-BOLT = AppliedJob(2, "Backend Engineer, Payments", "Bolt", APPLIED, AtsPlatform.LEVER)
-FACTORIAL = AppliedJob(
-    3, "Senior Backend Engineer", "Factorial", APPLIED, AtsPlatform.ASHBY
+TIDEWELL = AppliedJob(
+    2, "Backend Engineer, Payments", "Tidewell", APPLIED, AtsPlatform.LEVER
 )
-TYPEFORM = AppliedJob(
-    4, "Backend Engineer", "Typeform S.L.", APPLIED, AtsPlatform.WORKABLE
+LARKSPUR = AppliedJob(
+    3, "Senior Backend Engineer", "Larkspur", APPLIED, AtsPlatform.ASHBY
 )
-GLOVO = AppliedJob(
-    5, "Senior Backend Engineer", "Glovo", APPLIED, company_domains=("glovoapp.com",)
+QUILLFORM = AppliedJob(
+    4, "Backend Engineer", "Quillform S.L.", APPLIED, AtsPlatform.WORKABLE
 )
-N26 = AppliedJob(
-    6, "Senior Backend Engineer (Payments)", "N26", APPLIED, None, ("n26.com",)
+REDCART = AppliedJob(
+    5,
+    "Senior Backend Engineer",
+    "Redcart",
+    APPLIED,
+    company_domains=("redcart.example",),
 )
-BOARD = (ACME, BOLT, FACTORIAL, TYPEFORM, GLOVO, N26)
+MERIDIANBANK = AppliedJob(
+    6,
+    "Senior Backend Engineer (Payments)",
+    "Meridianbank",
+    APPLIED,
+    None,
+    ("meridianbank.example",),
+)
+BOARD = (ACME, TIDEWELL, LARKSPUR, QUILLFORM, REDCART, MERIDIANBANK)
 
 
 def fixture(name: str) -> ReplyMail:
@@ -73,35 +84,35 @@ def fixture(name: str) -> ReplyMail:
         ),
         (
             "lever_rejection_en",
-            BOLT,
+            TIDEWELL,
             Confidence.HIGH,
             MatchedBy.ATS,
             ReplyType.REJECTION,
         ),
         (
             "ashby_invitation_en",
-            FACTORIAL,
+            LARKSPUR,
             Confidence.HIGH,
             MatchedBy.ATS,
             ReplyType.INVITATION,
         ),
         (
             "workable_rejection_es",
-            TYPEFORM,
+            QUILLFORM,
             Confidence.HIGH,
             MatchedBy.ATS,
             ReplyType.REJECTION,
         ),
         (
             "company_invitation_es",
-            GLOVO,
+            REDCART,
             Confidence.HIGH,
             MatchedBy.DOMAIN,
             ReplyType.INVITATION,
         ),
         (
             "company_assignment_en",
-            N26,
+            MERIDIANBANK,
             Confidence.HIGH,
             MatchedBy.DOMAIN,
             ReplyType.ASSIGNMENT,
@@ -128,8 +139,8 @@ def test_a_thread_reply_from_a_personal_address_follows_the_thread() -> None:
     mail = fixture("thread_reply_en")
 
     assert mail.thread_ids == ("<ashby-invite-1@ashbyhq.com>",) * 2
-    assert match_reply(mail, BOARD, FACTORIAL.job_number) == ReplyMatch(
-        FACTORIAL.job_number, Confidence.HIGH, MatchedBy.THREAD
+    assert match_reply(mail, BOARD, LARKSPUR.job_number) == ReplyMatch(
+        LARKSPUR.job_number, Confidence.HIGH, MatchedBy.THREAD
     )
     # Процитоване «Thanks for applying» не робить відповідь автопідтвердженням.
     assert suggest_type(mail.subject, mail.text) is ReplyType.OTHER
