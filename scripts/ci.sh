@@ -85,6 +85,13 @@ docker compose -f infra/compose.prod.yaml --env-file infra/.env.prod.example con
 # Решта обовʼязкових змінних задана, тож у помилці лишається рівно одна підказка. --env-file /dev/null:
 # результат не залежить від локальних файлів.
 required=(JOBOFFER_POSTGRES_PASSWORD JOBOFFER_WEB_PUBLIC_URL JOBOFFER_AGENT_ALLOWED_HOSTS JOBOFFER_MAIL_ADDRESS)
+# Кожна обовʼязкова (`:?`) змінна компоузу має бути в required, інакше compose може назвати в помилці іншу.
+for var in $(grep -oE '\$\{[A-Z_]+:\?' infra/compose.prod.yaml | tr -d '${:?' | sort -u); do
+  [[ " ${required[*]} " == *" $var "* ]] || {
+    echo "обовʼязкова змінна $var з compose.prod.yaml не перевіряється: додай її в required" >&2
+    exit 1
+  }
+done
 for missing in "${required[@]}"; do
   if out="$(
     export JOBOFFER_POSTGRES_PASSWORD=ci-config-check JOBOFFER_WEB_PUBLIC_URL=https://jobs.example.com \
