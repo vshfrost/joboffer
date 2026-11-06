@@ -82,9 +82,10 @@ grep -qF "задай JOBOFFER_POSTGRES_PASSWORD в infra/.env" <<<"$out" || {
 
 step "infra: прод-compose валідний із шаблоном змінних і падає без кожної обовʼязкової змінної"
 docker compose -f infra/compose.prod.yaml --env-file infra/.env.prod.example config -q
-# Решта обовʼязкових змінних задана, тож у помилці лишається рівно одна підказка. --env-file /dev/null:
+# Решта обовʼязкових змінних задана (dummy-значення), тож у помилці лишається підказка лише про $missing; compose
+# називає одну відсутню змінну за запуск, і якщо якась не задана, то яку саме — недетерміновано. --env-file /dev/null:
 # результат не залежить від локальних файлів.
-required=(JOBOFFER_POSTGRES_PASSWORD JOBOFFER_WEB_PUBLIC_URL JOBOFFER_AGENT_ALLOWED_HOSTS JOBOFFER_MAIL_ADDRESS)
+required=(JOBOFFER_POSTGRES_PASSWORD JOBOFFER_WEB_PUBLIC_URL JOBOFFER_AGENT_ALLOWED_HOSTS JOBOFFER_MAIL_ADDRESS TUNNEL_TOKEN)
 # Кожна обовʼязкова (`:?`) змінна компоузу має бути в required, інакше compose може назвати в помилці іншу.
 for var in $(grep -oE '\$\{[A-Z_]+:\?' infra/compose.prod.yaml | tr -d '${:?' | sort -u); do
   [[ " ${required[*]} " == *" $var "* ]] || {
@@ -95,7 +96,7 @@ done
 for missing in "${required[@]}"; do
   if out="$(
     export JOBOFFER_POSTGRES_PASSWORD=ci-config-check JOBOFFER_WEB_PUBLIC_URL=https://jobs.example.com \
-      JOBOFFER_AGENT_ALLOWED_HOSTS='["jobs.example.com"]' JOBOFFER_MAIL_ADDRESS=mailroom@example.com
+      JOBOFFER_AGENT_ALLOWED_HOSTS='["jobs.example.com"]' JOBOFFER_MAIL_ADDRESS=mailroom@example.com TUNNEL_TOKEN=ci-config-check-token
     unset "$missing"
     docker compose --env-file /dev/null -f infra/compose.prod.yaml config -q 2>&1
   )"; then
