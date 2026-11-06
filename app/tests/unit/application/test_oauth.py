@@ -684,8 +684,10 @@ def test_unused_client_younger_than_30_days_is_kept(
 def test_client_that_has_a_grant_is_never_purged(
     flow: Flow, oauth: OAuthUseCases, clock: FakeClock, portal: BlockingPortal
 ) -> None:
-    flow.authorize()
-    clock.advance(STALE_AGE * 3)
+    pair = flow.tokens()
+    clock.advance(timedelta(days=20))
+    portal.call(oauth.exchange_refresh, CLIENT, pair.refresh_token)
+    clock.advance(timedelta(days=11))
 
     portal.call(oauth.purge_expired)
 
