@@ -7,6 +7,7 @@ edge (Caddy, Tunnel, Vite) веде `/mcp*` і `/.well-known/oauth-*` на аг�
 `<origin вебу>/mcp`, OAuth-маршрути лежать і в корені процесу, і під `/mcp/…` (так їх оголошують метадані).
 """
 
+import time
 from collections.abc import AsyncIterator, Callable
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
 
@@ -28,6 +29,7 @@ from infrastructure.mcp.health import healthz
 from infrastructure.mcp.login_gate import LoginGate
 from infrastructure.mcp.prefix import StripPrefix
 from infrastructure.mcp.provider import JobofferOAuthProvider
+from infrastructure.mcp.registration_guard import RegistrationGuard
 from infrastructure.mcp.resource_guard import ResourceGuard
 
 GATE_STATE_COOKIE = "joboffer_gate_state"
@@ -97,6 +99,9 @@ def create_agent_app(
         )
     app.add_route("/healthz", healthz(container.engine), methods=["GET"])
     app.add_middleware(ResourceGuard, resource=config.agent_public_url)
+    app.add_middleware(
+        RegistrationGuard, client_key=container.auth.client_key, now=time.monotonic
+    )
     # Останнім = найзовнішнім: гард і маршрути бачать шлях уже без префікса.
     app.add_middleware(StripPrefix, prefix=MCP_PATH)
     app.router.lifespan_context = _lifespan(app, container)
