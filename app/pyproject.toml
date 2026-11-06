@@ -48,7 +48,7 @@ default-groups = ["core-test", "dev"]
 exclude-newer = "2026-10-06T00:00:00Z"
 
 [build-system]
-requires = ["uv_build>=0.12.23,<0.13"]
+requires = ["uv_build>=0.12.23,<0.14"]
 build-backend = "uv_build"
 
 # Шари — пакети верхнього рівня в app/ (модуля проєкту нема).
