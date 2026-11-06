@@ -1,4 +1,4 @@
-# Версії — з hexpy-boilerplate (copier.yml, політика: ≥14 днів від релізу). Оновлення — `copier update`.
+# Версії: політика ≥14 днів від релізу.
 [project]
 name = "joboffer"
 version = "0.0.0"
