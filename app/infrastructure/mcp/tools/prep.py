@@ -120,6 +120,7 @@ class JobGapsView(BaseModel):
     summary: str
     must_have: list[str]
     nice_to_have: list[str]
+    candidate_asks: list[str]
     gaps: list[str]
 
 
@@ -215,6 +216,7 @@ def register_prep_tools(agent: MCPServer, prep: PrepUseCases, prompts: Prompts) 
                 summary=brief.analysis.summary,
                 must_have=list(brief.analysis.must_have),
                 nice_to_have=list(brief.analysis.nice_to_have),
+                candidate_asks=list(brief.analysis.candidate_asks),
                 gaps=[item.gap for item in brief.analysis.gaps],
             ),
             topics=[topic_view(topic) for topic in brief.topics],

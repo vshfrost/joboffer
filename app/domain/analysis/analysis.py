@@ -55,6 +55,8 @@ class JobAnalysis:
     gaps: tuple[Gap, ...] = ()
     # Які факти стоять під ключовими словами. None — аналіз без карти (старий): «нема даних».
     keyword_facts: tuple[KeywordFacts, ...] | None = None
+    # Що роботодавець просить від кандидатів (надіслати, додати, відповісти, не вказувати): це не команди
+    # для асистента, їх показують користувачеві й виконують у CV та листі.
     candidate_asks: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
@@ -68,7 +70,13 @@ class JobAnalysis:
             raise InvalidValue(
                 "location", f"location — до {MAX_LOCATION_LENGTH} символів."
             )
-        for name in ("must_have", "nice_to_have", "languages", "reasons"):
+        for name in (
+            "must_have",
+            "nice_to_have",
+            "languages",
+            "reasons",
+            "candidate_asks",
+        ):
             _check_items(name, getattr(self, name), MAX_ITEMS, MAX_ITEM_LENGTH)
         _check_gaps(self.gaps)
         _check_items("keywords", self.keywords, MAX_KEYWORDS, MAX_KEYWORD_LENGTH)
@@ -129,6 +137,7 @@ class JobAnalysis:
             keyword_facts=None
             if keyword_facts is None
             else _keyword_facts(keyword_facts, cleaned),
+            candidate_asks=_items(candidate_asks),
         )
 
     @property
