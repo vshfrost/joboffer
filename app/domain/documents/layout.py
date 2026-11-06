@@ -1,5 +1,7 @@
 """Задуманий текст документів у порядку читання (для ATS-lint), шапка з контактів і ім'я файлу."""
 
+from dataclasses import dataclass
+
 from domain.documents.document import (
     CoverLetter,
     Cv,
@@ -13,25 +15,46 @@ from domain.profile.contacts import Contacts
 MAX_CV_PAGES = 2
 MAX_LETTER_PAGES = 1
 SUMMARY_HEADING = "Profile"
+HTTPS = "https://"
 CONTACT_SEPARATOR = " · "
 SKILL_SEPARATOR = " · "
 FILE_LABELS = {DocumentKind.CV: "CV", DocumentKind.COVER_LETTER: "Cover_Letter"}
 
 
-def contact_rows(contacts: Contacts) -> tuple[tuple[str, ...], ...]:
-    """Рядки контактів у шапці PDF по порядку; порожні поля й рядки пропускаються."""
+@dataclass(frozen=True, slots=True)
+class ContactItem:
+    """Один контакт у шапці PDF: видимий текст і повне https-посилання (порожнє — просто текст)."""
+
+    text: str
+    url: str = ""
+
+
+def contact_item_rows(contacts: Contacts) -> tuple[tuple[ContactItem, ...], ...]:
+    """Рядки контактів у шапці PDF по порядку; порожні поля й рядки пропускаються.
+    LinkedIn і GitHub несуть повний URL, інші поля — лише текст."""
     rows = (
-        (contacts.city, contacts.work_authorization),
-        (contacts.email, contacts.phone),
-        (link_text(contacts.linkedin_url), link_text(contacts.github_url)),
+        (ContactItem(contacts.city), ContactItem(contacts.work_authorization)),
+        (ContactItem(contacts.email), ContactItem(contacts.phone)),
+        (_link_item(contacts.linkedin_url), _link_item(contacts.github_url)),
     )
-    filled = (tuple(value for value in row if value) for row in rows)
+    filled = (tuple(item for item in row if item.text) for row in rows)
     return tuple(row for row in filled if row)
+
+
+def _link_item(url: str) -> ContactItem:
+    return ContactItem(link_text(url), url if url.startswith(HTTPS) else "")
+
+
+def contact_rows(contacts: Contacts) -> tuple[tuple[str, ...], ...]:
+    """Те саме, що `contact_item_rows`, лише тексти."""
+    return tuple(
+        tuple(item.text for item in row) for row in contact_item_rows(contacts)
+    )
 
 
 def link_text(url: str) -> str:
     """Посилання в шапці так, як у зразку: без https:// і www., «linkedin.com/in/…»."""
-    text = url.removeprefix("https://").removeprefix("www.")
+    text = url.removeprefix(HTTPS).removeprefix("www.")
     return text.removesuffix("/")
 
 

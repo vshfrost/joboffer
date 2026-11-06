@@ -45,6 +45,7 @@ ALL_FIELDS: dict[str, Any] = {
     "salary_max_eur": 80000,
     "relocation": True,
     "reasons": ["Fits", "Remote"],
+    "candidate_asks": ["Send your GitHub", "Skip the list of frameworks"],
     "gaps": [
         {"gap": "No Go", "question": "Do you have Go experience? Where, how long?"}
     ],
@@ -186,6 +187,54 @@ async def test_save_returns_every_field_and_the_flags(agent: Agent) -> None:
         "filters_passed": True,
         "flags": [],
     }
+
+
+async def test_candidate_asks_are_saved_and_shown_as_the_previous_analysis_of_the_brief(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number = await seed(agent)
+    asks = ["Send your GitHub", "Describe a project you are proud of"]
+
+    saved = await save(agent, token, number, candidate_asks=asks)
+    brief = data(await call(agent, token, "prepare_analysis", {"job_id": number}))
+
+    assert saved["candidate_asks"] == asks
+    assert brief["previous"]["candidate_asks"] == asks
+
+
+async def test_an_analysis_saved_without_candidate_asks_returns_an_empty_list(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number = await seed(agent)
+
+    saved = await save(agent, token, number)
+
+    assert saved["candidate_asks"] == []
+
+
+async def test_too_many_candidate_asks_are_a_tool_error_and_save_nothing(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number = await seed(agent)
+
+    refused = await call(
+        agent,
+        token,
+        "save_analysis",
+        {
+            "job_id": number,
+            "analysis": {
+                "score": 70,
+                "summary": "S.",
+                "candidate_asks": [f"ask {n}" for n in range(31)],
+            },
+        },
+    )
+
+    assert "candidate_asks — не більше 30 пунктів." in error_text(refused)
 
 
 async def test_the_rubric_asks_for_one_question_for_every_gap(agent: Agent) -> None:

@@ -66,6 +66,7 @@ class AnalysisInput:
     gaps: Sequence[str | GapInput] = field(default=())
     # Ключове слово → номери фактів під ним; None — карти нема.
     keyword_facts: Mapping[str, Sequence[int]] | None = None
+    candidate_asks: Sequence[str] = ()
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -92,6 +93,7 @@ class AnalysisData:
     updated_at: datetime
     stale_since: datetime | None = None
     keyword_facts: tuple[KeywordFactsData, ...] | None = None
+    candidate_asks: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

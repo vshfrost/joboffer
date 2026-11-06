@@ -80,6 +80,7 @@ def _details(analysis: JobAnalysis) -> dict[str, Any]:
         "must_have": list(analysis.must_have),
         "nice_to_have": list(analysis.nice_to_have),
         "keywords": list(analysis.keywords),
+        "candidate_asks": list(analysis.candidate_asks),
         "seniority": None if analysis.seniority is None else analysis.seniority.value,
         "location": analysis.location,
         "languages": list(analysis.languages),
@@ -125,6 +126,7 @@ def _to_domain(row: AnalysisRow, number: int) -> Analysis:
         must_have=tuple(details["must_have"]),
         nice_to_have=tuple(details["nice_to_have"]),
         keywords=tuple(details["keywords"]),
+        candidate_asks=tuple(details.get("candidate_asks", ())),
         seniority=None
         if details["seniority"] is None
         else Seniority(details["seniority"]),

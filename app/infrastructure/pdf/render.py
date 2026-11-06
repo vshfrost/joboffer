@@ -3,10 +3,12 @@
 Стиль зразка: темна шапка із золотою смугою, одна колонка тексту, справжній текстовий шар;
 шрифти WeasyPrint вбудовує. Кожне значення з даних (текст claim, ім'я, контакти) екранується
 й підставляється в шаблон як значення, тож сирого HTML у PDF не потрапляє, а `$` у тексті не є
-плейсхолдером.
+плейсхолдером. LinkedIn і GitHub у шапці та `https://`-посилання в рядках CV і абзацах листа стають
+активними (`<a href>`); видимий текст, його екранування й текстовий шар PDF лишаються як були.
 """
 
 import asyncio
+import re
 from base64 import b64encode
 from collections.abc import Iterable
 from html import escape
@@ -14,8 +16,16 @@ from string import Template
 
 from application.ports.templates import TemplateKey, Templates
 from domain.documents.document import CoverLetter, Cv, CvEntry, CvSection, CvSectionName
-from domain.documents.layout import SUMMARY_HEADING, contact_rows, skill_items
+from domain.documents.layout import (
+    SUMMARY_HEADING,
+    ContactItem,
+    contact_item_rows,
+    skill_items,
+)
 from domain.profile.contacts import Contacts
+
+# Лише https. Кінець посилання — не розділовий знак: «…/repo.» чи «(…/repo)» не втягують крапку й дужку.
+_HTTPS_URL = re.compile(r"https://[^\s<>\"']*[^\s<>\"'.,;:!?)\]]")
 
 
 def pdf_from_html(html: str) -> bytes:
@@ -38,7 +48,7 @@ class WeasyPrintRenderer:
             headline=escape(cv.headline.text),
             contacts=self._contacts(contacts),
             summary_heading=escape(SUMMARY_HEADING),
-            summary=escape(cv.summary.text),
+            summary=self._text(cv.summary.text),
             sections="".join(self._section(section) for section in cv.sections),
             photo_class=""
             if photo is None
@@ -59,7 +69,7 @@ class WeasyPrintRenderer:
                 self._fill(
                     TemplateKey.PDF_LETTER_PARAGRAPH,
                     lines=self._join(
-                        TemplateKey.PDF_LETTER_BREAK, map(escape, paragraph)
+                        TemplateKey.PDF_LETTER_BREAK, map(self._text, paragraph)
                     ),
                 )
                 for paragraph in letter.lines
@@ -87,13 +97,20 @@ class WeasyPrintRenderer:
                 items=self._join(
                     TemplateKey.PDF_CONTACT_SEPARATOR,
                     (
-                        self._fill(TemplateKey.PDF_CONTACT_ITEM, text=escape(item))
+                        self._fill(
+                            TemplateKey.PDF_CONTACT_ITEM, text=self._contact(item)
+                        )
                         for item in row
                     ),
                 ),
             )
-            for row in contact_rows(contacts)
+            for row in contact_item_rows(contacts)
         )
+
+    def _contact(self, item: ContactItem) -> str:
+        if not item.url:
+            return escape(item.text)
+        return self._link(item.url, item.text)
 
     # --- секції CV ------------------------------------------------------------------
 
@@ -115,15 +132,15 @@ class WeasyPrintRenderer:
         if entry.bullets:
             return self._fill(
                 TemplateKey.PDF_CV_SKILL_ROW,
-                label=escape(entry.heading.text),
-                items=escape(skill_items(entry)),
+                label=self._text(entry.heading.text),
+                items=self._text(skill_items(entry)),
             )
         return self._fill(
-            TemplateKey.PDF_CV_SKILL_LINE, text=escape(entry.heading.text)
+            TemplateKey.PDF_CV_SKILL_LINE, text=self._text(entry.heading.text)
         )
 
     def _entry(self, entry: CvEntry) -> str:
-        heading = escape(entry.heading.text)
+        heading = self._text(entry.heading.text)
         if not (entry.bullets or entry.meta or entry.subtitle):
             return self._fill(TemplateKey.PDF_CV_LINE, text=heading)
         return self._fill(
@@ -132,23 +149,39 @@ class WeasyPrintRenderer:
             meta=""
             if entry.meta is None
             else self._fill(
-                TemplateKey.PDF_CV_ENTRY_META, text=escape(entry.meta.text)
+                TemplateKey.PDF_CV_ENTRY_META, text=self._text(entry.meta.text)
             ),
             subtitle=""
             if entry.subtitle is None
             else self._fill(
-                TemplateKey.PDF_CV_ENTRY_SUBTITLE, text=escape(entry.subtitle.text)
+                TemplateKey.PDF_CV_ENTRY_SUBTITLE, text=self._text(entry.subtitle.text)
             ),
             bullets=""
             if not entry.bullets
             else self._fill(
                 TemplateKey.PDF_CV_BULLETS,
                 items="".join(
-                    self._fill(TemplateKey.PDF_CV_BULLET, text=escape(bullet.text))
+                    self._fill(TemplateKey.PDF_CV_BULLET, text=self._text(bullet.text))
                     for bullet in entry.bullets
                 ),
             ),
         )
+
+    # --- посилання --------------------------------------------------------------------
+
+    def _text(self, value: str) -> str:
+        """Екранований текст, у якому кожне https-посилання — активне."""
+        parts: list[str] = []
+        end = 0
+        for found in _HTTPS_URL.finditer(value):
+            parts.append(escape(value[end : found.start()]))
+            parts.append(self._link(found.group(), found.group()))
+            end = found.end()
+        parts.append(escape(value[end:]))
+        return "".join(parts)
+
+    def _link(self, url: str, text: str) -> str:
+        return self._fill(TemplateKey.PDF_LINK, url=escape(url), text=escape(text))
 
     # --- підстановка ------------------------------------------------------------------
 

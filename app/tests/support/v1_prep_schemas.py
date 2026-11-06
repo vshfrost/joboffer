@@ -2,7 +2,7 @@
 
 Розгорнуті JSON-схеми (без title / description / default), зняті зі справжнього сервера v1:
 контракт-тест порівнює з ними схеми v2. Поля `status`, `steps_done`, `steps_total`,
-`minutes_left` у темі лишаються за контрактом v1; значення з кроків плану наповнить K50.
+`minutes_left` у темі лишаються за контрактом v1; значення з кроків плану наповнить K50. Після v1 у `job` брифу тем додано `candidate_asks` (63d7b9).
 """
 
 from typing import Any
@@ -83,6 +83,7 @@ V1: dict[str, dict[str, Any]] = {
                         "summary": {"type": "string"},
                         "must_have": _STRINGS,
                         "nice_to_have": _STRINGS,
+                        "candidate_asks": _STRINGS,
                         "gaps": _STRINGS,
                     },
                     "required": [
@@ -93,6 +94,7 @@ V1: dict[str, dict[str, Any]] = {
                         "summary",
                         "must_have",
                         "nice_to_have",
+                        "candidate_asks",
                         "gaps",
                     ],
                     "type": "object",

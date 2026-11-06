@@ -55,6 +55,18 @@ def test_the_apply_prompt_fills_the_form_in_the_browser_but_never_submits(
     assert "list_documents" in text
 
 
+def test_the_apply_prompt_checks_the_employers_asks_against_the_saved_documents_first(
+    prompts: ScenarioPrompts,
+) -> None:
+    text = " ".join(prompts.get(PromptKey.REQUEST_APPLY).split())
+
+    assert "Before filling the form, call prepare_analysis" in text
+    assert "previous.candidate_asks" in text
+    assert "check each ask against the saved CV and cover letter" in text
+    assert "tell me about every ask they do not meet" in text
+    assert text.index("candidate_asks") < text.index("Fill the form")
+
+
 def test_the_apply_prompt_falls_back_to_the_manual_flow_without_browser_tools(
     prompts: ScenarioPrompts,
 ) -> None:

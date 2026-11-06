@@ -272,6 +272,17 @@ def test_cv_brief_has_no_analysis_until_the_job_is_analysed(world: World) -> Non
     )
 
 
+def test_cv_brief_carries_what_the_employer_asks_of_candidates(world: World) -> None:
+    number = world.seed(world.alice)
+    asks = ["Send your GitHub", "Skip the list of frameworks"]
+
+    world.analyse(world.alice, number, candidate_asks=asks)
+    analysis = world.prepare_cv(world.alice, number).analysis
+
+    assert analysis is not None
+    assert analysis.candidate_asks == tuple(asks)
+
+
 def test_cv_brief_has_the_profile_and_an_empty_one_when_none_is_saved(
     world: World,
 ) -> None:
@@ -387,6 +398,19 @@ def test_letter_brief_has_job_analysis_profile_facts_and_rules(world: World) -> 
     assert brief.profile.contacts.full_name == "Test User"
     assert [item.fact_number for item in brief.confirmed_facts] == [fact]
     assert brief.rules == LETTER_RULES
+
+
+def test_letter_brief_carries_what_the_employer_asks_of_candidates(
+    world: World,
+) -> None:
+    number = world.seed(world.alice)
+    asks = ["Describe a project you are proud of"]
+
+    world.analyse(world.alice, number, candidate_asks=asks)
+    brief = world.prepare_letter(world.alice, number)
+
+    assert brief.analysis is not None
+    assert brief.analysis.candidate_asks == tuple(asks)
 
 
 def test_letter_brief_works_without_a_cv(world: World) -> None:

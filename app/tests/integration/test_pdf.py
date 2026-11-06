@@ -4,6 +4,8 @@
 падають на імпорті WeasyPrint — на Mac їх ганяє Linux-контейнер або CI.
 """
 
+import re
+from dataclasses import replace
 from io import BytesIO
 from pathlib import Path
 
@@ -21,7 +23,13 @@ from domain.documents.document import (
     CvSectionName,
 )
 from domain.documents.layout import cover_letter_layout, cv_layout
-from domain.documents.lint import KeywordCoverage, LintCode, LintReport, lint
+from domain.documents.lint import (
+    KeywordCoverage,
+    LintCode,
+    LintReport,
+    PdfLayer,
+    lint,
+)
 from domain.profile.contacts import Contacts
 from infrastructure.pdf.inspector import PypdfInspector
 from infrastructure.pdf.render import WeasyPrintRenderer, pdf_from_html
@@ -449,3 +457,157 @@ def test_a_long_name_next_to_the_photo_keeps_its_place_in_the_text_layer(
     layer = portal.call(PypdfInspector().inspect, pdf)
 
     assert lint(cv_layout(cv, contacts), layer).issues == ()
+
+
+# --- активні посилання -----------------------------------------------------------------
+
+LINKEDIN = "https://www.linkedin.com/in/alex-example"
+GITHUB = "https://github.com/alex-example"
+NO_LINKS = replace(CONTACTS, linkedin_url="", github_url="")
+
+
+def uris_of(pdf: bytes) -> list[str]:
+    """Усі URI-анотації PDF у порядку сторінок."""
+    found: list[str] = []
+    for page in PdfReader(BytesIO(pdf)).pages:
+        for annotation in page.get("/Annots", []):
+            action = annotation.get_object().get("/A")
+            if action is not None and action.get_object().get("/S") == "/URI":
+                found.append(str(action.get_object()["/URI"]))
+    return found
+
+
+def letter_with(text: str) -> CoverLetter:
+    """Лист потрібної довжини: перший абзац — `text`, далі наповнювач."""
+    return CoverLetter((text, "I build efficient financial APIs. " * 30), (1,))
+
+
+def without_links(html: str) -> str:
+    return re.sub(r"<a href=\"[^\"]*\">(.*?)</a>", r"\1", html)
+
+
+def test_the_cv_header_links_linkedin_and_github_with_the_full_urls(
+    portal: BlockingPortal, renderer: WeasyPrintRenderer
+) -> None:
+    pdf = portal.call(renderer.render_cv, full_cv(), CONTACTS)
+
+    assert uris_of(pdf) == [LINKEDIN, GITHUB]
+
+
+def test_the_cv_header_does_not_link_an_empty_url(
+    portal: BlockingPortal, renderer: WeasyPrintRenderer
+) -> None:
+    contacts = replace(CONTACTS, github_url="")
+
+    pdf = portal.call(renderer.render_cv, full_cv(), contacts)
+
+    assert uris_of(pdf) == [LINKEDIN]
+    assert uris_of(portal.call(renderer.render_cv, full_cv(), NO_LINKS)) == []
+
+
+def test_the_letter_header_links_linkedin_and_github_with_the_full_urls(
+    portal: BlockingPortal, renderer: WeasyPrintRenderer
+) -> None:
+    pdf = portal.call(renderer.render_cover_letter, signed_letter(), CONTACTS)
+
+    assert uris_of(pdf) == [LINKEDIN, GITHUB]
+
+
+def test_the_letter_header_does_not_link_an_empty_url(
+    portal: BlockingPortal, renderer: WeasyPrintRenderer
+) -> None:
+    contacts = replace(CONTACTS, linkedin_url="")
+
+    pdf = portal.call(renderer.render_cover_letter, signed_letter(), contacts)
+
+    assert uris_of(pdf) == [GITHUB]
+    letter = signed_letter()
+    assert uris_of(portal.call(renderer.render_cover_letter, letter, NO_LINKS)) == []
+
+
+def test_an_https_url_in_a_cv_bullet_is_an_active_link(
+    portal: BlockingPortal, renderer: WeasyPrintRenderer
+) -> None:
+    cv = full_cv("Built the payments API, code at https://github.com/alex-example/pay.")
+
+    pdf = portal.call(renderer.render_cv, cv, NO_LINKS)
+
+    assert uris_of(pdf) == ["https://github.com/alex-example/pay"]
+
+
+def test_an_https_url_in_a_letter_paragraph_is_an_active_link(
+    portal: BlockingPortal, renderer: WeasyPrintRenderer
+) -> None:
+    letter = letter_with(
+        "One project I am proud of is https://github.com/alex-example/ai-tool (see the README)."
+    )
+
+    pdf = portal.call(renderer.render_cover_letter, letter, NO_LINKS)
+
+    assert uris_of(pdf) == ["https://github.com/alex-example/ai-tool"]
+
+
+def test_markup_characters_next_to_a_url_stay_escaped_text(
+    portal: BlockingPortal, renderer: WeasyPrintRenderer
+) -> None:
+    cv = full_cv("Tools A&B <https://example.com/a?x=1&y=2> <b>bold</b>")
+
+    pdf = portal.call(renderer.render_cv, cv, NO_LINKS)
+    text = " ".join(portal.call(PypdfInspector().inspect, pdf).text.split())
+
+    assert uris_of(pdf) == ["https://example.com/a?x=1&y=2"]
+    assert "Tools A&B <https://example.com/a?x=1&y=2> <b>bold</b>" in text
+    assert len(PdfReader(BytesIO(pdf)).pages) == 1
+
+
+def test_a_url_with_a_quote_cannot_break_out_of_the_link(
+    portal: BlockingPortal, renderer: WeasyPrintRenderer
+) -> None:
+    cv = full_cv('See https://example.com/"onmouseover="x and more')
+
+    pdf = portal.call(renderer.render_cv, cv, NO_LINKS)
+    text = " ".join(portal.call(PypdfInspector().inspect, pdf).text.split())
+
+    assert uris_of(pdf) == ["https://example.com/"]
+    assert 'See https://example.com/"onmouseover="x and more' in text
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Docs at http://example.com/docs",
+        "Run javascript:alert(1) now",
+        "Mail mailto:alex@example.com or ftp://example.com/file",
+    ],
+)
+def test_only_https_urls_are_linked(
+    text: str, portal: BlockingPortal, renderer: WeasyPrintRenderer
+) -> None:
+    cv_pdf = portal.call(renderer.render_cv, full_cv(text), NO_LINKS)
+    letter_pdf = portal.call(renderer.render_cover_letter, letter_with(text), NO_LINKS)
+
+    assert uris_of(cv_pdf) == []
+    assert uris_of(letter_pdf) == []
+
+
+def test_links_change_neither_the_text_layer_nor_the_lint_report(
+    portal: BlockingPortal, renderer: WeasyPrintRenderer
+) -> None:
+    cv = full_cv("Built the API, code at https://github.com/alex-example/pay (public).")
+    letter = letter_with("I built https://github.com/alex-example/ai-tool with AI.")
+
+    def layer_of(html: str) -> PdfLayer:
+        return portal.call(PypdfInspector().inspect, pdf_from_html(html))
+
+    linked_cv = layer_of(renderer.cv_html(cv, CONTACTS))
+    plain_cv = layer_of(without_links(renderer.cv_html(cv, CONTACTS)))
+    linked_letter = layer_of(renderer.cover_letter_html(letter, CONTACTS))
+    plain_letter = layer_of(without_links(renderer.cover_letter_html(letter, CONTACTS)))
+
+    assert linked_cv.text == plain_cv.text
+    assert linked_letter.text == plain_letter.text
+    assert "https://github.com/alex-example/pay" in " ".join(linked_cv.text.split())
+    assert lint(cv_layout(cv, CONTACTS), linked_cv) == LintReport(pages=1)
+    assert lint(cover_letter_layout(letter, CONTACTS), linked_letter) == LintReport(
+        pages=1
+    )

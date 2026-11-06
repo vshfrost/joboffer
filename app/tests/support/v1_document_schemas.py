@@ -1,7 +1,7 @@
 """Схеми тулів документів v1 (`origin/main` `99a2007`: `agent/documents.py`).
 
 Розгорнуті JSON-схеми (без title / description / default), зняті зі справжнього сервера v1 разом із полями фото
-(`photo_id`, `photos`): контракт-тест порівнює з ними схеми v2 повністю.
+(`photo_id`, `photos`): контракт-тест порівнює з ними схеми v2 повністю. Після v1 в аналізі брифів додано `candidate_asks` (63d7b9).
 """
 
 from typing import Any
@@ -109,6 +109,10 @@ V1: dict[str, dict[str, Any]] = {
                                     "anyOf": [{"type": "boolean"}, {"type": "null"}]
                                 },
                                 "reasons": {
+                                    "items": {"type": "string"},
+                                    "type": "array",
+                                },
+                                "candidate_asks": {
                                     "items": {"type": "string"},
                                     "type": "array",
                                 },
@@ -1038,6 +1042,10 @@ V1: dict[str, dict[str, Any]] = {
                                     "anyOf": [{"type": "boolean"}, {"type": "null"}]
                                 },
                                 "reasons": {
+                                    "items": {"type": "string"},
+                                    "type": "array",
+                                },
+                                "candidate_asks": {
                                     "items": {"type": "string"},
                                     "type": "array",
                                 },

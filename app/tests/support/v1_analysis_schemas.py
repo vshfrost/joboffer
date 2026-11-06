@@ -6,6 +6,8 @@
 Друга різниця — `gap_answers` у брифі `prepare_analysis` (задача a0f389): відповіді користувача
 на прогалини вакансії, `[{gap, has_experience, fact_ids, answered}]`.
 Третя — `keyword_facts` на вході `save_analysis` (ATS-2): ключове слово → номери фактів під ним.
+Четверта — `candidate_asks` (63d7b9): список коротких рядків — що роботодавець просить від кандидатів; на вході
+й виході аналізу, не обов'язкове.
 """
 
 from typing import Any
@@ -257,6 +259,10 @@ V1: dict[str, dict[str, Any]] = {
                                     "items": {"type": "string"},
                                     "type": "array",
                                 },
+                                "candidate_asks": {
+                                    "items": {"type": "string"},
+                                    "type": "array",
+                                },
                                 "gaps": GAPS_OUT,
                                 "job_id": {"type": "integer"},
                                 "filters_passed": {"type": "boolean"},
@@ -336,6 +342,10 @@ V1: dict[str, dict[str, Any]] = {
                             "anyOf": [{"type": "boolean"}, {"type": "null"}]
                         },
                         "reasons": {"items": {"type": "string"}, "type": "array"},
+                        "candidate_asks": {
+                            "items": {"type": "string"},
+                            "type": "array",
+                        },
                         "gaps": GAPS_IN,
                         "keyword_facts": KEYWORD_FACTS_IN,
                     },
@@ -374,6 +384,7 @@ V1: dict[str, dict[str, Any]] = {
                 "salary_max_eur": {"anyOf": [{"type": "integer"}, {"type": "null"}]},
                 "relocation": {"anyOf": [{"type": "boolean"}, {"type": "null"}]},
                 "reasons": {"items": {"type": "string"}, "type": "array"},
+                "candidate_asks": {"items": {"type": "string"}, "type": "array"},
                 "gaps": GAPS_OUT,
                 "job_id": {"type": "integer"},
                 "filters_passed": {"type": "boolean"},
