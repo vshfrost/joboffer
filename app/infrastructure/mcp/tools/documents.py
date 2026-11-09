@@ -181,6 +181,29 @@ class MustHaveCoverageView(BaseModel):
     )
 
 
+class SkillsGroupView(BaseModel):
+    label: str = Field(description="Label of the first Skills group; empty: no group")
+    items: list[str] = Field(description="Items of that group; empty: no group")
+
+
+class FirstBulletView(BaseModel):
+    role: str = Field(description="Heading of the Experience entry")
+    text: str = Field(description="The first bullet of that entry")
+
+
+class FirstScreenView(BaseModel):
+    headline: str
+    summary: str
+    skills_group: SkillsGroupView
+    first_bullets: list[FirstBulletView] = Field(
+        description="The first bullet of each Experience entry that has bullets"
+    )
+    keywords: list[str] = Field(
+        description="Analysis keywords found in the four parts above; empty: none or "
+        "job not analysed"
+    )
+
+
 class CvCheckView(CheckView):
     """Result of check_cv: the CheckView plus the gate and the must-have coverage."""
 
@@ -193,6 +216,12 @@ class CvCheckView(CheckView):
         description="Which must_have items of the analysis the CV covers, by the "
         "must_have_facts you passed (without them every item is missing); null: job "
         "not analysed or the text could not be read",
+    )
+    first_screen: FirstScreenView | None = Field(
+        default=None,
+        description="What a recruiter sees first: headline, summary, first Skills "
+        "group, first bullet of each role, and which keywords landed there; null: "
+        "the text could not be read",
     )
 
 

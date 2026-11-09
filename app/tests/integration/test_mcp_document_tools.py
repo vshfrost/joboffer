@@ -458,6 +458,7 @@ async def test_check_cv_reports_a_placeholder_and_saves_nothing(
         "keywords",
         "gate",
         "must_have_coverage",
+        "first_screen",
     }
     assert checked["passed"] is False
     [issue] = checked["issues"]
@@ -682,6 +683,15 @@ async def test_check_cv_of_clean_text_passes_and_leaves_no_trace(
             "coverage_percent": None,
         },
         "must_have_coverage": None,
+        "first_screen": {
+            "headline": "Senior Backend Engineer",
+            "summary": "Payments backend engineer",
+            "skills_group": {"label": "Backend", "items": ["Python", "Postgres"]},
+            "first_bullets": [
+                {"role": "Engineer · Acme", "text": "Built payment APIs in Python"}
+            ],
+            "keywords": [],
+        },
     }
     await nothing_saved(agent, token, number, documents_dir)
 

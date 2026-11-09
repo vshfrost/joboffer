@@ -123,6 +123,34 @@ class MustHaveCoverageData:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class SkillsGroupData:
+    """Перша група секції Skills: назва й пункти; порожні, коли групи нема."""
+
+    label: str
+    items: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class FirstBulletData:
+    """Перший пункт ролі: заголовок ролі й текст пункту."""
+
+    role: str
+    text: str
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class FirstScreenData:
+    """Перший екран CV: посада, summary, перша група скілів, перший пункт кожної ролі Experience
+    і слова вакансії (`keywords`), що стоять саме в цих частинах."""
+
+    headline: str
+    summary: str
+    skills_group: SkillsGroupData
+    first_bullets: tuple[FirstBulletData, ...]
+    keywords: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class CheckData:
     """Результат check_cv / check_cover_letter: нічого не збережено. `passed` = нема issues —
     save_* прийме той самий документ. `keywords` — покриття по тексту документа (None — вакансію
@@ -134,6 +162,8 @@ class CheckData:
     gate: GateData | None = None
     # Лише в CV й лише коли вакансію проаналізовано, а CV розібрано; інакше None.
     must_have_coverage: MustHaveCoverageData | None = None
+    # Лише в CV, коли текст розібрано; інакше None.
+    first_screen: FirstScreenData | None = None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
