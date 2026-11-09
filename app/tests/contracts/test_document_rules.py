@@ -427,6 +427,65 @@ def test_cv_report_after_save_names_analogues_used_and_soft_rules_broken() -> No
     ) in process
 
 
+def test_cv_takes_gap_analogues_from_the_analysis_and_does_not_search_again() -> None:
+    block = _block(_cv_flat(), "GAP ANALOGUES AND THE MUST-HAVE MAP", "PROCESS")
+
+    assert "take them from its gap_analogues" in block
+    assert "do not search the facts for them again" in block
+
+
+def test_cv_gap_without_analogues_has_no_honest_analogue_and_stays_out() -> None:
+    block = _block(_cv_flat(), "GAP ANALOGUES AND THE MUST-HAVE MAP", "PROCESS")
+
+    assert (
+        "A gap with no entry in gap_analogues has no honest analogue: say so in the plan, "
+        "keep it out of the CV and report it to the user"
+    ) in block
+
+
+def test_cv_plan_maps_every_must_have_to_fact_ids_and_kind_fact_or_analogue() -> None:
+    block = _block(_cv_flat(), "GAP ANALOGUES AND THE MUST-HAVE MAP", "PROCESS")
+
+    assert "for every must_have item the fact_ids and the kind: fact" in block
+    assert "or analogue" in block
+
+
+def test_cv_passes_must_have_facts_to_check_cv_before_saving() -> None:
+    block = _block(_cv_flat(), "GAP ANALOGUES AND THE MUST-HAVE MAP", "PROCESS")
+
+    assert "Before save_cv, pass that map to check_cv as must_have_facts" in block
+    assert "entries {item, fact_ids, kind}" in block
+
+
+def test_cv_item_with_no_fact_is_not_passed_as_kind_fact() -> None:
+    block = _block(_cv_flat(), "GAP ANALOGUES AND THE MUST-HAVE MAP", "PROCESS")
+
+    assert "An item no fact answers is left out of must_have_facts" in block
+    assert "never pass it as kind fact" in block
+    assert "never pass an analogue as kind fact" in block
+
+
+def test_cv_report_after_saving_shows_must_have_coverage_by_status() -> None:
+    block = _block(_cv_flat(), "GAP ANALOGUES AND THE MUST-HAVE MAP", "PROCESS")
+
+    assert (
+        "After saving, the report shows must_have_coverage from the last check_cv: "
+        "how many items are covered, analogue and missing, each missing item named"
+    ) in block
+
+
+def test_cv_missing_must_have_is_explained_or_fixed_and_never_faked() -> None:
+    block = _block(_cv_flat(), "GAP ANALOGUES AND THE MUST-HAVE MAP", "PROCESS")
+
+    assert "status missing: explain it to the user" in block
+    assert "or fix the CV so a line cites the fact" in block
+    assert "never invent a fact" in block
+
+
+def test_cv_must_have_block_keeps_the_neutral_wording() -> None:
+    block = _block(_cv_flat(), "GAP ANALOGUES AND THE MUST-HAVE MAP", "PROCESS")
+
+    assert not NAMING.search(block)
 def _letter_flat() -> str:
     return _flat(_rules(PromptKey.DOCUMENTS_COVER_LETTER_RULES))
 
