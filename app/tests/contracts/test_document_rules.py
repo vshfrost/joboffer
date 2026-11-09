@@ -453,7 +453,7 @@ def test_letter_explains_a_gap_by_an_analogue_in_the_words_of_the_fact() -> None
 def test_letter_never_uses_the_gaps_word_even_as_like_or_similar() -> None:
     block = _block(_letter_flat(), "Letter asks and gaps", "Before writing")
 
-    assert 'never with the gap\'s word as a skill' in block
+    assert "never with the gap's word as a skill" in block
     assert '"-like", "similar to" or "familiar with"' in block
 
 
