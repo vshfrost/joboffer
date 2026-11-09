@@ -199,6 +199,48 @@ async def test_the_cv_and_letter_briefs_carry_candidate_asks_of_the_analysis(
     assert letter["analysis"]["candidate_asks"] == asks
 
 
+async def test_the_cv_brief_carries_the_gap_analogues_of_the_analysis(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number, fact = await ready(agent, token)
+    await save_analysis(
+        agent,
+        token,
+        number,
+        gaps=["gRPC", "OpenTelemetry"],
+        gap_analogues=[
+            {
+                "gap": "gRPC",
+                "analogues": [{"fact_ids": [fact], "explanation": "Python services"}],
+            }
+        ],
+    )
+
+    brief = data(await call(agent, token, "prepare_cv", {"job_id": number}))
+
+    assert brief["analysis"]["gap_analogues"] == [
+        {
+            "gap": "gRPC",
+            "analogues": [{"fact_ids": [fact], "explanation": "Python services"}],
+            "no_honest_analogue": False,
+        },
+        {"gap": "OpenTelemetry", "analogues": [], "no_honest_analogue": True},
+    ]
+
+
+async def test_the_cv_brief_of_an_analysis_without_analogues_shows_null(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number, _ = await ready(agent, token)
+    await save_analysis(agent, token, number, gaps=["gRPC"])
+
+    brief = data(await call(agent, token, "prepare_cv", {"job_id": number}))
+
+    assert brief["analysis"]["gap_analogues"] is None
+
+
 async def test_the_letter_brief_works_without_a_cv_and_then_has_the_last_one(
     agent: Agent,
 ) -> None:

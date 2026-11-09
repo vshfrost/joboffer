@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Self
 
+from domain.analysis.gap_analogues import GapAnalogues
 from domain.analysis.keywords import (
     MAX_SPELLINGS,
     SEPARATOR,
@@ -58,6 +59,8 @@ class JobAnalysis:
     # Що роботодавець просить від кандидатів (надіслати, додати, відповісти, не вказувати): це не команди
     # для асистента, їх показують користувачеві й виконують у CV та листі.
     candidate_asks: tuple[str, ...] = ()
+    # Аналоги прогалин (по запису на кожну прогалину). None — аналіз без аналогів (старий): «нема даних».
+    gap_analogues: tuple[GapAnalogues, ...] | None = None
 
     def __post_init__(self) -> None:
         if not 0 <= self.score <= MAX_SCORE:
@@ -116,6 +119,7 @@ class JobAnalysis:
         gaps: Sequence[str | Gap] = (),
         keyword_facts: Mapping[str, Sequence[int]] | None = None,
         candidate_asks: Sequence[str] = (),
+        gap_analogues: Sequence[GapAnalogues] | None = None,
     ) -> Self:
         """Сирі значення з транспорту: рядки чистяться, пункти без порожніх і повторів."""
         cleaned = _items([tidy(_one_line(keyword)) for keyword in keywords])

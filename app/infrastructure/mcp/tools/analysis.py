@@ -38,6 +38,36 @@ class GapView(BaseModel):
     question: str | None
 
 
+class AnalogueIn(BaseModel):
+    fact_ids: list[int] = Field(
+        description="Confirmed facts that make the analogue; at least one"
+    )
+    explanation: str = Field(
+        description="One short sentence: how the facts relate to the gap"
+    )
+
+
+class GapAnaloguesIn(BaseModel):
+    gap: str = Field(description="Text of the gap, exactly as in gaps")
+    analogues: list[AnalogueIn] = Field(
+        default_factory=list,
+        description="Closest confirmed facts for the gap; empty: no honest analogue",
+    )
+
+
+class AnalogueView(BaseModel):
+    fact_ids: list[int]
+    explanation: str
+
+
+class GapAnaloguesView(BaseModel):
+    gap: str
+    analogues: list[AnalogueView]
+    no_honest_analogue: bool = Field(
+        description="True: no confirmed fact is an honest analogue of the gap"
+    )
+
+
 class AnalysisFields(BaseModel):
     """Спільні поля розбору вакансії (без прогалин: на вході й на виході вони різні)."""
 
@@ -72,14 +102,32 @@ class AnalysisIn(AnalysisFields):
         description="Keyword (exactly as in keywords) -> fact_ids of the confirmed "
         "facts that back it; leave out keywords no fact backs. null: no map",
     )
+    gap_analogues: list[GapAnaloguesIn] | None = Field(
+        default=None,
+        description="For gaps: the closest confirmed facts (fact_ids + a short "
+        "explanation) the CV can use instead of the missing skill; a gap left out "
+        "or with no analogues is stored as no_honest_analogue. null: not assessed",
+    )
 
 
-class AnalysisView(AnalysisFields):
+class SavedAnalysisView(AnalysisFields):
+    """Відповідь `save_analysis`: розбір, як його збережено, і позначки фільтрів."""
+
     gaps: list[GapView] = Field(default_factory=list)
     job_id: int
     filters_passed: bool = Field(description="false: fails the user's hard filters")
     flags: list[str] = Field(description="Which hard filters failed, in Ukrainian")
     updated: str = Field(description="YYYY-MM-DD")
+
+
+class AnalysisView(SavedAnalysisView):
+    """Збережений аналіз у брифах: те саме й аналоги прогалин."""
+
+    gap_analogues: list[GapAnaloguesView] | None = Field(
+        default=None,
+        description="Per gap: confirmed facts close to it, or no_honest_analogue; "
+        "null: the analysis predates analogues (find them yourself)",
+    )
 
 
 class GapAnswerView(BaseModel):
@@ -163,7 +211,7 @@ def register_analysis_tools(
         description=prompts.get(PromptKey.MCP_TOOL_SAVE_ANALYSIS),
         annotations=WRITE,
     )
-    async def save_analysis(job_id: int, analysis: AnalysisIn) -> AnalysisView:
+    async def save_analysis(job_id: int, analysis: AnalysisIn) -> SavedAnalysisView:
         data = AnalysisInput(
             score=analysis.score,
             summary=analysis.summary,
@@ -191,4 +239,6 @@ def register_analysis_tools(
             saved = await use_cases.save_analysis(current_actor(), job_id, data)
         except DomainError as error:
             raise ToolError(error.message) from error
-        return analysis_view(saved)
+        return SavedAnalysisView.model_validate(
+            analysis_view(saved).model_dump(exclude={"gap_analogues"})
+        )
