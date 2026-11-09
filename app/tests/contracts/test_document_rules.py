@@ -372,3 +372,34 @@ def test_cv_asks_are_split_into_cv_and_cover_letter_and_a_cv_ask_goes_in_the_mos
     assert "cover-letter ask" in p1
     assert "most visible place that fits" in p1
     assert "An ask no fact can answer is reported to the user, never faked" in p1
+
+
+def test_cv_plan_before_writing_covers_every_item_and_does_not_wait_unless_ambiguous() -> None:
+    text = _cv_flat()
+    process = _block(text, "PROCESS")
+
+    for item in (
+        "ceiling:",
+        "asks:",
+        "must-have map:",
+        "gap → analogue map:",
+        "strengths:",
+        "first screen:",
+        "soft rules you will break and why",
+    ):
+        assert item in process, item
+    assert "Continue without waiting unless a choice is genuinely ambiguous" in process
+
+
+def test_cv_failed_check_shrinks_the_lowest_priority_first() -> None:
+    process = _block(_cv_flat(), "PROCESS")
+
+    assert "fixing issues by shrinking the lowest priority first" in process
+
+
+def test_cv_report_after_save_names_analogues_used_and_soft_rules_broken() -> None:
+    process = _block(_cv_flat(), "PROCESS")
+
+    assert (
+        "After saving, report: coverage numbers, gaps left out, analogues used, soft rules broken"
+    ) in process
