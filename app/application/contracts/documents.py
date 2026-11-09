@@ -12,6 +12,7 @@ from application.contracts.profile import ProfileData
 from domain.documents.document import DocumentKind
 from domain.documents.gate import GateStatus
 from domain.documents.lint import LintCode
+from domain.documents.must_have import MustHaveStatus
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -92,6 +93,36 @@ class GateData:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class MustHaveFactsData:
+    """Вхід check_cv: що агент каже про пункт must-have — `item` (текст пункту з аналізу), факти під
+    ним і `kind`: `fact` (факти закривають вимогу) чи `analogue` (схожий досвід замість неї)."""
+
+    item: str
+    fact_ids: Sequence[int]
+    kind: str
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class MustHaveItemData:
+    """Пункт must-have аналізу: `covered` / `analogue` (fact_ids — факти запису, на які спирається
+    рядок CV) чи `missing` (reason — чому)."""
+
+    item: str
+    status: MustHaveStatus
+    fact_ids: tuple[int, ...]
+    reason: str | None
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class MustHaveCoverageData:
+    """Покриття must-have аналізу: кожен його пункт по порядку; `unknown` — пункти з входу, яких
+    в аналізі нема (не помилка)."""
+
+    items: tuple[MustHaveItemData, ...]
+    unknown: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class CheckData:
     """Результат check_cv / check_cover_letter: нічого не збережено. `passed` = нема issues —
     save_* прийме той самий документ. `keywords` — покриття по тексту документа (None — вакансію
@@ -101,6 +132,8 @@ class CheckData:
     issues: tuple[LintIssueData, ...]
     keywords: KeywordCoverageData | None
     gate: GateData | None = None
+    # Лише в CV й лише коли вакансію проаналізовано, а CV розібрано; інакше None.
+    must_have_coverage: MustHaveCoverageData | None = None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
