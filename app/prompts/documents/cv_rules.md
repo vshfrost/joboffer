@@ -103,6 +103,21 @@ SOFT RULES (P6): the lines above on section order, Experience entry format, Proj
 Skills group size, Education and Languages one line each, and free space are soft rules. Break one only
 when it shows the candidate better for this job, and name the rule and the reason in the plan.
 
+GAP ANALOGUES AND THE MUST-HAVE MAP (they extend P3, P5 and the plan):
+- Gap analogues come from the analysis: take them from its gap_analogues (gap → fact_ids) and do not search
+  the facts for them again. A gap with no entry in gap_analogues has no honest analogue: say so in the plan,
+  keep it out of the CV and report it to the user.
+- The must-have map of the plan lists for every must_have item the fact_ids and the kind: fact (the facts
+  meet the requirement itself) or analogue (the closest related facts, the requirement itself is a gap).
+- Before save_cv, pass that map to check_cv as must_have_facts: entries {item, fact_ids, kind}, the item
+  exactly as in the analysis must_have. An item no fact answers is left out of must_have_facts: never pass
+  it as kind fact, and never pass an analogue as kind fact.
+- After saving, the report shows must_have_coverage from the last check_cv: how many items are covered,
+  analogue and missing, each missing item named.
+- A must_have_coverage item with status missing: explain it to the user (no fact, or no CV line cites the
+  fact) or fix the CV so a line cites the fact; never invent a fact, and never add a word no fact backs to
+  turn the item into covered.
+
 PROCESS:
 1. Before writing, show the user a short CV plan:
    - ceiling: the keyword coverage the facts allow and the keywords no fact backs;
