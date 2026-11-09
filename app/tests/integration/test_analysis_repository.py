@@ -11,6 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from domain.analysis.analysis import Analysis, Gap, JobAnalysis
+from domain.analysis.gap_analogues import Analogue, GapAnalogues
 from domain.analysis.ids import AnalysisId
 from domain.analysis.keywords import KeywordFacts
 from domain.identity.ids import UserId
@@ -177,6 +178,43 @@ def test_candidate_asks_keep_their_order_and_an_old_row_without_them_reads_empty
     old = portal.call(_get, uow, ALICE, job)
     assert old is not None
     assert old.analysis.candidate_asks == ()
+
+
+def test_gap_analogues_keep_their_order_and_an_old_row_without_them_reads_none(
+    portal: BlockingPortal, uow: UnitOfWorkFactory, engine: AsyncEngine
+) -> None:
+    job = portal.call(_add, uow, ALICE, "job")
+    analogues = (
+        GapAnalogues(
+            "OpenTelemetry",
+            (
+                Analogue((9, 4), "Prometheus and Grafana dashboards"),
+                Analogue((12,), "ELK logging"),
+            ),
+        ),
+        GapAnalogues("gRPC"),
+    )
+    portal.call(
+        _analyse,
+        uow,
+        ALICE,
+        job,
+        JobAnalysis(
+            5, "s", gaps=(Gap("OpenTelemetry"), Gap("gRPC")), gap_analogues=analogues
+        ),
+    )
+    saved = portal.call(_get, uow, ALICE, job)
+    assert saved is not None
+    assert saved.analysis.gap_analogues == analogues
+
+    portal.call(
+        _execute,
+        engine,
+        "UPDATE job_analyses SET details = details - 'gap_analogues'",
+    )
+    old = portal.call(_get, uow, ALICE, job)
+    assert old is not None
+    assert old.analysis.gap_analogues is None
 
 
 def test_an_analysis_stored_with_string_gaps_reads_with_null_questions(

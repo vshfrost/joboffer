@@ -11,10 +11,12 @@ from datetime import datetime
 
 from application.contracts.actor import Actor
 from application.contracts.analysis import (
+    AnalogueData,
     AnalysisBriefData,
     AnalysisData,
     AnalysisInput,
     AnsweredGapData,
+    GapAnaloguesData,
     GapAnswerData,
     GapAnswerInput,
     GapData,
@@ -30,12 +32,13 @@ from application.ports.ids import IdGenerator
 from application.ports.prompts import PromptKey, Prompts
 from application.profile.use_cases import profile_data
 from domain.analysis.analysis import Analysis, Gap, JobAnalysis, apply_filters
+from domain.analysis.gap_analogues import Analogue, GapAnalogues
 from domain.analysis.gap_answer import GapAnswer, validate_answer
 from domain.analysis.ids import AnalysisId, GapAnswerId
 from domain.analysis.rubric import rubric_values
 from domain.facts.fact import Fact, FactSource, NewFact
 from domain.facts.ids import FactId
-from domain.facts.library import ordered, require_existing
+from domain.facts.library import ordered, require_confirmed, require_existing
 from domain.shared.errors import InvalidValue, NotFound
 from domain.shared.fingerprint import text_fingerprint
 
@@ -113,6 +116,18 @@ class AnalysisUseCases:
                 for item in data.gaps
             ],
             keyword_facts=data.keyword_facts,
+            gap_analogues=None
+            if data.gap_analogues is None
+            else [
+                GapAnalogues(
+                    item.gap,
+                    tuple(
+                        Analogue(tuple(analogue.fact_numbers), analogue.explanation)
+                        for analogue in item.analogues
+                    ),
+                )
+                for item in data.gap_analogues
+            ],
         )
         user = actor.user_id
         now = self._clock.now()
@@ -125,6 +140,16 @@ class AnalysisUseCases:
                     {fact.number for fact in await uow.facts.all(user)},
                     [n for item in analysis.keyword_facts for n in item.fact_numbers],
                     "keyword_facts",
+                )
+            if analysis.gap_analogues:
+                require_confirmed(
+                    await uow.facts.all(user),
+                    [
+                        number
+                        for item in analysis.gap_analogues
+                        for analogue in item.analogues
+                        for number in analogue.fact_numbers
+                    ],
                 )
             profile = await uow.profiles.get(user)
             posting = "\n".join(filter(None, (job.title, job.company, job.text)))
@@ -290,6 +315,22 @@ def analysis_data(
         flags=saved.flags,
         updated_at=saved.updated_at,
         stale_since=stale_since,
+        gap_analogues=None
+        if analysis.gap_analogues is None
+        else tuple(
+            GapAnaloguesData(
+                gap=item.gap,
+                analogues=tuple(
+                    AnalogueData(
+                        fact_numbers=analogue.fact_numbers,
+                        explanation=analogue.explanation,
+                    )
+                    for analogue in item.analogues
+                ),
+                no_honest_analogue=item.no_honest_analogue,
+            )
+            for item in analysis.gap_analogues
+        ),
         keyword_facts=None
         if analysis.keyword_facts is None
         else tuple(

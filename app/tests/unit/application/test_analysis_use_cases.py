@@ -11,9 +11,13 @@ from anyio.from_thread import BlockingPortal
 from application.analysis.use_cases import AnalysisUseCases
 from application.contracts.actor import Actor, Channel, Scope
 from application.contracts.analysis import (
+    AnalogueData,
+    AnalogueInput,
     AnalysisBriefData,
     AnalysisData,
     AnalysisInput,
+    GapAnaloguesData,
+    GapAnaloguesInput,
     GapData,
     GapInput,
     KeywordFactsData,
@@ -873,3 +877,139 @@ def test_an_analysed_job_cannot_be_triaged(world: World) -> None:
     with pytest.raises(InvalidValue) as error:
         world.triage_job(world.alice, number, 50, "maybe")
     assert error.value.message == f"Елемент 1: вакансію {number} уже проаналізовано."
+
+
+# --- аналоги прогалин ---------------------------------------------------------------
+
+
+def test_gap_analogues_are_saved_with_the_analysis_and_read_back(world: World) -> None:
+    number = world.seed(world.alice)
+    prometheus = world.fact(world.alice, "skill", "Prometheus", confirmed=True)
+    grafana = world.fact(world.alice, "skill", "Grafana", confirmed=True)
+
+    saved = world.save(
+        world.alice,
+        number,
+        gaps=[
+            GapInput(gap="OpenTelemetry", question="Have you used OpenTelemetry?"),
+            GapInput(gap="gRPC", question="Have you used gRPC?"),
+        ],
+        gap_analogues=[
+            GapAnaloguesInput(
+                gap="OpenTelemetry",
+                analogues=[
+                    AnalogueInput(
+                        fact_numbers=[prometheus, grafana],
+                        explanation="Metrics and dashboards in production",
+                    )
+                ],
+            )
+        ],
+    )
+
+    expected = (
+        GapAnaloguesData(
+            gap="OpenTelemetry",
+            analogues=(
+                AnalogueData(
+                    fact_numbers=(prometheus, grafana),
+                    explanation="Metrics and dashboards in production",
+                ),
+            ),
+            no_honest_analogue=False,
+        ),
+        GapAnaloguesData(gap="gRPC", analogues=(), no_honest_analogue=True),
+    )
+    previous = world.prepare(world.alice, number).previous
+    assert saved.gap_analogues == expected
+    assert world.get(world.alice, number).gap_analogues == expected
+    assert previous is not None
+    assert previous.gap_analogues == expected
+
+
+def test_an_analysis_saved_without_gap_analogues_reads_back_without_them(
+    world: World,
+) -> None:
+    number = world.seed(world.alice)
+
+    world.save(world.alice, number, gaps=["Go"])
+
+    assert world.get(world.alice, number).gap_analogues is None
+
+
+def test_a_resave_without_gap_analogues_replaces_the_earlier_ones(
+    world: World,
+) -> None:
+    number = world.seed(world.alice)
+    rest = world.fact(world.alice, "skill", "REST", confirmed=True)
+    analogue = AnalogueInput(fact_numbers=[rest], explanation="REST services")
+    world.save(
+        world.alice,
+        number,
+        gaps=["gRPC"],
+        gap_analogues=[GapAnaloguesInput(gap="gRPC", analogues=[analogue])],
+    )
+
+    world.save(world.alice, number, gaps=["gRPC"])
+
+    assert world.get(world.alice, number).gap_analogues is None
+
+
+def test_an_unconfirmed_fact_in_gap_analogues_is_refused_and_saves_nothing(
+    world: World,
+) -> None:
+    number = world.seed(world.alice)
+    draft = world.fact(world.alice, "skill", "REST", confirmed=False)
+    analogue = AnalogueInput(fact_numbers=[draft], explanation="REST services")
+
+    with pytest.raises(InvalidValue) as error:
+        world.save(
+            world.alice,
+            number,
+            gaps=["gRPC"],
+            gap_analogues=[GapAnaloguesInput(gap="gRPC", analogues=[analogue])],
+        )
+
+    assert error.value.message == (
+        f"Факти не підтверджені: #{draft} — спершу користувач їх підтверджує."
+    )
+    with pytest.raises(NotFound):
+        world.get(world.alice, number)
+
+
+def test_a_fact_of_another_user_in_gap_analogues_is_refused_like_a_missing_one(
+    world: World,
+) -> None:
+    number = world.seed(world.alice)
+    theirs = world.fact(world.bob, "skill", "REST", confirmed=True)
+    analogue = AnalogueInput(fact_numbers=[theirs], explanation="REST services")
+
+    with pytest.raises(InvalidValue) as error:
+        world.save(
+            world.alice,
+            number,
+            gaps=["gRPC"],
+            gap_analogues=[GapAnaloguesInput(gap="gRPC", analogues=[analogue])],
+        )
+
+    assert error.value.message == f"Факти не знайдено: #{theirs}."
+    with pytest.raises(NotFound):
+        world.get(world.alice, number)
+
+
+def test_a_gap_analogue_for_a_gap_that_is_not_in_gaps_is_refused(
+    world: World,
+) -> None:
+    number = world.seed(world.alice)
+    rest = world.fact(world.alice, "skill", "REST", confirmed=True)
+    analogue = AnalogueInput(fact_numbers=[rest], explanation="REST services")
+
+    with pytest.raises(InvalidValue) as error:
+        world.save(
+            world.alice,
+            number,
+            gaps=["gRPC"],
+            gap_analogues=[GapAnaloguesInput(gap="Rust", analogues=[analogue])],
+        )
+
+    assert error.value.message == "gap_analogues: «Rust» — такої прогалини нема в gaps."

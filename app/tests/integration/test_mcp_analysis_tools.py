@@ -237,6 +237,145 @@ async def test_too_many_candidate_asks_are_a_tool_error_and_save_nothing(
     assert "candidate_asks — не більше 30 пунктів." in error_text(refused)
 
 
+async def confirmed_fact(agent: Agent, token: str, text: str) -> int:
+    fact = await add_fact(agent, token, "skill", text)
+    data(await call(agent, token, "confirm_facts", {"fact_ids": [fact]}))
+    return fact
+
+
+async def test_gap_analogues_are_saved_and_a_gap_without_them_has_no_honest_analogue(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number = await seed(agent)
+    rest = await confirmed_fact(agent, token, "REST")
+
+    await save(
+        agent,
+        token,
+        number,
+        gaps=["gRPC", "OpenTelemetry"],
+        gap_analogues=[
+            {
+                "gap": "gRPC",
+                "analogues": [{"fact_ids": [rest], "explanation": "REST services"}],
+            }
+        ],
+    )
+    brief = data(await call(agent, token, "prepare_analysis", {"job_id": number}))
+
+    assert brief["previous"]["gap_analogues"] == [
+        {
+            "gap": "gRPC",
+            "analogues": [{"fact_ids": [rest], "explanation": "REST services"}],
+            "no_honest_analogue": False,
+        },
+        {"gap": "OpenTelemetry", "analogues": [], "no_honest_analogue": True},
+    ]
+
+
+async def test_an_analysis_saved_without_gap_analogues_shows_null_in_the_brief(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number = await seed(agent)
+
+    await save(agent, token, number, gaps=["gRPC"])
+    brief = data(await call(agent, token, "prepare_analysis", {"job_id": number}))
+
+    assert brief["previous"]["gap_analogues"] is None
+
+
+async def test_an_unconfirmed_fact_in_gap_analogues_is_a_tool_error_and_saves_nothing(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number = await seed(agent)
+    draft = await add_fact(agent, token, "skill", "REST")
+
+    refused = await call(
+        agent,
+        token,
+        "save_analysis",
+        {
+            "job_id": number,
+            "analysis": {
+                "score": 70,
+                "summary": "S.",
+                "gaps": ["gRPC"],
+                "gap_analogues": [
+                    {
+                        "gap": "gRPC",
+                        "analogues": [
+                            {"fact_ids": [draft], "explanation": "REST services"}
+                        ],
+                    }
+                ],
+            },
+        },
+    )
+
+    assert f"Факти не підтверджені: #{draft}" in error_text(refused)
+    brief = data(await call(agent, token, "prepare_analysis", {"job_id": number}))
+    assert brief["previous"] is None
+
+
+async def test_a_fact_of_another_user_in_gap_analogues_is_a_tool_error(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number = await seed(agent)
+    theirs = await confirmed_fact(agent, await katya(agent), "REST")
+
+    refused = await call(
+        agent,
+        token,
+        "save_analysis",
+        {
+            "job_id": number,
+            "analysis": {
+                "score": 70,
+                "summary": "S.",
+                "gaps": ["gRPC"],
+                "gap_analogues": [
+                    {
+                        "gap": "gRPC",
+                        "analogues": [
+                            {"fact_ids": [theirs], "explanation": "REST services"}
+                        ],
+                    }
+                ],
+            },
+        },
+    )
+
+    assert f"Факти не знайдено: #{theirs}." in error_text(refused)
+
+
+async def test_gap_analogues_of_a_gap_that_is_not_in_gaps_are_a_tool_error(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number = await seed(agent)
+
+    refused = await call(
+        agent,
+        token,
+        "save_analysis",
+        {
+            "job_id": number,
+            "analysis": {
+                "score": 70,
+                "summary": "S.",
+                "gaps": ["gRPC"],
+                "gap_analogues": [{"gap": "Rust", "analogues": []}],
+            },
+        },
+    )
+
+    assert "gap_analogues: «Rust» — такої прогалини нема в gaps." in error_text(refused)
+
+
 async def test_the_rubric_asks_for_one_question_for_every_gap(agent: Agent) -> None:
     token = await taras(agent)
     number = await seed(agent)
