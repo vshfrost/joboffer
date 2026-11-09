@@ -305,3 +305,27 @@ def test_cv_soft_rules_are_named_one_by_one_and_broken_only_with_a_stated_reason
         "Break one only when it shows the candidate better for this job, "
         "and name the rule and the reason in the plan"
     ) in soft
+
+
+def test_cv_never_writes_the_word_of_a_gap_not_even_as_like_similar_to_or_familiar_with() -> None:
+    text = _cv_flat()
+    hard = _block(text, "HARD RULES", "PRIORITIES")
+
+    assert (
+        "A word for a gap (a keyword or requirement no fact backs) never appears in the CV" in hard
+    )
+    assert 'not even as "-like", "similar to" or "familiar with"' in hard
+
+
+def test_cv_analogue_is_written_in_the_words_of_the_fact_and_placed_by_the_gap_priority() -> None:
+    text = _cv_flat()
+    p3 = _block(text, "P3 Analogues for must-have gaps", "P4 Strongest facts")
+    p5 = _block(text, "P5 Analogues for nice-to-have gaps", "P6 Soft rules")
+
+    assert "closest confirmed facts" in p3
+    assert "Write them in the fact's own words" in p3
+    assert "summary or first Skills group" in p3
+    assert "only when it is genuinely related" in p3
+    assert 'no honest analogue" is the answer when none exists' in p3
+    assert "same rules as P3, placed lower" in p5
+    assert "later bullets or a later Skills group" in p5
