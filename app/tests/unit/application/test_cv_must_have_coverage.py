@@ -176,6 +176,8 @@ def test_a_fact_of_another_user_leaves_the_item_missing_with_the_reason(
     world: World,
 ) -> None:
     owner, number, fact = seeded(world)
+    # Номери фактів — у межах користувача: у Боба потрібен номер, якого в власника нема.
+    world.fact(world.bob, "Go")
     foreign = world.fact(world.bob, "Kafka")
     world.analyse(owner, number, must_have=["Kafka"])
 
@@ -234,15 +236,15 @@ def test_an_item_that_is_not_in_the_analysis_is_unknown_not_an_error(
 
 def test_the_item_is_matched_ignoring_case_and_extra_spaces(world: World) -> None:
     owner, number, fact = seeded(world)
-    world.analyse(owner, number, must_have=["Python  backend"])
+    world.analyse(owner, number, must_have=["Python backend"])
 
     checked = check(
-        world, owner, number, cv_data(fact), entry(" python BACKEND ", "fact", fact)
+        world, owner, number, cv_data(fact), entry(" python  BACKEND ", "fact", fact)
     )
 
     assert coverage(checked).unknown == ()
     assert [(i.item, i.status) for i in coverage(checked).items] == [
-        ("Python  backend", MustHaveStatus.COVERED)
+        ("Python backend", MustHaveStatus.COVERED)
     ]
 
 
