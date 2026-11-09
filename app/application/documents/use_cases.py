@@ -20,6 +20,8 @@ from application.contracts.documents import (
     CvBriefData,
     CvData,
     DocumentData,
+    FirstBulletData,
+    FirstScreenData,
     GateData,
     JobDocumentData,
     KeywordCoverageData,
@@ -30,6 +32,7 @@ from application.contracts.documents import (
     MustHaveItemData,
     PdfFileData,
     PruneData,
+    SkillsGroupData,
 )
 from application.contracts.photos import PhotoLibraryData
 from application.documents.parsing import (
@@ -53,6 +56,7 @@ from domain.documents.document import (
     Document,
     DocumentKind,
 )
+from domain.documents.first_screen import FirstScreen, first_screen
 from domain.documents.gate import CvGate, cv_ceiling, cv_gate
 from domain.documents.ids import DocumentId
 from domain.documents.layout import cover_letter_layout, cv_layout, pdf_file_name
@@ -104,6 +108,8 @@ class _Checked:
     gate: CvGate | None = None
     # Лише в CV вакансії з аналізом.
     must_have: MustHaveCoverage | None = None
+    # Лише в CV, коли текст розібрано.
+    screen: tuple[FirstScreen, KeywordCoverage | None] | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -328,6 +334,7 @@ class DocumentUseCases:
             keywords=_keywords_data(checked.keywords),
             gate=_gate_data(checked.gate),
             must_have_coverage=_must_have_data(checked.must_have),
+            first_screen=_first_screen_data(checked.screen),
         )
 
     async def _save(
@@ -424,7 +431,10 @@ class DocumentUseCases:
         coverage = keyword_coverage(keywords, layout.lines)
         gate = None
         must_have = None
+        screen = None
         if isinstance(content, Cv):
+            seen = first_screen(content)
+            screen = (seen, keyword_coverage(keywords, seen.lines))
             live = {fact.number for fact in confirmed(await uow.facts.all(user))}
             gate = cv_gate(
                 coverage,
@@ -439,7 +449,9 @@ class DocumentUseCases:
                     live,
                 )
         if hygiene:
-            return _Checked(hygiene, coverage, gate=gate, must_have=must_have)
+            return _Checked(
+                hygiene, coverage, gate=gate, must_have=must_have, screen=screen
+            )
         if isinstance(content, Cv):
             pdf = await self._output.renderer.render_cv(
                 content, contacts, None if photo is None else photo.data
@@ -448,13 +460,16 @@ class DocumentUseCases:
             pdf = await self._output.renderer.render_cover_letter(content, contacts)
         report = lint(layout, await self._output.inspector.inspect(pdf), keywords)
         if report.issues:
-            return _Checked(report.issues, coverage, gate=gate, must_have=must_have)
+            return _Checked(
+                report.issues, coverage, gate=gate, must_have=must_have, screen=screen
+            )
         return _Checked(
             (),
             coverage,
             ready=_Ready(content, pdf, report, None if photo is None else photo.id),
             gate=gate,
             must_have=must_have,
+            screen=screen,
         )
 
 
@@ -470,6 +485,24 @@ def _keywords_data(keywords: KeywordCoverage | None) -> KeywordCoverageData | No
         else KeywordCoverageData(
             covered=keywords.covered, missing=keywords.missing, percent=keywords.percent
         )
+    )
+
+
+def _first_screen_data(
+    screen: tuple[FirstScreen, KeywordCoverage | None] | None,
+) -> FirstScreenData | None:
+    if screen is None:
+        return None
+    seen, keywords = screen
+    return FirstScreenData(
+        headline=seen.headline,
+        summary=seen.summary,
+        skills_group=SkillsGroupData(label=seen.skills_label, items=seen.skills_items),
+        first_bullets=tuple(
+            FirstBulletData(role=bullet.role, text=bullet.text)
+            for bullet in seen.first_bullets
+        ),
+        keywords=() if keywords is None else keywords.covered,
     )
 
 

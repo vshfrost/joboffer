@@ -529,6 +529,7 @@ def _check_view(checked: CheckData) -> CheckView:
 def _cv_check_view(checked: CheckData) -> CvCheckView:
     gate = checked.gate
     must_have = checked.must_have_coverage
+    screen = checked.first_screen
     return CvCheckView(
         **_check_view(checked).model_dump(),
         gate=None
@@ -552,6 +553,21 @@ def _cv_check_view(checked: CheckData) -> CvCheckView:
                 for item in must_have.items
             ],
             unknown=list(must_have.unknown),
+        ),
+        first_screen=None
+        if screen is None
+        else FirstScreenView(
+            headline=screen.headline,
+            summary=screen.summary,
+            skills_group=SkillsGroupView(
+                label=screen.skills_group.label,
+                items=list(screen.skills_group.items),
+            ),
+            first_bullets=[
+                FirstBulletView(role=bullet.role, text=bullet.text)
+                for bullet in screen.first_bullets
+            ],
+            keywords=list(screen.keywords),
         ),
     )
 
