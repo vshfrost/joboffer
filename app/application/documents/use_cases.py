@@ -7,7 +7,7 @@ cover letter і перевіряє його (`check_*`: нічого не збе
 попередню того ж виду для тієї ж вакансії. Вакансія скрізь — за номером у межах користувача.
 """
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
 from application.analysis.use_cases import analysis_data
@@ -25,6 +25,7 @@ from application.contracts.documents import (
     KeywordCoverageData,
     LintData,
     LintIssueData,
+    MustHaveFactsData,
     PdfFileData,
     PruneData,
 )
@@ -179,6 +180,7 @@ class DocumentUseCases:
         job_number: int,
         data: CvData,
         photo_number: int | None = None,
+        must_have_facts: Sequence[MustHaveFactsData] = (),
     ) -> CheckData:
         """Ті самі перевірки, що в `save_cv`, але нічого не зберігається і файлу нема. Спершу текст
         без рендеру; PDF рендериться (у пам'яті) лише коли текст чистий. Проблеми документа — у
