@@ -4,6 +4,8 @@
 
 from dataclasses import dataclass
 
+MAX_ANALOGUES = 5
+
 
 @dataclass(frozen=True, slots=True)
 class Analogue:
