@@ -76,3 +76,25 @@ DOCUMENT_TOOL_TEXTS = {
 def test_the_description_is_the_expected_text_addressed_to_any_user(name: str) -> None:
     text = (CATALOG / f"{name}.md").read_text(encoding="utf-8")
     assert text == DOCUMENT_TOOL_TEXTS[name]
+
+
+def _check_cv_text() -> str:
+    return (CATALOG / "check_cv.md").read_text(encoding="utf-8")
+
+
+def test_check_cv_description_explains_the_optional_must_have_facts_input() -> None:
+    text = _check_cv_text()
+
+    assert "Optional must_have_facts" in text
+    assert "fact_ids" in text
+    assert "kind (fact: the facts meet the requirement itself" in text
+    assert "analogue: the closest related facts" in text
+
+
+def test_check_cv_description_explains_the_must_have_coverage_result() -> None:
+    text = _check_cv_text()
+
+    assert "must_have_coverage: per item covered, analogue or missing" in text
+    assert "null when the job has no analysis" in text
+    assert "without must_have_facts every item is missing" in text
+    assert "never invent a fact" in text
