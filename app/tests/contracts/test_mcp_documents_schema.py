@@ -221,6 +221,31 @@ async def test_check_cv_alone_returns_the_optional_must_have_coverage(
     assert "must_have_coverage" not in letter["properties"]
 
 
+async def test_check_cv_alone_returns_the_optional_first_screen(
+    agent: MCPServer,
+) -> None:
+    cv = (await tool_of(agent, "check_cv")).output_schema
+    letter = (await tool_of(agent, "check_cover_letter")).output_schema
+    assert cv is not None
+    assert letter is not None
+    resolved = _resolve(cv, cv.get("$defs", {}))
+
+    assert "first_screen" not in resolved["required"]
+    [object_schema] = [
+        item
+        for item in resolved["properties"]["first_screen"]["anyOf"]
+        if item.get("type") == "object"
+    ]
+    assert sorted(object_schema["properties"]) == [
+        "first_bullets",
+        "headline",
+        "keywords",
+        "skills_group",
+        "summary",
+    ]
+    assert "first_screen" not in letter["properties"]
+
+
 async def test_the_photo_fields_are_offered(agent: MCPServer) -> None:
     save = await tool_of(agent, "save_cv")
     assert "photo_id" in save.input_schema["properties"]

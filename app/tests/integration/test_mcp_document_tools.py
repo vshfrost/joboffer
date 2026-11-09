@@ -199,6 +199,48 @@ async def test_the_cv_and_letter_briefs_carry_candidate_asks_of_the_analysis(
     assert letter["analysis"]["candidate_asks"] == asks
 
 
+async def test_the_cv_brief_carries_the_gap_analogues_of_the_analysis(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number, fact = await ready(agent, token)
+    await save_analysis(
+        agent,
+        token,
+        number,
+        gaps=["gRPC", "OpenTelemetry"],
+        gap_analogues=[
+            {
+                "gap": "gRPC",
+                "analogues": [{"fact_ids": [fact], "explanation": "Python services"}],
+            }
+        ],
+    )
+
+    brief = data(await call(agent, token, "prepare_cv", {"job_id": number}))
+
+    assert brief["analysis"]["gap_analogues"] == [
+        {
+            "gap": "gRPC",
+            "analogues": [{"fact_ids": [fact], "explanation": "Python services"}],
+            "no_honest_analogue": False,
+        },
+        {"gap": "OpenTelemetry", "analogues": [], "no_honest_analogue": True},
+    ]
+
+
+async def test_the_cv_brief_of_an_analysis_without_analogues_shows_null(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number, _ = await ready(agent, token)
+    await save_analysis(agent, token, number, gaps=["gRPC"])
+
+    brief = data(await call(agent, token, "prepare_cv", {"job_id": number}))
+
+    assert brief["analysis"]["gap_analogues"] is None
+
+
 async def test_the_letter_brief_works_without_a_cv_and_then_has_the_last_one(
     agent: Agent,
 ) -> None:
@@ -458,6 +500,7 @@ async def test_check_cv_reports_a_placeholder_and_saves_nothing(
         "keywords",
         "gate",
         "must_have_coverage",
+        "first_screen",
     }
     assert checked["passed"] is False
     [issue] = checked["issues"]
@@ -682,6 +725,15 @@ async def test_check_cv_of_clean_text_passes_and_leaves_no_trace(
             "coverage_percent": None,
         },
         "must_have_coverage": None,
+        "first_screen": {
+            "headline": "Senior Backend Engineer",
+            "summary": "Payments backend engineer",
+            "skills_group": {"label": "Backend", "items": ["Python", "Postgres"]},
+            "first_bullets": [
+                {"role": "Engineer · Acme", "text": "Built payment APIs in Python"}
+            ],
+            "keywords": [],
+        },
     }
     await nothing_saved(agent, token, number, documents_dir)
 

@@ -8,6 +8,8 @@
 Третя — `keyword_facts` на вході `save_analysis` (ATS-2): ключове слово → номери фактів під ним.
 Четверта — `candidate_asks` (63d7b9): список коротких рядків — що роботодавець просить від кандидатів; на вході
 й виході аналізу, не обов'язкове.
+П'ята — `gap_analogues` (ecd42c): аналоги прогалин. На вході `[{gap, analogues: [{fact_ids, explanation}]}]` або null,
+на виході так само плюс `no_honest_analogue` на кожній прогалині; null — аналіз без аналогів.
 """
 
 from typing import Any
@@ -31,6 +33,65 @@ KEYWORD_FACTS_IN: dict[str, Any] = {
         {
             "additionalProperties": {"items": {"type": "integer"}, "type": "array"},
             "type": "object",
+        },
+        {"type": "null"},
+    ]
+}
+GAP_ANALOGUES_IN: dict[str, Any] = {
+    "anyOf": [
+        {
+            "items": {
+                "properties": {
+                    "gap": {"type": "string"},
+                    "analogues": {
+                        "items": {
+                            "properties": {
+                                "fact_ids": {
+                                    "items": {"type": "integer"},
+                                    "type": "array",
+                                },
+                                "explanation": {"type": "string"},
+                            },
+                            "required": ["fact_ids", "explanation"],
+                            "type": "object",
+                        },
+                        "type": "array",
+                    },
+                },
+                "required": ["gap"],
+                "type": "object",
+            },
+            "type": "array",
+        },
+        {"type": "null"},
+    ]
+}
+GAP_ANALOGUES_OUT: dict[str, Any] = {
+    "anyOf": [
+        {
+            "items": {
+                "properties": {
+                    "gap": {"type": "string"},
+                    "analogues": {
+                        "items": {
+                            "properties": {
+                                "fact_ids": {
+                                    "items": {"type": "integer"},
+                                    "type": "array",
+                                },
+                                "explanation": {"type": "string"},
+                            },
+                            "required": ["fact_ids", "explanation"],
+                            "type": "object",
+                        },
+                        "type": "array",
+                    },
+                    "no_honest_analogue": {"type": "boolean"},
+                },
+                "required": ["gap", "analogues", "no_honest_analogue"],
+                "type": "object",
+            },
+            "type": "array",
         },
         {"type": "null"},
     ]
@@ -264,6 +325,7 @@ V1: dict[str, dict[str, Any]] = {
                                     "type": "array",
                                 },
                                 "gaps": GAPS_OUT,
+                                "gap_analogues": GAP_ANALOGUES_OUT,
                                 "job_id": {"type": "integer"},
                                 "filters_passed": {"type": "boolean"},
                                 "flags": {"items": {"type": "string"}, "type": "array"},
@@ -348,6 +410,7 @@ V1: dict[str, dict[str, Any]] = {
                         },
                         "gaps": GAPS_IN,
                         "keyword_facts": KEYWORD_FACTS_IN,
+                        "gap_analogues": GAP_ANALOGUES_IN,
                     },
                     "required": ["score", "summary"],
                     "type": "object",

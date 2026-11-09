@@ -46,7 +46,7 @@ def test_an_existing_analysis_gets_an_empty_candidate_asks_and_downgrades_cleanl
                     ),
                     {"id": ANALYSIS, "user": USER, "job": JOB},
                 )
-            await upgrade(scratch)
+            await upgrade(scratch, "0036")
             async with scratch.connect() as conn:
                 after = (await conn.execute(query)).scalar_one()
             await downgrade(scratch, "0035")

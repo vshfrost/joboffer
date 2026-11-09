@@ -486,3 +486,39 @@ def test_cv_must_have_block_keeps_the_neutral_wording() -> None:
     block = _block(_cv_flat(), "GAP ANALOGUES AND THE MUST-HAVE MAP", "PROCESS")
 
     assert not NAMING.search(block)
+def _letter_flat() -> str:
+    return _flat(_rules(PromptKey.DOCUMENTS_COVER_LETTER_RULES))
+
+
+def test_letter_answers_each_ask_assigned_to_the_letter() -> None:
+    text = _letter_flat()
+    block = _block(text, "Letter asks and gaps", "Before writing")
+
+    assert "Each ask assigned to the letter" in block
+    assert "cover-letter ask" in block
+    assert "answered in the letter" in block
+    assert "never faked" in block
+
+
+def test_letter_explains_a_gap_by_an_analogue_in_the_words_of_the_fact() -> None:
+    block = _block(_letter_flat(), "Letter asks and gaps", "Before writing")
+
+    assert "closest confirmed facts" in block
+    assert "in the fact's own words" in block
+    assert "gap_analogues" in block
+    assert "no honest analogue" in block
+
+
+def test_letter_never_uses_the_gaps_word_even_as_like_or_similar() -> None:
+    block = _block(_letter_flat(), "Letter asks and gaps", "Before writing")
+
+    assert "never with the gap's word as a skill" in block
+    assert '"-like", "similar to" or "familiar with"' in block
+
+
+def test_letter_explains_at_most_two_gaps_and_no_negations() -> None:
+    block = _block(_letter_flat(), "Letter asks and gaps", "Before writing")
+
+    assert "at most two" in block
+    assert "must-have gaps" in block
+    assert 'no negations such as "I have no experience with"' in block
