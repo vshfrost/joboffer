@@ -102,3 +102,16 @@ PLACEMENT — the first screen gets most of a recruiter's attention:
 SOFT RULES (P6): the lines above on section order, Experience entry format, Projects entry format,
 Skills group size, Education and Languages one line each, and free space are soft rules. Break one only
 when it shows the candidate better for this job, and name the rule and the reason in the plan.
+
+PROCESS:
+1. Before writing, show the user a short CV plan:
+   - ceiling: the keyword coverage the facts allow and the keywords no fact backs;
+   - asks: each ask → CV or cover letter, and where it goes;
+   - must-have map: requirement → fact_ids (and which have none);
+   - gap → analogue map: gap → fact_ids and wording (or "no honest analogue");
+   - strengths: the 3–5 chosen facts with their scores;
+   - first screen: headline, summary outline, first Skills group, first bullet per role;
+   - soft rules you will break and why.
+   Continue without waiting unless a choice is genuinely ambiguous.
+2. Write the CV and call check_cv until passed is true, fixing issues by shrinking the lowest priority first.
+3. After saving, report: coverage numbers, gaps left out, analogues used, soft rules broken.
