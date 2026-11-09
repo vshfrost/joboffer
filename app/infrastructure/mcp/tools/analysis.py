@@ -10,7 +10,13 @@ from mcp.server.mcpserver.exceptions import ToolError
 from pydantic import BaseModel, Field
 
 from application.analysis.use_cases import AnalysisUseCases
-from application.contracts.analysis import AnalysisData, AnalysisInput, GapInput
+from application.contracts.analysis import (
+    AnalogueInput,
+    AnalysisData,
+    AnalysisInput,
+    GapAnaloguesInput,
+    GapInput,
+)
 from application.ports.prompts import PromptKey, Prompts
 from domain.analysis.analysis import MAX_SCORE
 from domain.shared.errors import DomainError
@@ -152,6 +158,22 @@ class AnalysisBriefView(BaseModel):
 
 def analysis_view(saved: AnalysisData) -> AnalysisView:
     return AnalysisView(
+        gap_analogues=None
+        if saved.gap_analogues is None
+        else [
+            GapAnaloguesView(
+                gap=item.gap,
+                analogues=[
+                    AnalogueView(
+                        fact_ids=list(analogue.fact_numbers),
+                        explanation=analogue.explanation,
+                    )
+                    for analogue in item.analogues
+                ],
+                no_honest_analogue=item.no_honest_analogue,
+            )
+            for item in saved.gap_analogues
+        ],
         job_id=saved.job_number,
         filters_passed=saved.filters_passed,
         flags=list(saved.flags),
@@ -234,6 +256,21 @@ def register_analysis_tools(
                 for item in analysis.gaps
             ],
             keyword_facts=analysis.keyword_facts,
+            gap_analogues=None
+            if analysis.gap_analogues is None
+            else [
+                GapAnaloguesInput(
+                    gap=item.gap,
+                    analogues=[
+                        AnalogueInput(
+                            fact_numbers=analogue.fact_ids,
+                            explanation=analogue.explanation,
+                        )
+                        for analogue in item.analogues
+                    ],
+                )
+                for item in analysis.gap_analogues
+            ],
         )
         try:
             saved = await use_cases.save_analysis(current_actor(), job_id, data)
