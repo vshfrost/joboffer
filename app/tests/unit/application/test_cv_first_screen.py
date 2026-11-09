@@ -120,7 +120,7 @@ def test_a_keyword_only_in_an_old_role_is_not_in_the_first_screen(
         fact,
         roles=(
             ("Engineer · Acme", ("Built payment APIs",)),
-            ("Developer · Beta", ("Wrote Kafka consumers",)),
+            ("Developer · Beta", ("Wrote ETL jobs", "Wrote Kafka consumers")),
         ),
     )
 
