@@ -329,3 +329,46 @@ def test_cv_analogue_is_written_in_the_words_of_the_fact_and_placed_by_the_gap_p
     assert 'no honest analogue" is the answer when none exists' in p3
     assert "same rules as P3, placed lower" in p5
     assert "later bullets or a later Skills group" in p5
+
+
+def test_cv_strengths_are_three_to_five_by_a_scale_of_seven_signals_one_per_theme() -> None:
+    text = _cv_flat()
+    p4 = _block(text, "P4 Strongest facts", "P5 Analogues for nice-to-have gaps")
+
+    assert "Choose 3–5 per CV" in p4
+    assert "at most one near-duplicate per theme" in p4
+    assert len(re.findall(r"- [^:]+: \+\d\b", p4)) == 7
+    assert "not stored in the profile" in p4
+
+
+def test_cv_first_screen_has_headline_summary_order_first_skills_group_and_first_bullet() -> None:
+    text = _cv_flat()
+    placement = _block(text, "PLACEMENT", "SOFT RULES")
+
+    assert "headline: the job title as the posting names it" in placement
+    assert (
+        "P1 asks → strongest P2 match → P3 analogue for the most important gap → "
+        "1–2 P4 strengths with numbers"
+    ) in placement
+    assert "Skills, first group: the job's core stack" in placement
+    assert "names taken from the job's requirements" in placement
+    assert "first bullet of each role: the highest-priority fact of that role" in placement
+    assert "Older or less relevant roles shrink first" in placement
+
+
+def test_cv_maps_every_must_have_item_to_the_facts_that_back_it() -> None:
+    text = _cv_flat()
+    p2 = _block(text, "P2 Must-have requirements backed by facts", "P3 Analogues")
+
+    assert "Map every must_have item AND every analysis keyword to the facts that back it" in p2
+    assert "years, team size, leadership, domain" in p2
+
+
+def test_cv_asks_are_split_into_cv_and_cover_letter_and_a_cv_ask_goes_in_the_most_visible_place() -> None:
+    text = _cv_flat()
+    p1 = _block(text, "P1 Employer asks", "P2 Must-have")
+
+    assert "Split each ask: CV ask" in p1
+    assert "cover-letter ask" in p1
+    assert "most visible place that fits" in p1
+    assert "An ask no fact can answer is reported to the user, never faked" in p1
