@@ -46,7 +46,7 @@ def test_an_existing_analysis_is_marked_without_analogues_and_downgrades_cleanly
                     ),
                     {"id": ANALYSIS, "user": USER, "job": JOB},
                 )
-            await upgrade(scratch)
+            await upgrade(scratch, "0037")
             async with scratch.connect() as conn:
                 after = (await conn.execute(query)).scalar_one()
             await downgrade(scratch, "0036")
