@@ -499,6 +499,7 @@ def _check_view(checked: CheckData) -> CheckView:
 
 def _cv_check_view(checked: CheckData) -> CvCheckView:
     gate = checked.gate
+    must_have = checked.must_have_coverage
     return CvCheckView(
         **_check_view(checked).model_dump(),
         gate=None
@@ -508,6 +509,20 @@ def _cv_check_view(checked: CheckData) -> CvCheckView:
             evidence_percent=gate.evidence_percent,
             evidence_missing=list(gate.evidence_missing),
             coverage_percent=gate.coverage_percent,
+        ),
+        must_have_coverage=None
+        if must_have is None
+        else MustHaveCoverageView(
+            items=[
+                MustHaveItemView(
+                    item=item.item,
+                    status=item.status.value,
+                    fact_ids=list(item.fact_ids),
+                    reason=item.reason,
+                )
+                for item in must_have.items
+            ],
+            unknown=list(must_have.unknown),
         ),
     )
 

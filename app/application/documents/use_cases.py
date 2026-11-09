@@ -25,7 +25,9 @@ from application.contracts.documents import (
     KeywordCoverageData,
     LintData,
     LintIssueData,
+    MustHaveCoverageData,
     MustHaveFactsData,
+    MustHaveItemData,
     PdfFileData,
     PruneData,
 )
@@ -64,6 +66,12 @@ from domain.documents.lint import (
     letter_text_issues,
     lint,
 )
+from domain.documents.must_have import (
+    MustHaveCoverage,
+    MustHaveEntry,
+    MustHaveKind,
+    must_have_coverage,
+)
 from domain.facts.library import confirmed, require_confirmed
 from domain.identity.ids import UserId
 from domain.jobs.job import Job
@@ -94,6 +102,17 @@ class _Checked:
     ready: _Ready | None = None
     # Гейт є лише в CV: лист слів вакансії не вичерпує.
     gate: CvGate | None = None
+    # Лише в CV вакансії з аналізом.
+    must_have: MustHaveCoverage | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class _Options:
+    """Що ще, крім самого документа, впливає на перевірку."""
+
+    photo_number: int | None
+    # Лише для CV: карта пунктів must-have аналізу до фактів від агента.
+    must_have: tuple[MustHaveEntry, ...] = ()
 
 
 class DocumentUseCases:
@@ -184,8 +203,11 @@ class DocumentUseCases:
     ) -> CheckData:
         """Ті самі перевірки, що в `save_cv`, але нічого не зберігається і файлу нема. Спершу текст
         без рендеру; PDF рендериться (у пам'яті) лише коли текст чистий. Проблеми документа — у
-        результаті; `NotFound` / `InvalidValue` — вакансії нема, чужа чи без тексту."""
-        return await self._check_only(actor, job_number, data, photo_number)
+        результаті; `NotFound` / `InvalidValue` — вакансії нема, чужа чи без тексту.
+        `must_have_facts` — необов'язкова карта пунктів must-have аналізу до фактів (див.
+        `must_have_coverage`); невідомий `kind` — `InvalidValue`."""
+        entries = tuple(_must_have_entry(item) for item in must_have_facts)
+        return await self._check_only(actor, job_number, data, photo_number, entries)
 
     async def check_cover_letter(
         self, actor: Actor, job_number: int, data: CoverLetterData
@@ -289,11 +311,14 @@ class DocumentUseCases:
         job_number: int,
         raw: CvData | CoverLetterData,
         photo_number: int | None,
+        entries: tuple[MustHaveEntry, ...] = (),
     ) -> CheckData:
         user = actor.user_id
         async with self._unit_of_work() as uow:
             job = _writable(await uow.jobs.get(user, job_number), job_number)
-            checked = await self._check(uow, user, job, raw, photo_number)
+            checked = await self._check(
+                uow, user, job, raw, _Options(photo_number, entries)
+            )
         return CheckData(
             passed=not checked.issues,
             issues=tuple(
@@ -302,6 +327,7 @@ class DocumentUseCases:
             ),
             keywords=_keywords_data(checked.keywords),
             gate=_gate_data(checked.gate),
+            must_have_coverage=_must_have_data(checked.must_have),
         )
 
     async def _save(
@@ -314,7 +340,7 @@ class DocumentUseCases:
         user = actor.user_id
         async with self._unit_of_work() as uow:
             job = _writable(await uow.jobs.get(user, job_number), job_number)
-            checked = await self._check(uow, user, job, raw, photo_number)
+            checked = await self._check(uow, user, job, raw, _Options(photo_number))
             if checked.invalid is not None:
                 raise checked.invalid
             ready = checked.ready
@@ -372,7 +398,7 @@ class DocumentUseCases:
         user: UserId,
         job: Job,
         raw: CvData | CoverLetterData,
-        photo_number: int | None,
+        options: _Options,
     ) -> _Checked:
         """Усі перевірки документа в одному місці — для `check_*` і `save_*`. Спершу текст без
         рендеру (розбір, факти, ім'я, фото, гігієна); PDF рендериться, лише коли текст чистий, і
@@ -384,7 +410,7 @@ class DocumentUseCases:
         )
         try:
             content, contacts, photo = await self._validated(
-                uow, user, raw, photo_number
+                uow, user, raw, options.photo_number
             )
         except InvalidValue as error:
             issue = LintIssue(LintCode.INVALID_VALUE, error.message)
@@ -397,6 +423,7 @@ class DocumentUseCases:
             layout = cover_letter_layout(content, contacts)
         coverage = keyword_coverage(keywords, layout.lines)
         gate = None
+        must_have = None
         if isinstance(content, Cv):
             live = {fact.number for fact in confirmed(await uow.facts.all(user))}
             gate = cv_gate(
@@ -404,8 +431,15 @@ class DocumentUseCases:
                 None if analysis is None else analysis.analysis.keyword_facts,
                 live,
             )
+            if analysis is not None:
+                must_have = must_have_coverage(
+                    analysis.analysis.must_have,
+                    options.must_have,
+                    content.fact_ids,
+                    live,
+                )
         if hygiene:
-            return _Checked(hygiene, coverage, gate=gate)
+            return _Checked(hygiene, coverage, gate=gate, must_have=must_have)
         if isinstance(content, Cv):
             pdf = await self._output.renderer.render_cv(
                 content, contacts, None if photo is None else photo.data
@@ -414,12 +448,13 @@ class DocumentUseCases:
             pdf = await self._output.renderer.render_cover_letter(content, contacts)
         report = lint(layout, await self._output.inspector.inspect(pdf), keywords)
         if report.issues:
-            return _Checked(report.issues, coverage, gate=gate)
+            return _Checked(report.issues, coverage, gate=gate, must_have=must_have)
         return _Checked(
             (),
             coverage,
             ready=_Ready(content, pdf, report, None if photo is None else photo.id),
             gate=gate,
+            must_have=must_have,
         )
 
 
@@ -434,6 +469,35 @@ def _keywords_data(keywords: KeywordCoverage | None) -> KeywordCoverageData | No
         if keywords is None
         else KeywordCoverageData(
             covered=keywords.covered, missing=keywords.missing, percent=keywords.percent
+        )
+    )
+
+
+def _must_have_entry(item: MustHaveFactsData) -> MustHaveEntry:
+    try:
+        kind = MustHaveKind(item.kind)
+    except ValueError:
+        raise InvalidValue(
+            "kind", f"kind — fact або analogue, не {item.kind!r}."
+        ) from None
+    return MustHaveEntry(item.item, tuple(item.fact_ids), kind)
+
+
+def _must_have_data(coverage: MustHaveCoverage | None) -> MustHaveCoverageData | None:
+    return (
+        None
+        if coverage is None
+        else MustHaveCoverageData(
+            items=tuple(
+                MustHaveItemData(
+                    item=item.item,
+                    status=item.status,
+                    fact_ids=item.fact_ids,
+                    reason=item.reason,
+                )
+                for item in coverage.items
+            ),
+            unknown=coverage.unknown,
         )
     )
 
