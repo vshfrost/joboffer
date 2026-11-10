@@ -486,6 +486,8 @@ def test_cv_must_have_block_keeps_the_neutral_wording() -> None:
     block = _block(_cv_flat(), "GAP ANALOGUES AND THE MUST-HAVE MAP", "PROCESS")
 
     assert not NAMING.search(block)
+
+
 def _letter_flat() -> str:
     return _flat(_rules(PromptKey.DOCUMENTS_COVER_LETTER_RULES))
 
