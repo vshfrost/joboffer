@@ -8,6 +8,22 @@ updates:
     directory: /web
     schedule:
       interval: weekly
+    groups:
+      react:
+        patterns:
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+    ignore:
+      # typescript-eslint підтримує лише typescript <6.1.
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
+      # cropperjs 2 має зовсім нове API; міграція — окремою задачею.
+      - dependency-name: cropperjs
+        update-types:
+          - version-update:semver-major
   - package-ecosystem: github-actions
     directory: /
     schedule:
