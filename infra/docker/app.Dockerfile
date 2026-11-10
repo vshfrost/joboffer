@@ -2,7 +2,7 @@
 # Образ backend (app/). Контекст збірки — корінь репо.
 FROM ghcr.io/astral-sh/uv:0.13.7 AS uv
 
-FROM python:3.14.8-slim-trixie AS build
+FROM python:3.14.9-slim-trixie AS build
 COPY --from=uv /uv /usr/local/bin/uv
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
@@ -18,7 +18,7 @@ COPY app/infrastructure infrastructure
 COPY app/bootstrap bootstrap
 RUN uv sync --locked --no-default-groups --no-editable
 
-FROM python:3.14.8-slim-trixie
+FROM python:3.14.9-slim-trixie
 # WeasyPrint (рендер PDF): pango + harfbuzz і шрифти, які він вбудовує в PDF.
 # poppler-utils: pdftotext, другий парсер PDF для ATS-lint.
 RUN apt-get update \
