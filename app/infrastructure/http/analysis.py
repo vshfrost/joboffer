@@ -35,6 +35,7 @@ class AnalysisModel(BaseModel):
     must_have: list[str]
     nice_to_have: list[str]
     keywords: list[str]
+    candidate_asks: list[str]
     seniority: SeniorityName | None
     work_mode: WorkModeName | None
     location: str | None
@@ -76,6 +77,7 @@ def _model(data: AnalysisData) -> AnalysisModel:
         must_have=list(data.must_have),
         nice_to_have=list(data.nice_to_have),
         keywords=list(data.keywords),
+        candidate_asks=list(data.candidate_asks),
         seniority=None if data.seniority is None else data.seniority.value,
         work_mode=None if data.work_mode is None else data.work_mode.value,
         location=data.location,

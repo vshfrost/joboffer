@@ -13,6 +13,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from domain.analysis.analysis import Analysis, Gap, JobAnalysis
+from domain.analysis.gap_analogues import Analogue, GapAnalogues
 from domain.analysis.ids import AnalysisId
 from domain.analysis.keywords import KeywordFacts
 from domain.identity.ids import UserId
@@ -80,6 +81,7 @@ def _details(analysis: JobAnalysis) -> dict[str, Any]:
         "must_have": list(analysis.must_have),
         "nice_to_have": list(analysis.nice_to_have),
         "keywords": list(analysis.keywords),
+        "candidate_asks": list(analysis.candidate_asks),
         "seniority": None if analysis.seniority is None else analysis.seniority.value,
         "location": analysis.location,
         "languages": list(analysis.languages),
@@ -89,6 +91,22 @@ def _details(analysis: JobAnalysis) -> dict[str, Any]:
         "reasons": list(analysis.reasons),
         "gaps": [
             {"gap": item.gap, "question": item.question} for item in analysis.gaps
+        ],
+        # Нема ключа / null — аналіз без аналогів (старий): «нема даних».
+        "gap_analogues": None
+        if analysis.gap_analogues is None
+        else [
+            {
+                "gap": item.gap,
+                "analogues": [
+                    {
+                        "fact_numbers": list(analogue.fact_numbers),
+                        "explanation": analogue.explanation,
+                    }
+                    for analogue in item.analogues
+                ],
+            }
+            for item in analysis.gap_analogues
         ],
         # Список, не об'єкт: JSONB не зберігає порядок ключів. Нема ключа / null — старий аналіз.
         "keyword_facts": None
@@ -117,6 +135,23 @@ def _keyword_facts(
     )
 
 
+def _gap_analogues(
+    stored: list[dict[str, Any]] | None,
+) -> tuple[GapAnalogues, ...] | None:
+    if stored is None:
+        return None
+    return tuple(
+        GapAnalogues(
+            item["gap"],
+            tuple(
+                Analogue(tuple(analogue["fact_numbers"]), analogue["explanation"])
+                for analogue in item["analogues"]
+            ),
+        )
+        for item in stored
+    )
+
+
 def _to_domain(row: AnalysisRow, number: int) -> Analysis:
     details = row.details
     analysis = JobAnalysis(
@@ -125,6 +160,7 @@ def _to_domain(row: AnalysisRow, number: int) -> Analysis:
         must_have=tuple(details["must_have"]),
         nice_to_have=tuple(details["nice_to_have"]),
         keywords=tuple(details["keywords"]),
+        candidate_asks=tuple(details.get("candidate_asks", ())),
         seniority=None
         if details["seniority"] is None
         else Seniority(details["seniority"]),
@@ -137,5 +173,6 @@ def _to_domain(row: AnalysisRow, number: int) -> Analysis:
         reasons=tuple(details["reasons"]),
         gaps=tuple(_gap(item) for item in details["gaps"]),
         keyword_facts=_keyword_facts(details.get("keyword_facts")),
+        gap_analogues=_gap_analogues(details.get("gap_analogues")),
     )
     return Analysis(number, analysis, tuple(row.flags), row.updated_at)

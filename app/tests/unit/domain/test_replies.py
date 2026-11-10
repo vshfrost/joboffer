@@ -50,7 +50,7 @@ def test_a_reply_in_the_thread_of_an_applied_job_matches_it_with_high_confidence
 ):
     jobs = (
         AppliedJob(1, "Backend", "Acme", APPLIED),
-        AppliedJob(2, "Data", "Bolt", APPLIED),
+        AppliedJob(2, "Data", "Tidewell", APPLIED),
     )
 
     found = match_reply(reply("someone@gmail.com", in_reply_to="<a@b>"), jobs, 2)
@@ -113,15 +113,15 @@ def test_the_company_domain_or_its_subdomain_matches_but_a_lookalike_does_not() 
 def test_an_ats_sender_with_the_company_name_and_the_same_ats_matches(
     sender: str, platform: AtsPlatform
 ) -> None:
-    job = AppliedJob(30, "Backend", "Bolt", APPLIED, platform)
+    job = AppliedJob(30, "Backend", "Tidewell", APPLIED, platform)
 
-    found = match_reply(reply(sender, "Your application to Bolt"), (job,), None)
+    found = match_reply(reply(sender, "Your application to Tidewell"), (job,), None)
 
     assert found == ReplyMatch(30, Confidence.HIGH, MatchedBy.ATS)
 
 
 def test_an_ats_sender_without_the_company_name_matches_nothing() -> None:
-    job = AppliedJob(30, "Backend", "Bolt", APPLIED, AtsPlatform.LEVER)
+    job = AppliedJob(30, "Backend", "Tidewell", APPLIED, AtsPlatform.LEVER)
 
     assert match_reply(reply("no-reply@hire.lever.co", "Hi"), (job,), None) == (
         ReplyMatch()
@@ -131,11 +131,11 @@ def test_an_ats_sender_without_the_company_name_matches_nothing() -> None:
 def test_an_ats_sender_of_another_platform_falls_back_to_the_name_with_low_confidence() -> (
     None
 ):
-    other_ats = AppliedJob(31, "Backend", "Bolt", APPLIED, AtsPlatform.ASHBY)
-    no_ats = AppliedJob(32, "Backend", "Bolt", APPLIED)
+    other_ats = AppliedJob(31, "Backend", "Tidewell", APPLIED, AtsPlatform.ASHBY)
+    no_ats = AppliedJob(32, "Backend", "Tidewell", APPLIED)
 
     found = match_reply(
-        reply("no-reply@hire.lever.co", "Your application to Bolt"),
+        reply("no-reply@hire.lever.co", "Your application to Tidewell"),
         (other_ats, no_ats),
         None,
     )
@@ -144,29 +144,29 @@ def test_an_ats_sender_of_another_platform_falls_back_to_the_name_with_low_confi
 
 
 def test_the_company_name_alone_is_low_confidence_and_ignores_the_legal_form() -> None:
-    job = AppliedJob(40, "Backend", "Typeform S.L.", APPLIED)
+    job = AppliedJob(40, "Backend", "Quillform S.L.", APPLIED)
 
     found = match_reply(
-        reply("agency@talent.example", "A role at Typeform"), (job,), None
+        reply("agency@talent.example", "A role at Quillform"), (job,), None
     )
 
     assert found == ReplyMatch(40, Confidence.LOW, MatchedBy.NAME)
 
 
 def test_the_company_name_must_be_a_whole_word() -> None:
-    job = AppliedJob(40, "Backend", "Bolt", APPLIED)
+    job = AppliedJob(40, "Backend", "Tidewell", APPLIED)
 
-    found = match_reply(reply("x@talent.example", "Thunderbolt news"), (job,), None)
+    found = match_reply(reply("x@talent.example", "Thundertidewell news"), (job,), None)
 
     assert found == ReplyMatch()
 
 
 def test_the_company_name_is_found_in_the_sender_name_and_the_text() -> None:
-    job = AppliedJob(40, "Backend", "Bolt", APPLIED)
+    job = AppliedJob(40, "Backend", "Tidewell", APPLIED)
 
-    by_name = match_reply(reply("a@x.example", name="Bolt Talent"), (job,), None)
+    by_name = match_reply(reply("a@x.example", name="Tidewell Talent"), (job,), None)
     by_text = match_reply(
-        reply("a@x.example", text="We at Bolt liked it"), (job,), None
+        reply("a@x.example", text="We at Tidewell liked it"), (job,), None
     )
 
     assert by_name == ReplyMatch(40, Confidence.LOW, MatchedBy.NAME)
@@ -175,12 +175,12 @@ def test_the_company_name_is_found_in_the_sender_name_and_the_text() -> None:
 
 def test_a_name_match_picks_the_job_whose_title_the_mail_mentions() -> None:
     jobs = (
-        AppliedJob(40, "Backend", "Bolt", APPLIED),
-        AppliedJob(41, "Data Engineer", "Bolt", APPLIED),
+        AppliedJob(40, "Backend", "Tidewell", APPLIED),
+        AppliedJob(41, "Data Engineer", "Tidewell", APPLIED),
     )
 
     found = match_reply(
-        reply("agency@talent.example", "Data Engineer role at Bolt"), jobs, None
+        reply("agency@talent.example", "Data Engineer role at Tidewell"), jobs, None
     )
 
     assert found == ReplyMatch(41, Confidence.LOW, MatchedBy.NAME)

@@ -2,9 +2,6 @@
 
 Сервіс генерації CV та Cover Letter для подачі на вакансію
 
-Згенеровано з [hexpy-boilerplate](https://github.com/vshfrost/hexpy-boilerplate) (copier).
-Оновити каркас до нової версії шаблону: `uvx copier update --trust`.
-
 ## Архітектура
 
 Гексагональна (ports & adapters), один модульний моноліт. Шари — пакети верхнього рівня в `app/`:
@@ -104,7 +101,7 @@ scripts/web.sh run dev         # http://localhost:5174/
 UI — Tailwind CSS 4 і компоненти в стилі shadcn/ui (Radix, class-variance-authority) з темою Pine:
 токени лежать лише в `web/src/ui/theme.css`, їх звіряє `theme.test.ts` з дизайн-системою; Inter — локальні WOFF2
 (`@fontsource-variable/inter`). Нові кольори, радіуси й відступи спершу додаються до дизайн-системи.
-Бренд — `web/public/brand/`, затверджений макет Pine 02 і еталон лого — `docs/design/` (референс, не в збірці).
+Бренд — `web/public/brand/`, еталон лого — `docs/design/` (референс, не в збірці).
 
 ## База даних
 

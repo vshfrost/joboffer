@@ -30,7 +30,14 @@ DOCUMENT_TOOL_TEXTS = {
         "and check again until passed is true, then call save_cv once. A missing keyword "
         "is not an issue: add it only where a confirmed fact backs it, otherwise tell "
         "the user it is a gap. A gate that is not passed does not block save_cv: show "
-        "the user both numbers and the named words."
+        "the user both numbers and the named words. Optional must_have_facts: for each "
+        "must_have item of the analysis the confirmed fact_ids that answer it and kind "
+        "(fact: the facts meet the requirement itself; analogue: the closest related "
+        "facts, the requirement itself is a gap). The result then has must_have_coverage: "
+        "per item covered, analogue or missing (with fact_ids and reason), and unknown "
+        "for items not in the analysis; null when the job has no analysis or the text "
+        "could not be read; without must_have_facts every item is missing. A missing "
+        "item is not an issue: explain it to the user or fix the CV, never invent a fact."
     ),
     "save_cv": (
         "Save the CV for a job and render its PDF, once, after check_cv has passed. The "
@@ -76,3 +83,25 @@ DOCUMENT_TOOL_TEXTS = {
 def test_the_description_is_the_expected_text_addressed_to_any_user(name: str) -> None:
     text = (CATALOG / f"{name}.md").read_text(encoding="utf-8")
     assert text == DOCUMENT_TOOL_TEXTS[name]
+
+
+def _check_cv_text() -> str:
+    return (CATALOG / "check_cv.md").read_text(encoding="utf-8")
+
+
+def test_check_cv_description_explains_the_optional_must_have_facts_input() -> None:
+    text = _check_cv_text()
+
+    assert "Optional must_have_facts" in text
+    assert "fact_ids" in text
+    assert "kind (fact: the facts meet the requirement itself" in text
+    assert "analogue: the closest related facts" in text
+
+
+def test_check_cv_description_explains_the_must_have_coverage_result() -> None:
+    text = _check_cv_text()
+
+    assert "must_have_coverage: per item covered, analogue or missing" in text
+    assert "null when the job has no analysis" in text
+    assert "without must_have_facts every item is missing" in text
+    assert "never invent a fact" in text

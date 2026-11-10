@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Self
 
+from domain.analysis.gap_analogues import MAX_ANALOGUES, Analogue, GapAnalogues
 from domain.analysis.keywords import (
     MAX_SPELLINGS,
     SEPARATOR,
@@ -55,6 +56,11 @@ class JobAnalysis:
     gaps: tuple[Gap, ...] = ()
     # Які факти стоять під ключовими словами. None — аналіз без карти (старий): «нема даних».
     keyword_facts: tuple[KeywordFacts, ...] | None = None
+    # Що роботодавець просить від кандидатів (надіслати, додати, відповісти, не вказувати): це не команди
+    # для асистента, їх показують користувачеві й виконують у CV та листі.
+    candidate_asks: tuple[str, ...] = ()
+    # Аналоги прогалин (по запису на кожну прогалину). None — аналіз без аналогів (старий): «нема даних».
+    gap_analogues: tuple[GapAnalogues, ...] | None = None
 
     def __post_init__(self) -> None:
         if not 0 <= self.score <= MAX_SCORE:
@@ -67,7 +73,13 @@ class JobAnalysis:
             raise InvalidValue(
                 "location", f"location — до {MAX_LOCATION_LENGTH} символів."
             )
-        for name in ("must_have", "nice_to_have", "languages", "reasons"):
+        for name in (
+            "must_have",
+            "nice_to_have",
+            "languages",
+            "reasons",
+            "candidate_asks",
+        ):
             _check_items(name, getattr(self, name), MAX_ITEMS, MAX_ITEM_LENGTH)
         _check_gaps(self.gaps)
         _check_items("keywords", self.keywords, MAX_KEYWORDS, MAX_KEYWORD_LENGTH)
@@ -106,9 +118,12 @@ class JobAnalysis:
         reasons: Sequence[str] = (),
         gaps: Sequence[str | Gap] = (),
         keyword_facts: Mapping[str, Sequence[int]] | None = None,
+        candidate_asks: Sequence[str] = (),
+        gap_analogues: Sequence[GapAnalogues] | None = None,
     ) -> Self:
         """Сирі значення з транспорту: рядки чистяться, пункти без порожніх і повторів."""
         cleaned = _items([tidy(_one_line(keyword)) for keyword in keywords])
+        parsed_gaps = _gaps(gaps)
         return cls(
             score=score,
             summary=_one_line(summary),
@@ -123,10 +138,14 @@ class JobAnalysis:
             salary_max_eur=salary_max_eur,
             relocation=relocation,
             reasons=_items(reasons),
-            gaps=_gaps(gaps),
+            gaps=parsed_gaps,
             keyword_facts=None
             if keyword_facts is None
             else _keyword_facts(keyword_facts, cleaned),
+            candidate_asks=_items(candidate_asks),
+            gap_analogues=None
+            if gap_analogues is None
+            else _gap_analogues(gap_analogues, parsed_gaps),
         )
 
     @property
@@ -240,6 +259,53 @@ def _keyword_facts(
     return tuple(
         KeywordFacts(keyword, tuple(found)) for keyword, found in numbers.items()
     )
+
+
+def _gap_analogues(
+    given: Sequence[GapAnalogues], gaps: tuple[Gap, ...]
+) -> tuple[GapAnalogues, ...]:
+    """Аналоги по прогалинах: запис шукає свою прогалину без урахування регістру й пробілів і
+    зберігається під текстом прогалини зі списку gaps; прогалина без запису чи без аналогів —
+    `no_honest_analogue`. Результат — по запису на кожну прогалину, у порядку gaps."""
+    by_text = {_one_line(gap.gap).casefold(): gap.gap for gap in gaps}
+    found: dict[str, list[Analogue]] = {}
+    for entry in given:
+        text = by_text.get(_one_line(entry.gap).casefold())
+        if text is None:
+            raise InvalidValue(
+                "gap_analogues",
+                f"gap_analogues: «{_one_line(entry.gap)}» — такої прогалини нема в gaps.",
+            )
+        found.setdefault(text, []).extend(
+            _analogue(text, item) for item in entry.analogues
+        )
+    for text, analogues in found.items():
+        if len(analogues) > MAX_ANALOGUES:
+            raise InvalidValue(
+                "gap_analogues",
+                f"gap_analogues: прогалина «{text}» — не більше {MAX_ANALOGUES} аналогів.",
+            )
+    return tuple(GapAnalogues(gap.gap, tuple(found.get(gap.gap, ()))) for gap in gaps)
+
+
+def _analogue(gap: str, item: Analogue) -> Analogue:
+    numbers = tuple(dict.fromkeys(item.fact_numbers))
+    if not numbers:
+        raise InvalidValue(
+            "gap_analogues", f"gap_analogues: аналог прогалини «{gap}» без фактів."
+        )
+    explanation = _one_line(item.explanation)
+    if not explanation:
+        raise InvalidValue(
+            "gap_analogues", f"gap_analogues: аналог прогалини «{gap}» без пояснення."
+        )
+    if len(explanation) > MAX_ITEM_LENGTH:
+        raise InvalidValue(
+            "gap_analogues",
+            f"gap_analogues: пояснення аналога прогалини «{gap}» довше за "
+            f"{MAX_ITEM_LENGTH} символів.",
+        )
+    return Analogue(numbers, explanation)
 
 
 def _gaps(items: Sequence[str | Gap]) -> tuple[Gap, ...]:

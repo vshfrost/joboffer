@@ -47,6 +47,37 @@ class KeywordFactsData:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class AnalogueInput:
+    """Аналог прогалини з транспорту: номери фактів і пояснення."""
+
+    fact_numbers: Sequence[int]
+    explanation: str
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class GapAnaloguesInput:
+    """Аналоги однієї прогалини з транспорту; без аналогів — `no_honest_analogue`."""
+
+    gap: str
+    analogues: Sequence[AnalogueInput] = ()
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class AnalogueData:
+    fact_numbers: tuple[int, ...]
+    explanation: str
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class GapAnaloguesData:
+    """Збережені аналоги прогалини; `no_honest_analogue` — аналогів нема."""
+
+    gap: str
+    analogues: tuple[AnalogueData, ...]
+    no_honest_analogue: bool
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class AnalysisInput:
     """Сирі значення з будь-якого транспорту; рядки й списки чистяться в домені."""
 
@@ -66,6 +97,9 @@ class AnalysisInput:
     gaps: Sequence[str | GapInput] = field(default=())
     # Ключове слово → номери фактів під ним; None — карти нема.
     keyword_facts: Mapping[str, Sequence[int]] | None = None
+    candidate_asks: Sequence[str] = ()
+    # Аналоги прогалин; None — не оцінено.
+    gap_analogues: Sequence[GapAnaloguesInput] | None = None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -92,6 +126,8 @@ class AnalysisData:
     updated_at: datetime
     stale_since: datetime | None = None
     keyword_facts: tuple[KeywordFactsData, ...] | None = None
+    candidate_asks: tuple[str, ...] = ()
+    gap_analogues: tuple[GapAnaloguesData, ...] | None = None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

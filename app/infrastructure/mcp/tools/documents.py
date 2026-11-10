@@ -25,6 +25,7 @@ from application.contracts.documents import (
     CvSectionData,
     DocumentData,
     LintData,
+    MustHaveFactsData,
 )
 from application.documents.use_cases import DocumentUseCases
 from application.ports.prompts import PromptKey, Prompts
@@ -91,6 +92,19 @@ class CvIn(BaseModel):
     sections: list[CvSectionIn]
 
 
+class MustHaveFactsIn(BaseModel):
+    """What you say about one must-have item of the analysis; the server checks it."""
+
+    item: str = Field(description="The must_have text exactly as in the analysis")
+    fact_ids: list[int] = Field(
+        description="Confirmed facts under the item; at least one must stand in a CV line"
+    )
+    kind: Literal["fact", "analogue"] = Field(
+        description="fact: the facts meet the requirement itself; analogue: they are "
+        "the closest related experience, the requirement itself is a gap"
+    )
+
+
 class CoverLetterView(BaseModel):
     text: str = Field(description="Paragraphs separated by blank lines")
     fact_ids: list[int]
@@ -146,12 +160,68 @@ class GateView(BaseModel):
     )
 
 
+class MustHaveItemView(BaseModel):
+    item: str = Field(description="A must_have item of the analysis")
+    status: Literal["covered", "analogue", "missing"] = Field(
+        description="covered: a CV line cites the facts you gave as kind fact; analogue: "
+        "the same for kind analogue; missing: otherwise, see reason"
+    )
+    fact_ids: list[int] = Field(
+        description="The facts of the entry a CV line cites; empty when missing"
+    )
+    reason: str | None = Field(description="Why the item is missing; null otherwise")
+
+
+class MustHaveCoverageView(BaseModel):
+    items: list[MustHaveItemView] = Field(
+        description="Every must_have item of the analysis, in its order"
+    )
+    unknown: list[str] = Field(
+        description="Items you named that are not in the analysis; ignored"
+    )
+
+
+class SkillsGroupView(BaseModel):
+    label: str = Field(description="Label of the first Skills group; empty: no group")
+    items: list[str] = Field(description="Items of that group; empty: no group")
+
+
+class FirstBulletView(BaseModel):
+    role: str = Field(description="Heading of the Experience entry")
+    text: str = Field(description="The first bullet of that entry")
+
+
+class FirstScreenView(BaseModel):
+    headline: str
+    summary: str
+    skills_group: SkillsGroupView
+    first_bullets: list[FirstBulletView] = Field(
+        description="The first bullet of each Experience entry that has bullets"
+    )
+    keywords: list[str] = Field(
+        description="Analysis keywords found in the four parts above; empty: none or "
+        "job not analysed"
+    )
+
+
 class CvCheckView(CheckView):
-    """Result of check_cv: the CheckView plus the gate."""
+    """Result of check_cv: the CheckView plus the gate and the must-have coverage."""
 
     gate: GateView | None = Field(
         default=None,
         description="null: the text could not be read",
+    )
+    must_have_coverage: MustHaveCoverageView | None = Field(
+        default=None,
+        description="Which must_have items of the analysis the CV covers, by the "
+        "must_have_facts you passed (without them every item is missing); null: job "
+        "not analysed or the text could not be read",
+    )
+    first_screen: FirstScreenView | None = Field(
+        default=None,
+        description="What a recruiter sees first: headline, summary, first Skills "
+        "group, first bullet of each role, and which keywords landed there; null: "
+        "the text could not be read",
     )
 
 
@@ -319,10 +389,27 @@ def register_document_tools(
                 description="Header photo the user picked (list_photos); null: no photo"
             ),
         ] = None,
+        must_have_facts: Annotated[
+            list[MustHaveFactsIn] | None,
+            Field(
+                description="Optional: for each must_have item of the analysis the "
+                "confirmed facts that answer it and whether directly or as an analogue; "
+                "the result then says per item covered, analogue or missing"
+            ),
+        ] = None,
     ) -> CvCheckView:
         try:
             checked = await use_cases.check_cv(
-                current_actor(), job_id, _cv_data(cv), photo_id
+                current_actor(),
+                job_id,
+                _cv_data(cv),
+                photo_id,
+                [
+                    MustHaveFactsData(
+                        item=entry.item, fact_ids=entry.fact_ids, kind=entry.kind
+                    )
+                    for entry in must_have_facts or ()
+                ],
             )
         except DomainError as error:
             raise ToolError(error.message) from error
@@ -441,6 +528,8 @@ def _check_view(checked: CheckData) -> CheckView:
 
 def _cv_check_view(checked: CheckData) -> CvCheckView:
     gate = checked.gate
+    must_have = checked.must_have_coverage
+    screen = checked.first_screen
     return CvCheckView(
         **_check_view(checked).model_dump(),
         gate=None
@@ -450,6 +539,35 @@ def _cv_check_view(checked: CheckData) -> CvCheckView:
             evidence_percent=gate.evidence_percent,
             evidence_missing=list(gate.evidence_missing),
             coverage_percent=gate.coverage_percent,
+        ),
+        must_have_coverage=None
+        if must_have is None
+        else MustHaveCoverageView(
+            items=[
+                MustHaveItemView(
+                    item=item.item,
+                    status=item.status.value,
+                    fact_ids=list(item.fact_ids),
+                    reason=item.reason,
+                )
+                for item in must_have.items
+            ],
+            unknown=list(must_have.unknown),
+        ),
+        first_screen=None
+        if screen is None
+        else FirstScreenView(
+            headline=screen.headline,
+            summary=screen.summary,
+            skills_group=SkillsGroupView(
+                label=screen.skills_group.label,
+                items=list(screen.skills_group.items),
+            ),
+            first_bullets=[
+                FirstBulletView(role=bullet.role, text=bullet.text)
+                for bullet in screen.first_bullets
+            ],
+            keywords=list(screen.keywords),
         ),
     )
 

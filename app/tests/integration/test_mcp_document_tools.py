@@ -20,6 +20,7 @@ from domain.shared.errors import NotFound
 from domain.shared.local_time import local_day
 from tests.integration.test_agent_http import BASE, PUBLIC, Agent
 from tests.integration.test_mcp_analysis_tools import add_fact, seed
+from tests.integration.test_mcp_analysis_tools import save as save_analysis
 from tests.integration.test_mcp_job_tools import data, error_text
 from tests.integration.test_mcp_photo_tools import add_photo
 from tests.integration.test_mcp_profile_tools import (
@@ -181,6 +182,63 @@ async def test_the_cv_brief_has_the_job_analysis_profile_facts_rules_and_photos(
         TOOLS.parent.parent / "documents" / "cv_rules.md"
     ).read_text(encoding="utf-8")
     assert brief["previous"] is None
+
+
+async def test_the_cv_and_letter_briefs_carry_candidate_asks_of_the_analysis(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number, _ = await ready(agent, token)
+    asks = ["Send your GitHub", "Skip the list of frameworks"]
+    await save_analysis(agent, token, number, candidate_asks=asks)
+
+    cv = data(await call(agent, token, "prepare_cv", {"job_id": number}))
+    letter = data(await call(agent, token, "prepare_cover_letter", {"job_id": number}))
+
+    assert cv["analysis"]["candidate_asks"] == asks
+    assert letter["analysis"]["candidate_asks"] == asks
+
+
+async def test_the_cv_brief_carries_the_gap_analogues_of_the_analysis(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number, fact = await ready(agent, token)
+    await save_analysis(
+        agent,
+        token,
+        number,
+        gaps=["gRPC", "OpenTelemetry"],
+        gap_analogues=[
+            {
+                "gap": "gRPC",
+                "analogues": [{"fact_ids": [fact], "explanation": "Python services"}],
+            }
+        ],
+    )
+
+    brief = data(await call(agent, token, "prepare_cv", {"job_id": number}))
+
+    assert brief["analysis"]["gap_analogues"] == [
+        {
+            "gap": "gRPC",
+            "analogues": [{"fact_ids": [fact], "explanation": "Python services"}],
+            "no_honest_analogue": False,
+        },
+        {"gap": "OpenTelemetry", "analogues": [], "no_honest_analogue": True},
+    ]
+
+
+async def test_the_cv_brief_of_an_analysis_without_analogues_shows_null(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number, _ = await ready(agent, token)
+    await save_analysis(agent, token, number, gaps=["gRPC"])
+
+    brief = data(await call(agent, token, "prepare_cv", {"job_id": number}))
+
+    assert brief["analysis"]["gap_analogues"] is None
 
 
 async def test_the_letter_brief_works_without_a_cv_and_then_has_the_last_one(
@@ -391,9 +449,16 @@ async def test_a_user_never_sees_documents_of_another(agent: Agent) -> None:
 
 
 async def check_cv(
-    agent: Agent, token: str, job: int, cv: dict[str, Any], photo_id: int | None = None
+    agent: Agent,
+    token: str,
+    job: int,
+    cv: dict[str, Any],
+    photo_id: int | None = None,
+    must_have_facts: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     arguments = {"job_id": job, "cv": cv, "photo_id": photo_id}
+    if must_have_facts is not None:
+        arguments["must_have_facts"] = must_have_facts
     return data(await call(agent, token, "check_cv", arguments))
 
 
@@ -429,7 +494,14 @@ async def test_check_cv_reports_a_placeholder_and_saves_nothing(
         agent, token, number, with_bullet(fact, "Worked at [Company]")
     )
 
-    assert set(checked) == {"passed", "issues", "keywords", "gate"}
+    assert set(checked) == {
+        "passed",
+        "issues",
+        "keywords",
+        "gate",
+        "must_have_coverage",
+        "first_screen",
+    }
     assert checked["passed"] is False
     [issue] = checked["issues"]
     assert issue["code"] == "placeholder"
@@ -512,6 +584,91 @@ async def test_check_cv_returns_the_gate_with_the_two_numbers_and_the_named_word
     }
 
 
+async def test_check_cv_returns_the_must_have_coverage_by_the_facts_the_agent_names(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number, fact = await ready(agent, token)
+    kafka = await add_fact(agent, token, "skill", "Kafka")
+    data(await call(agent, token, "confirm_facts", {"fact_ids": [kafka]}))
+    data(
+        await call(
+            agent,
+            token,
+            "save_analysis",
+            {
+                "job_id": number,
+                "analysis": {
+                    "score": 70,
+                    "summary": "S.",
+                    "must_have": ["Python", "gRPC", "Rust"],
+                },
+            },
+        )
+    )
+
+    checked = await check_cv(
+        agent,
+        token,
+        number,
+        with_bullet(fact, "Built payment APIs in [Place]"),
+        must_have_facts=[
+            {"item": "Python", "fact_ids": [fact], "kind": "fact"},
+            {"item": "gRPC", "fact_ids": [fact], "kind": "analogue"},
+            {"item": "Rust", "fact_ids": [kafka], "kind": "fact"},
+            {"item": "Go", "fact_ids": [fact], "kind": "fact"},
+        ],
+    )
+
+    assert checked["must_have_coverage"] == {
+        "items": [
+            {"item": "Python", "status": "covered", "fact_ids": [fact], "reason": None},
+            {"item": "gRPC", "status": "analogue", "fact_ids": [fact], "reason": None},
+            {
+                "item": "Rust",
+                "status": "missing",
+                "fact_ids": [],
+                "reason": f"Жоден рядок CV не спирається на факти [{kafka}].",
+            },
+        ],
+        "unknown": ["Go"],
+    }
+
+
+async def test_check_cv_without_must_have_facts_marks_every_must_have_missing(
+    agent: Agent,
+) -> None:
+    token = await taras(agent)
+    number, fact = await ready(agent, token)
+    data(
+        await call(
+            agent,
+            token,
+            "save_analysis",
+            {
+                "job_id": number,
+                "analysis": {"score": 70, "summary": "S.", "must_have": ["Python"]},
+            },
+        )
+    )
+
+    checked = await check_cv(
+        agent, token, number, with_bullet(fact, "Built payment APIs in [Place]")
+    )
+
+    assert checked["must_have_coverage"] == {
+        "items": [
+            {
+                "item": "Python",
+                "status": "missing",
+                "fact_ids": [],
+                "reason": "У must_have_facts немає запису для цього пункту.",
+            }
+        ],
+        "unknown": [],
+    }
+
+
 async def test_check_cv_of_a_job_not_analysed_has_null_keywords(agent: Agent) -> None:
     token = await taras(agent)
     number, fact = await ready(agent, token)
@@ -566,6 +723,16 @@ async def test_check_cv_of_clean_text_passes_and_leaves_no_trace(
             "evidence_percent": None,
             "evidence_missing": [],
             "coverage_percent": None,
+        },
+        "must_have_coverage": None,
+        "first_screen": {
+            "headline": "Senior Backend Engineer",
+            "summary": "Payments backend engineer",
+            "skills_group": {"label": "Backend", "items": ["Python", "Postgres"]},
+            "first_bullets": [
+                {"role": "Engineer · Acme", "text": "Built payment APIs in Python"}
+            ],
+            "keywords": [],
         },
     }
     await nothing_saved(agent, token, number, documents_dir)

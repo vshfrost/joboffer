@@ -1,12 +1,12 @@
 """Схеми тулів документів v1 (`origin/main` `99a2007`: `agent/documents.py`).
 
 Розгорнуті JSON-схеми (без title / description / default), зняті зі справжнього сервера v1 разом із полями фото
-(`photo_id`, `photos`): контракт-тест порівнює з ними схеми v2 повністю.
+(`photo_id`, `photos`): контракт-тест порівнює з ними схеми v2 повністю. Після v1 в аналізі брифів додано `candidate_asks` (63d7b9) і `gap_analogues` (ecd42c).
 """
 
 from typing import Any
 
-from tests.support.v1_analysis_schemas import GAPS_OUT
+from tests.support.v1_analysis_schemas import GAP_ANALOGUES_OUT, GAPS_OUT
 
 V1: dict[str, dict[str, Any]] = {
     "prepare_cv": {
@@ -112,7 +112,12 @@ V1: dict[str, dict[str, Any]] = {
                                     "items": {"type": "string"},
                                     "type": "array",
                                 },
+                                "candidate_asks": {
+                                    "items": {"type": "string"},
+                                    "type": "array",
+                                },
                                 "gaps": GAPS_OUT,
+                                "gap_analogues": GAP_ANALOGUES_OUT,
                                 "job_id": {"type": "integer"},
                                 "filters_passed": {"type": "boolean"},
                                 "flags": {"items": {"type": "string"}, "type": "array"},
@@ -1041,7 +1046,12 @@ V1: dict[str, dict[str, Any]] = {
                                     "items": {"type": "string"},
                                     "type": "array",
                                 },
+                                "candidate_asks": {
+                                    "items": {"type": "string"},
+                                    "type": "array",
+                                },
                                 "gaps": GAPS_OUT,
+                                "gap_analogues": GAP_ANALOGUES_OUT,
                                 "job_id": {"type": "integer"},
                                 "filters_passed": {"type": "boolean"},
                                 "flags": {"items": {"type": "string"}, "type": "array"},

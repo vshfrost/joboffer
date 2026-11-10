@@ -32,6 +32,7 @@ class TemplateKey(StrEnum):
     PDF_CONTACT_SEPARATOR = "pdf/contact_separator"
     PDF_CONTACTS_ROW = "pdf/contacts_row"
     PDF_COVER_LETTER = "pdf/cover_letter"
+    PDF_LINK = "pdf/link"
     PDF_LETTER_BREAK = "pdf/letter_break"
     PDF_LETTER_PARAGRAPH = "pdf/letter_paragraph"
 

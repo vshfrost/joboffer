@@ -116,10 +116,31 @@ async def test_check_cv_takes_what_save_cv_takes(agent: MCPServer) -> None:
     check = await tool_of(agent, "check_cv")
     save = await tool_of(agent, "save_cv")
 
-    assert _resolve(
-        check.input_schema, check.input_schema.get("$defs", {})
-    ) == _resolve(save.input_schema, save.input_schema.get("$defs", {}))
+    check_schema = _resolve(check.input_schema, check.input_schema.get("$defs", {}))
+    del check_schema["properties"]["must_have_facts"]  # the one extra input, below
+    assert check_schema == _resolve(
+        save.input_schema, save.input_schema.get("$defs", {})
+    )
     assert check.input_schema["required"] == ["job_id", "cv"]
+
+
+async def test_check_cv_alone_takes_an_optional_must_have_facts_list(
+    agent: MCPServer,
+) -> None:
+    check = await tool_of(agent, "check_cv")
+    save = await tool_of(agent, "save_cv")
+    resolved = _resolve(check.input_schema, check.input_schema.get("$defs", {}))
+
+    assert "must_have_facts" not in check.input_schema["required"]
+    assert "must_have_facts" not in save.input_schema["properties"]
+    [array] = [
+        item
+        for item in resolved["properties"]["must_have_facts"]["anyOf"]
+        if item.get("type") == "array"
+    ]
+    assert array["items"]["required"] == ["item", "fact_ids", "kind"]
+    assert array["items"]["properties"]["kind"]["enum"] == ["fact", "analogue"]
+    assert array["items"]["properties"]["fact_ids"]["items"] == {"type": "integer"}
 
 
 async def test_check_cover_letter_takes_what_save_cover_letter_takes(
@@ -176,6 +197,53 @@ async def test_check_cv_alone_returns_the_gate_with_the_two_numbers(
         "status",
     ]
     assert "gate" not in letter["properties"]
+
+
+async def test_check_cv_alone_returns_the_optional_must_have_coverage(
+    agent: MCPServer,
+) -> None:
+    cv = (await tool_of(agent, "check_cv")).output_schema
+    letter = (await tool_of(agent, "check_cover_letter")).output_schema
+    assert cv is not None
+    assert letter is not None
+    resolved = _resolve(cv, cv.get("$defs", {}))
+
+    assert "must_have_coverage" not in resolved["required"]
+    [object_schema] = [
+        item
+        for item in resolved["properties"]["must_have_coverage"]["anyOf"]
+        if item.get("type") == "object"
+    ]
+    assert sorted(object_schema["properties"]) == ["items", "unknown"]
+    item = object_schema["properties"]["items"]["items"]
+    assert sorted(item["properties"]) == ["fact_ids", "item", "reason", "status"]
+    assert item["properties"]["status"]["enum"] == ["covered", "analogue", "missing"]
+    assert "must_have_coverage" not in letter["properties"]
+
+
+async def test_check_cv_alone_returns_the_optional_first_screen(
+    agent: MCPServer,
+) -> None:
+    cv = (await tool_of(agent, "check_cv")).output_schema
+    letter = (await tool_of(agent, "check_cover_letter")).output_schema
+    assert cv is not None
+    assert letter is not None
+    resolved = _resolve(cv, cv.get("$defs", {}))
+
+    assert "first_screen" not in resolved["required"]
+    [object_schema] = [
+        item
+        for item in resolved["properties"]["first_screen"]["anyOf"]
+        if item.get("type") == "object"
+    ]
+    assert sorted(object_schema["properties"]) == [
+        "first_bullets",
+        "headline",
+        "keywords",
+        "skills_group",
+        "summary",
+    ]
+    assert "first_screen" not in letter["properties"]
 
 
 async def test_the_photo_fields_are_offered(agent: MCPServer) -> None:
