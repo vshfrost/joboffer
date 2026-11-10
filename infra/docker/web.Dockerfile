@@ -7,7 +7,7 @@ RUN npm ci --no-audit --no-fund
 COPY web/ ./
 RUN npm run build
 
-FROM caddy:2.11.7-alpine
+FROM caddy:2.11.9-alpine
 COPY infra/web/Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /web/dist /srv/app
 # Не root: Caddy слухає 8080 (> 1024, привілеїв не треба), а стан пише лише у /config і /data.
