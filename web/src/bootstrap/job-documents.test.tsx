@@ -97,7 +97,7 @@ describe("дві картки", () => {
     await open(BOTH);
 
     const section = await screen.findByRole("region", { name: "Документи" });
-    const cards = within(section).getAllByRole("region", { name: /^(CV|Cover letter)$/ });
+    const cards = await within(section).findAllByRole("region", { name: /^(CV|Cover letter)$/ });
     expect(cards.map((item) => item.getAttribute("aria-labelledby") && item.querySelector("h3")?.textContent)).toEqual(["CV", "Cover letter"]);
     expect(cards[0]?.parentElement?.className).toContain("md:grid-cols-2");
   });

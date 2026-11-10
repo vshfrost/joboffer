@@ -4,10 +4,16 @@ updates:
     directory: /app
     schedule:
       interval: weekly
+    # Політика: брати версії лише через ≥14 днів після релізу.
+    cooldown:
+      default-days: 14
   - package-ecosystem: npm
     directory: /web
     schedule:
       interval: weekly
+    # Політика: брати версії лише через ≥14 днів після релізу.
+    cooldown:
+      default-days: 14
     groups:
       react:
         patterns:
@@ -15,6 +21,10 @@ updates:
           - react-dom
           - "@types/react"
           - "@types/react-dom"
+      vitest:
+        patterns:
+          - vitest
+          - "@vitest/*"
     ignore:
       # typescript-eslint підтримує лише typescript <6.1.
       - dependency-name: typescript
@@ -28,10 +38,16 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Політика: брати версії лише через ≥14 днів після релізу.
+    cooldown:
+      default-days: 14
   - package-ecosystem: docker
     directory: /infra/docker
     schedule:
       interval: weekly
+    # Політика: брати версії лише через ≥14 днів після релізу.
+    cooldown:
+      default-days: 14
     # Python 3.15 ломить `uv sync --locked` (exit 2); потрібен окремий свідомий апгрейд.
     ignore:
       - dependency-name: python
