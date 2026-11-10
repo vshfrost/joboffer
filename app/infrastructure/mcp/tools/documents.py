@@ -213,9 +213,9 @@ class CvCheckView(CheckView):
     )
     must_have_coverage: MustHaveCoverageView | None = Field(
         default=None,
-        description="Which must_have items of the analysis the CV covers, by the "
-        "must_have_facts you passed (without them every item is missing); null: job "
-        "not analysed or the text could not be read",
+        description="must_have items of the analysis the CV covers, by the "
+        "must_have_facts passed (none passed = all missing); null: job not "
+        "analysed or text unreadable",
     )
     first_screen: FirstScreenView | None = Field(
         default=None,
@@ -392,9 +392,9 @@ def register_document_tools(
         must_have_facts: Annotated[
             list[MustHaveFactsIn] | None,
             Field(
-                description="Optional: for each must_have item of the analysis the "
-                "confirmed facts that answer it and whether directly or as an analogue; "
-                "the result then says per item covered, analogue or missing"
+                description="Optional: per must_have item of the analysis, the confirmed "
+                "facts that answer it, directly or as an analogue; the result marks "
+                "each covered, analogue or missing"
             ),
         ] = None,
     ) -> CvCheckView:
