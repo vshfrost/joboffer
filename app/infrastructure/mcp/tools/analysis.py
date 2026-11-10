@@ -110,9 +110,9 @@ class AnalysisIn(AnalysisFields):
     )
     gap_analogues: list[GapAnaloguesIn] | None = Field(
         default=None,
-        description="For gaps: the closest confirmed facts (fact_ids + a short "
-        "explanation) the CV can use instead of the missing skill; a gap left out "
-        "or with no analogues is stored as no_honest_analogue. null: not assessed",
+        description="For gaps: closest confirmed facts (fact_ids + short explanation) usable "
+        "instead of the missing skill; omitted or empty = no_honest_analogue. "
+        "null: not assessed",
     )
 
 
