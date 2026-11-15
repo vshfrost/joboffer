@@ -11,7 +11,13 @@ from domain.profile.locations import Locations, SearchLocation
 from domain.profile.modes import WorkMode
 from domain.profile.profile import Profile
 from domain.profile.rules import Rules
-from domain.sources.filtering import Skip, infer_mode, skip_reason, stored_skip_reason
+from domain.sources.filtering import (
+    Skip,
+    infer_mode,
+    listing_skip_reason,
+    skip_reason,
+    stored_skip_reason,
+)
 from domain.sources.posting import Posting
 
 REMOTE, HYBRID, ONSITE = WorkMode.REMOTE, WorkMode.HYBRID, WorkMode.ONSITE
@@ -57,6 +63,52 @@ def test_a_posting_without_text_is_empty() -> None:
 
 def test_an_empty_text_is_reported_before_the_title_rules() -> None:
     assert skip_reason(posting(text=""), profile(keywords=("python",))) is Skip.EMPTY
+
+
+# --- вакансія зі списку (ще без тексту) -----------------------------------------------------
+
+
+def test_a_listing_without_text_is_not_empty_for_the_prefilter() -> None:
+    assert listing_skip_reason(posting(text=""), profile()) is None
+
+
+def test_the_prefilter_applies_the_title_rules() -> None:
+    wanted = profile(keywords=("backend",), exclude=("junior",))
+
+    assert (
+        listing_skip_reason(posting(title="Data Analyst", text=""), wanted)
+        is Skip.TITLE
+    )
+    assert (
+        listing_skip_reason(posting(title="Junior Backend Engineer", text=""), wanted)
+        is Skip.EXCLUDED
+    )
+    assert (
+        listing_skip_reason(posting(title="Backend Engineer", text=""), wanted) is None
+    )
+
+
+def test_the_prefilter_applies_format_and_location() -> None:
+    madrid = profile(places=(place("Madrid", HYBRID),), work_modes=frozenset({HYBRID}))
+
+    assert (
+        listing_skip_reason(
+            posting(locations=("Madrid",), work_mode=REMOTE, text=""), madrid
+        )
+        is Skip.FORMAT
+    )
+    assert (
+        listing_skip_reason(
+            posting(locations=("Paris",), work_mode=HYBRID, text=""), madrid
+        )
+        is Skip.LOCATION
+    )
+    assert (
+        listing_skip_reason(
+            posting(locations=("Madrid",), work_mode=HYBRID, text=""), madrid
+        )
+        is None
+    )
 
 
 # --- назва ---------------------------------------------------------------------------------

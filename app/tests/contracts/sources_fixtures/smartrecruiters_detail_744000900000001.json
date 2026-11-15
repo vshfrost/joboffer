@@ -1,0 +1,73 @@
+{
+  "id": "744000900000001",
+  "name": "Senior Backend Engineer",
+  "uuid": "00000000-0000-4000-8000-000900000001",
+  "jobAdId": "11111111-0000-4000-8000-000900000001",
+  "defaultJobAd": true,
+  "refNumber": "LF-001",
+  "company": {
+    "identifier": "lumenfreight",
+    "name": "Lumen Freight"
+  },
+  "releasedDate": "2026-10-28T15:14:43.941Z",
+  "location": {
+    "city": "Madrid",
+    "region": "Madrid",
+    "country": "es",
+    "remote": false,
+    "hybrid": true,
+    "fullLocation": "Madrid, Madrid, Spain"
+  },
+  "industry": {
+    "id": "logistics",
+    "label": "Logistics"
+  },
+  "department": {
+    "id": "1",
+    "label": "Engineering"
+  },
+  "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+  },
+  "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+  },
+  "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+  },
+  "customField": [],
+  "visibility": "PUBLIC",
+  "ref": "https://api.smartrecruiters.com/v1/companies/lumenfreight/postings/744000900000001",
+  "language": {
+    "code": "en",
+    "label": "English"
+  },
+  "jobId": "22222222-0000-4000-8000-000900000001",
+  "postingUrl": "https://jobs.smartrecruiters.com/LumenFreight/744000900000001-senior-backend-engineer",
+  "applyUrl": "https://jobs.smartrecruiters.com/LumenFreight/744000900000001-senior-backend-engineer?oga=true",
+  "referralUrl": "https://jobs.smartrecruiters.com/LumenFreight/744000900000001-senior-backend-engineer?oga=true&ref=referral",
+  "active": true,
+  "jobAd": {
+    "sections": {
+      "companyDescription": {
+        "title": "Company Description",
+        "text": "<p>Lumen Freight moves parcels across Europe.</p>"
+      },
+      "jobDescription": {
+        "title": "Job Description",
+        "text": "<p>You will build the routing service in <strong>Python</strong>.</p><ul><li>Design APIs</li><li>Own on-call</li></ul>"
+      },
+      "qualifications": {
+        "title": "Qualifications",
+        "text": "<ul><li>5+ years of backend work</li></ul>"
+      },
+      "additionalInformation": {
+        "title": "Additional Information",
+        "text": "<p>Hybrid: three days a week in Madrid.</p>"
+      }
+    }
+  }
+}

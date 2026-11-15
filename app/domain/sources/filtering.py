@@ -52,6 +52,11 @@ def skip_reason(posting: Posting, profile: Profile) -> Skip | None:
     )
 
 
+def listing_skip_reason(posting: Posting, profile: Profile) -> Skip | None:
+    """Stub."""
+    return None
+
+
 def stored_skip_reason(job: Job, profile: Profile) -> Skip | None:
     """Те саме для вакансії, що вже збережена: `Posting` збирається з її полів (локація — `jobs.location`,
     формат — зі слів у локації й тексті; невідомий — `include_unknown_mode`). Стрічка RSS шукає місце ще

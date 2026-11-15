@@ -8,6 +8,8 @@ from infrastructure.sources.dou import DouSource
 from infrastructure.sources.greenhouse import GreenhouseSource
 from infrastructure.sources.http import Fetcher
 from infrastructure.sources.lever import LeverSource
+from infrastructure.sources.smartrecruiters import SmartRecruitersSource
+from infrastructure.sources.workable import WorkableSource
 
 
 def build_sources(fetcher: Fetcher) -> dict[SourceKind, JobSource]:
@@ -16,6 +18,8 @@ def build_sources(fetcher: Fetcher) -> dict[SourceKind, JobSource]:
         Platform.GREENHOUSE: GreenhouseSource(fetcher),
         Platform.ASHBY: AshbySource(fetcher),
         Platform.LEVER: LeverSource(fetcher),
+        Platform.SMARTRECRUITERS: SmartRecruitersSource(fetcher),
+        Platform.WORKABLE: WorkableSource(fetcher),
         FeedSource.DOU: DouSource(fetcher),
         FeedSource.DJINNI: DjinniSource(fetcher),
     }

@@ -1,0 +1,66 @@
+{
+  "name": "Brightharbor",
+  "description": "<p>Brightharbor builds port software.</p>",
+  "jobs": [
+    {
+      "title": "Backend Engineer (Python)",
+      "shortcode": "A1B2C3D4E5",
+      "code": null,
+      "employment_type": "Full-time",
+      "telecommuting": false,
+      "department": "Engineering",
+      "url": "https://apply.workable.com/j/A1B2C3D4E5",
+      "shortlink": "https://apply.workable.com/j/A1B2C3D4E5",
+      "application_url": "https://apply.workable.com/j/A1B2C3D4E5/apply",
+      "published_on": "2026-10-20",
+      "created_at": "2026-10-18",
+      "country": "Spain",
+      "city": "Valencia",
+      "state": "Valencia",
+      "education": null,
+      "experience": "Mid-Senior level",
+      "function": "Engineering",
+      "industry": "Logistics",
+      "locations": [
+        {
+          "country": "Spain",
+          "countryCode": "ES",
+          "city": "Valencia",
+          "region": "Valencia",
+          "hidden": false
+        }
+      ],
+      "description": "<p>Build <strong>port</strong> tracking APIs.</p><ul><li>Python</li><li>PostgreSQL</li></ul>"
+    },
+    {
+      "title": "Data Engineer",
+      "shortcode": "F6G7H8I9J0",
+      "code": null,
+      "employment_type": "Full-time",
+      "telecommuting": true,
+      "department": "Engineering",
+      "url": "https://apply.workable.com/j/F6G7H8I9J0",
+      "shortlink": "https://apply.workable.com/j/F6G7H8I9J0",
+      "application_url": "https://apply.workable.com/j/F6G7H8I9J0/apply",
+      "published_on": "2026-10-20",
+      "created_at": "2026-10-18",
+      "country": "Portugal",
+      "city": "",
+      "state": "",
+      "education": null,
+      "experience": "Mid-Senior level",
+      "function": "Engineering",
+      "industry": "Logistics",
+      "locations": [
+        {
+          "country": "Portugal",
+          "countryCode": "PT",
+          "city": "",
+          "region": "",
+          "hidden": false
+        }
+      ],
+      "description": "<p>Fully remote data platform role.</p>"
+    }
+  ]
+}

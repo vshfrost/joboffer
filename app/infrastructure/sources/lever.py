@@ -3,6 +3,7 @@
 
 from urllib.parse import quote
 
+from application.ports.job_sources import Keep
 from domain.shared.text import html_to_text
 from domain.sources.failure import FailureReason, SourceError
 from domain.sources.labels import parse_work_mode_label
@@ -18,7 +19,9 @@ class LeverSource:
     def __init__(self, fetcher: Fetcher) -> None:
         self._fetcher = fetcher
 
-    async def fetch(self, target: SourceTarget) -> list[Posting]:
+    async def fetch(
+        self, target: SourceTarget, keep: Keep | None = None
+    ) -> list[Posting]:
         data = await self._fetcher.get_json(
             API_URL.format(slug=quote(target.ref, safe="")),
             {"mode": "json"},

@@ -7,6 +7,8 @@ class Platform(StrEnum):
     GREENHOUSE = "greenhouse"
     ASHBY = "ashby"
     LEVER = "lever"
+    SMARTRECRUITERS = "smartrecruiters"
+    WORKABLE = "workable"
 
 
 class FeedSource(StrEnum):
