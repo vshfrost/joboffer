@@ -118,7 +118,7 @@ PostgreSQL через async SQLAlchemy + psycopg 3. Адреса — `JOBOFFER_D
 
 ## Прогін джерел
 
-Вакансії з ATS компаній (Greenhouse, Ashby, Lever) і RSS-стрічок (DOU, Djinni) імпортуються кожному користувачеві за
+Вакансії з ATS компаній (Greenhouse, Ashby, Lever, SmartRecruiters, Workable) і RSS-стрічок (DOU, Djinni) імпортуються кожному користувачеві за
 його профілем. Таблиці: `source_companies`, `source_feeds` (унікальні «користувач + платформа + слаг» і «користувач +
 джерело + запит») та стан останнього прогону — `source_company_runs` / `source_feed_runs`, один рядок на джерело
 користувача (час, лічильники, код помилки).

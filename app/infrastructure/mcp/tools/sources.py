@@ -41,7 +41,9 @@ class RunView(BaseModel):
 
 class CompanyView(BaseModel):
     name: str
-    platform: str = Field(description="greenhouse, ashby or lever")
+    platform: str = Field(
+        description="greenhouse, ashby, lever, smartrecruiters or workable"
+    )
     slug: str
     enabled: bool
     last_run: RunView | None = Field(description="null: never refreshed")

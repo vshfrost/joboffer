@@ -45,16 +45,17 @@ def skip_reason(posting: Posting, profile: Profile) -> Skip | None:
     """Чому вакансію не беремо за профілем, або None. Порядок: порожній текст, назва, формат, локація."""
     if not posting.text:
         return Skip.EMPTY
+    return listing_skip_reason(posting, profile)
+
+
+def listing_skip_reason(posting: Posting, profile: Profile) -> Skip | None:
+    """Те саме для вакансії зі списку, ще без тексту: назва, формат, локація (без `EMPTY`). Адаптер
+    за цим вирішує, чи вантажити повний опис."""
     return (
         _title_skip(posting, profile)
         or _format_skip(posting, profile)
         or _location_skip(posting, profile)
     )
-
-
-def listing_skip_reason(posting: Posting, profile: Profile) -> Skip | None:
-    """Stub."""
-    return None
 
 
 def stored_skip_reason(job: Job, profile: Profile) -> Skip | None:
