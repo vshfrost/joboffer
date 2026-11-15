@@ -24,6 +24,10 @@ import { useSourcesServices } from "./SourcesServices";
 import { problemText } from "./texts";
 
 const SLUG_HINT = "Остання частина адреси сторінки вакансій. Наприклад, jobs.ashbyhq.com/acme → acme.";
+const SLUG_HINTS: Partial<Record<CompanyPlatform, string>> = {
+  smartrecruiters: "Остання частина адреси сторінки вакансій. Наприклад, jobs.smartrecruiters.com/Acme → Acme.",
+  workable: "Остання частина адреси сторінки вакансій. Наприклад, apply.workable.com/acme → acme.",
+};
 const QUERY_HINT = "Без пробілів. DOU: category=Python&remote · Djinni: primary_keyword=Python&exp_level=5y";
 const QUERY_PLACEHOLDER: Record<FeedSource, string> = { dou: "category=Python&remote", djinni: "primary_keyword=Python" };
 
@@ -128,7 +132,7 @@ export function AddSourcePage() {
                 </Select>
               )}
             </Field>
-            <Field label="Слаг компанії" hint={SLUG_HINT} error={errors["slug"]}>
+            <Field label="Слаг компанії" hint={SLUG_HINTS[platform] ?? SLUG_HINT} error={errors["slug"]}>
               {(controls) => <Input {...controls} value={key} placeholder="acme" autoComplete="off" onChange={(event) => edit(() => setKey(event.target.value))} />}
             </Field>
             <Field label="Назва компанії · необов’язково" hint="Без назви буде використано слаг." error={errors["name"]}>
