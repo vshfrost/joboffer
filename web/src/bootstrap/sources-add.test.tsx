@@ -42,7 +42,7 @@ describe("форма", () => {
     await openForm();
 
     const platform = screen.getByRole("combobox", { name: "ATS-платформа" });
-    expect(within(platform).getAllByRole("option").map((option) => option.textContent)).toEqual(["Greenhouse", "Ashby", "Lever"]);
+    expect(within(platform).getAllByRole("option").map((option) => option.textContent)).toEqual(["Greenhouse", "Ashby", "Lever", "SmartRecruiters", "Workable"]);
     expect(slugField().getAttribute("aria-describedby")).not.toBeNull();
     expect(screen.getByText("Остання частина адреси сторінки вакансій. Наприклад, jobs.ashbyhq.com/acme → acme.")).toBeDefined();
     expect(screen.getByText("Без назви буде використано слаг.")).toBeDefined();
@@ -120,6 +120,23 @@ describe("додати компанію", () => {
 
     await screen.findByRole("heading", { level: 1, name: "Джерела вакансій" });
     expect(backend.bodies["POST /api/sources/companies"]).toEqual([{ platform: "greenhouse", slug: "acme", name: "" }]);
+    expect(await sourceNames()).toContain("acme");
+  });
+
+  test.each([
+    ["SmartRecruiters", "smartrecruiters", "Остання частина адреси сторінки вакансій. Наприклад, jobs.smartrecruiters.com/Acme → Acme."],
+    ["Workable", "workable", "Остання частина адреси сторінки вакансій. Наприклад, apply.workable.com/acme → acme."],
+  ])("%s: платформа є у списку, підказка слага своя, компанія додається", async (label, value, hint) => {
+    const user = userEvent.setup();
+    const backend = await openForm();
+
+    await user.selectOptions(screen.getByRole("combobox", { name: "ATS-платформа" }), label);
+    expect(screen.getByText(hint)).toBeDefined();
+    await user.type(slugField(), "acme");
+    await user.click(screen.getByRole("button", { name: "Перевірити й додати" }));
+
+    await screen.findByRole("heading", { level: 1, name: "Джерела вакансій" });
+    expect(backend.bodies["POST /api/sources/companies"]).toEqual([{ platform: value, slug: "acme", name: "" }]);
     expect(await sourceNames()).toContain("acme");
   });
 

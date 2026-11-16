@@ -95,7 +95,7 @@ async def test_the_description_comes_from_the_catalog_and_names_no_person(
 async def test_the_descriptions_keep_the_v1_meaning(agent: MCPServer) -> None:
     assert (await tool_of(agent, "get_sources")).description == (
         "The sources the user's new jobs come from — company career pages (Greenhouse, "
-        "Ashby, Lever) and RSS feeds (DOU, Djinni) — each with its last run (when, found / "
+        "Ashby, Lever, SmartRecruiters, Workable) and RSS feeds (DOU, Djinni) — each with its last run (when, found / "
         "imported / skipped by their profile filters / duplicate / error). The server "
         "refreshes them on a schedule; jobs from them arrive with full text. Also "
         "filtered_out: saved jobs their current profile filters would no longer take "

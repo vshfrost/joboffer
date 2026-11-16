@@ -8,12 +8,13 @@ from datetime import datetime
 from types import TracebackType
 from typing import Self
 
+from application.ports.job_sources import Keep
 from application.ports.sources import SourceGone
 from domain.identity.ids import UserId
 from domain.profile.profile import Profile
 from domain.sources.failure import FailureReason, SourceError
 from domain.sources.ids import SourceId
-from domain.sources.kinds import SourceKind
+from domain.sources.kinds import Platform, SourceKind
 from domain.sources.posting import Posting
 from domain.sources.run import SourceRun, Subscription
 from domain.sources.target import SourceTarget
@@ -150,10 +151,14 @@ class InMemorySourceRunUnitOfWork:
 
 
 class ScriptedSource:
-    """Адаптер-сценарій: віддає вакансії цілі чи кидає `SourceError`; запам'ятовує, що читали."""
+    """Адаптер-сценарій: віддає вакансії цілі чи кидає `SourceError`; запам'ятовує, що читали.
+    `uses_keep` — як SmartRecruiters: віддає лише вакансії, що пройшли `keep`, і запам'ятовує їх."""
 
-    def __init__(self, reads: list[SourceTarget]) -> None:
+    def __init__(self, reads: list[SourceTarget], *, uses_keep: bool = False) -> None:
         self._reads = reads
+        self._uses_keep = uses_keep
+        # target.ref → назви, що пройшли `keep` (лише для `uses_keep`).
+        self.kept: dict[str, list[str]] = {}
         self.postings: dict[str, list[Posting]] = {}
         self.failures: dict[str, FailureReason] = {}
         # Несподіваний збій читання: не `SourceError`, а будь-який інший виняток.
@@ -161,7 +166,9 @@ class ScriptedSource:
         # Що виконати посеред читання цілі (напр. запустити ще один прогін).
         self.during: dict[str, Callable[[], Awaitable[None]]] = {}
 
-    async def fetch(self, target: SourceTarget) -> list[Posting]:
+    async def fetch(
+        self, target: SourceTarget, keep: Keep | None = None
+    ) -> list[Posting]:
         self._reads.append(target)
         if target.ref in self.during:
             await self.during[target.ref]()
@@ -169,10 +176,17 @@ class ScriptedSource:
             raise self.crashes[target.ref]
         if target.ref in self.failures:
             raise SourceError(self.failures[target.ref])
-        return list(self.postings.get(target.ref, []))
+        postings = list(self.postings.get(target.ref, []))
+        if self._uses_keep and keep is not None:
+            postings = [posting for posting in postings if keep(posting)]
+            self.kept[target.ref] = [posting.title for posting in postings]
+        return postings
 
 
 def registry(
     kinds: Iterable[SourceKind], reads: list[SourceTarget]
 ) -> dict[SourceKind, ScriptedSource]:
-    return {kind: ScriptedSource(reads) for kind in kinds}
+    return {
+        kind: ScriptedSource(reads, uses_keep=kind is Platform.SMARTRECRUITERS)
+        for kind in kinds
+    }

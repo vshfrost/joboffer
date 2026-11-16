@@ -2,6 +2,7 @@
 (`remote_type` ігнорується), компанія — лише якщо вона є в назві («… у Brightloop»). Недокументований
 JSON `djinni.co/api/jobs/` не використовується."""
 
+from application.ports.job_sources import Keep
 from domain.sources.posting import Posting
 from domain.sources.target import SourceTarget
 from infrastructure.sources.http import Fetcher
@@ -12,6 +13,8 @@ class DjinniSource:
     def __init__(self, fetcher: Fetcher) -> None:
         self._fetcher = fetcher
 
-    async def fetch(self, target: SourceTarget) -> list[Posting]:
+    async def fetch(
+        self, target: SourceTarget, keep: Keep | None = None
+    ) -> list[Posting]:
         body = await self._fetcher.get_bytes(f"{BASE_URLS['djinni']}?{target.ref}")
         return feed_postings(body)

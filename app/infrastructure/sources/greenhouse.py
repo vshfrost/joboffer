@@ -3,6 +3,7 @@
 import html
 from urllib.parse import quote
 
+from application.ports.job_sources import Keep
 from domain.shared.text import html_to_text
 from domain.sources.failure import FailureReason, SourceError
 from domain.sources.posting import Posting, sanitize
@@ -16,7 +17,9 @@ class GreenhouseSource:
     def __init__(self, fetcher: Fetcher) -> None:
         self._fetcher = fetcher
 
-    async def fetch(self, target: SourceTarget) -> list[Posting]:
+    async def fetch(
+        self, target: SourceTarget, keep: Keep | None = None
+    ) -> list[Posting]:
         data = await self._fetcher.get_json(
             API_URL.format(slug=quote(target.ref, safe="")), {"content": "true"}
         )

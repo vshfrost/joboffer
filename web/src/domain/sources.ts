@@ -8,7 +8,7 @@ export type SourcesTab = "companies" | "feeds";
 /** Фільтр стану; порожній — «Усі». */
 export type StateFilter = "" | "enabled" | "error" | "disabled";
 export type SourceState = "ok" | "error" | "pending" | "disabled";
-export type CompanyPlatform = "greenhouse" | "ashby" | "lever";
+export type CompanyPlatform = "greenhouse" | "ashby" | "lever" | "smartrecruiters" | "workable";
 export type FeedSource = "dou" | "djinni";
 export type FailureCode = "timeout" | "not_found" | "rate_limited" | "unavailable" | "rejected" | "invalid" | "unsupported";
 export type FilteredReason = "title" | "excluded" | "format" | "location";
@@ -73,7 +73,7 @@ export interface SourcesQuery {
 
 export const SOURCES_TABS: readonly SourcesTab[] = ["companies", "feeds"];
 export const STATE_FILTERS: readonly StateFilter[] = ["", "enabled", "error", "disabled"];
-export const COMPANY_PLATFORMS: readonly CompanyPlatform[] = ["greenhouse", "ashby", "lever"];
+export const COMPANY_PLATFORMS: readonly CompanyPlatform[] = ["greenhouse", "ashby", "lever", "smartrecruiters", "workable"];
 export const FEED_SOURCES: readonly FeedSource[] = ["dou", "djinni"];
 export const FAILURE_CODES: readonly FailureCode[] = ["timeout", "not_found", "rate_limited", "unavailable", "rejected", "invalid", "unsupported"];
 export const FILTERED_REASONS: readonly FilteredReason[] = ["title", "excluded", "format", "location"];
@@ -96,6 +96,8 @@ export const PLATFORM_LABELS: Record<string, string> = {
   greenhouse: "Greenhouse",
   ashby: "Ashby",
   lever: "Lever",
+  smartrecruiters: "SmartRecruiters",
+  workable: "Workable",
   dou: "DOU",
   djinni: "Djinni",
 };

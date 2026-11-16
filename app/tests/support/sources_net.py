@@ -1,6 +1,7 @@
 """Мережа-пустушка для адаптерів джерел: httpx2 MockTransport, запити запам'ятовуються."""
 
 import json
+from collections.abc import Callable
 from pathlib import Path
 
 import httpx2
@@ -38,6 +39,18 @@ class Scripted:
 
     def source(self, kind: SourceKind) -> JobSource:
         return build_sources(self.fetcher())[kind]
+
+
+class Routed(Scripted):
+    """Відповідає за запитом: маршрутизатор бачить кожен запит (список і деталі одного джерела)."""
+
+    def __init__(self, route: Callable[[httpx2.Request], httpx2.Response]) -> None:
+        super().__init__()
+        self._route = route
+
+    def __call__(self, request: httpx2.Request) -> httpx2.Response:
+        self.requests.append(request)
+        return self._route(request)
 
 
 def ok(body: bytes = b"{}") -> httpx2.Response:

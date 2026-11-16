@@ -48,10 +48,12 @@ KINDS: dict[str, SourceKind] = {
     "Greenhouse": Platform.GREENHOUSE,
     "Ashby": Platform.ASHBY,
     "Lever": Platform.LEVER,
+    "SmartRecruiters": Platform.SMARTRECRUITERS,
+    "Workable": Platform.WORKABLE,
     "DOU": FeedSource.DOU,
     "Djinni": FeedSource.DJINNI,
 }
-SOURCE = r'(?P<kind>Greenhouse|Ashby|Lever|DOU|Djinni) "(?P<ref>[^"]*)"'
+SOURCE = r'(?P<kind>Greenhouse|Ashby|Lever|SmartRecruiters|Workable|DOU|Djinni) "(?P<ref>[^"]*)"'
 USER = r'"(?P<user>[^"]*)"'
 SUMMARY = (
     r": знайдено (?P<found>\d+), імпортовано (?P<imported>\d+), відкинуто (?P<filtered>\d+),"
@@ -237,14 +239,16 @@ def source_fails(world: World, kind: str, ref: str, code: str) -> None:
     world.scripts[KINDS[kind]].failures[ref] = FailureReason(code)
 
 
-@bdd_given(rx(r"^для (?P<kind>Greenhouse|Ashby|Lever|DOU|Djinni) адаптера нема$"))
+@bdd_given(
+    rx(
+        r"^для (?P<kind>Greenhouse|Ashby|Lever|SmartRecruiters|Workable|DOU|Djinni) адаптера нема$"
+    )
+)
 def no_adapter(world: World, kind: str) -> None:
     world.without_adapter.add(KINDS[kind])
 
 
-WATCHED = (
-    r'(?P<watched_kind>Greenhouse|Ashby|Lever|DOU|Djinni) "(?P<watched_ref>[^"]*)"'
-)
+WATCHED = r'(?P<watched_kind>Greenhouse|Ashby|Lever|SmartRecruiters|Workable|DOU|Djinni) "(?P<watched_ref>[^"]*)"'
 
 
 @bdd_given(rx(rf"^під час читання {SOURCE} я дивлюся на стан {WATCHED} у {USER}$"))
@@ -309,6 +313,12 @@ def run_refresh(world: World) -> None:
 
 
 # --- результат ------------------------------------------------------------------------------
+
+
+@bdd_then(rx(rf'^для {SOURCE} адаптер залишив "(?P<titles>[^"]*)"$'))
+def adapter_kept(world: World, kind: str, ref: str, titles: str) -> None:
+    script: ScriptedSource = world.scripts[KINDS[kind]]
+    assert script.kept[ref] == list(listed(titles))
 
 
 @bdd_then(rx(r"^прогін прочитав (?P<count>\d+) (?:ціль|цілі|цілей)$"))

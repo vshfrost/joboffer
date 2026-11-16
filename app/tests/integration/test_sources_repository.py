@@ -340,6 +340,13 @@ def test_an_unknown_platform_is_rejected(db: Db) -> None:
         db.company(ALICE.value, "workday", "acme")
 
 
+def test_smartrecruiters_and_workable_companies_are_accepted(db: Db) -> None:
+    db.company(ALICE.value, "smartrecruiters", "acme")
+    db.company(ALICE.value, "workable", "acme")
+
+    assert len(db.rows("SELECT id FROM source_companies")) == 2
+
+
 def test_an_unknown_feed_source_is_rejected(db: Db) -> None:
     with pytest.raises(IntegrityError):
         db.feed(ALICE.value, "indeed", "q=python")

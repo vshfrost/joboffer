@@ -1,0 +1,73 @@
+{
+  "id": "744000900000002",
+  "name": "Junior Product Designer",
+  "uuid": "00000000-0000-4000-8000-000900000002",
+  "jobAdId": "11111111-0000-4000-8000-000900000002",
+  "defaultJobAd": true,
+  "refNumber": "LF-002",
+  "company": {
+    "identifier": "lumenfreight",
+    "name": "Lumen Freight"
+  },
+  "releasedDate": "2026-10-28T15:14:43.941Z",
+  "location": {
+    "city": "Valencia",
+    "region": "Valencia",
+    "country": "es",
+    "remote": false,
+    "hybrid": false,
+    "fullLocation": "Valencia, Valencia, Spain"
+  },
+  "industry": {
+    "id": "logistics",
+    "label": "Logistics"
+  },
+  "department": {
+    "id": "1",
+    "label": "Engineering"
+  },
+  "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+  },
+  "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+  },
+  "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+  },
+  "customField": [],
+  "visibility": "PUBLIC",
+  "ref": "https://api.smartrecruiters.com/v1/companies/lumenfreight/postings/744000900000002",
+  "language": {
+    "code": "en",
+    "label": "English"
+  },
+  "jobId": "22222222-0000-4000-8000-000900000002",
+  "postingUrl": "https://jobs.smartrecruiters.com/LumenFreight/744000900000002-junior-product-designer",
+  "applyUrl": "https://jobs.smartrecruiters.com/LumenFreight/744000900000002-junior-product-designer?oga=true",
+  "referralUrl": "https://jobs.smartrecruiters.com/LumenFreight/744000900000002-junior-product-designer?oga=true&ref=referral",
+  "active": true,
+  "jobAd": {
+    "sections": {
+      "companyDescription": {
+        "title": "Company Description",
+        "text": "<p>Lumen Freight moves parcels across Europe.</p>"
+      },
+      "jobDescription": {
+        "title": "Job Description",
+        "text": "<p>Design the driver app.</p>"
+      },
+      "qualifications": {
+        "title": "Qualifications",
+        "text": "<ul><li>Portfolio</li></ul>"
+      },
+      "additionalInformation": {
+        "title": "Additional Information",
+        "text": "<p>Office in Valencia.</p>"
+      }
+    }
+  }
+}

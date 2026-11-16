@@ -377,6 +377,25 @@ def test_a_company_is_added_after_one_light_probe_request(
 
 
 @pytest.mark.parametrize(
+    ("platform", "host", "path"),
+    [
+        ("smartrecruiters", "api.smartrecruiters.com", "/v1/companies/acme/postings"),
+        ("workable", "apply.workable.com", "/api/v1/widget/accounts/acme"),
+    ],
+)
+def test_smartrecruiters_and_workable_companies_are_added_after_a_probe_of_their_own_api(
+    alice: SourcesSession, probe_net: ProbeNet, platform: str, host: str, path: str
+) -> None:
+    response = alice.add_company(platform=platform, slug="acme", name="Acme")
+
+    assert response.status_code == 201
+    assert response.json()["platform"] == platform
+    (request,) = probe_net.requests
+    assert (request.url.host, request.url.path) == (host, path)
+    assert [c["platform"] for c in alice.listing().json()["companies"]] == [platform]
+
+
+@pytest.mark.parametrize(
     "body",
     [
         {"platform": "lever", "slug": "stayhaven"},

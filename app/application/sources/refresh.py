@@ -9,10 +9,12 @@ from collections.abc import Callable, Mapping, Sequence
 
 from application.ports.clock import Clock
 from application.ports.ids import IdGenerator
-from application.ports.job_sources import JobSource
+from application.ports.job_sources import JobSource, Keep
 from application.ports.sources import SourceGone, SourceRunUnitOfWork
 from application.sources.imports import SourceImportUseCases
+from domain.profile.profile import Profile
 from domain.sources.failure import FailureReason, SourceError
+from domain.sources.filtering import listing_skip_reason
 from domain.sources.importing import ImportSummary
 from domain.sources.kinds import SourceKind
 from domain.sources.posting import Posting
@@ -51,7 +53,7 @@ class SourceRunUseCases:
                 return RefreshReport(locked=True)
             report = RefreshReport()
             for target, subscriptions in _by_target(await guard.source_runs.enabled()):
-                await self._refresh_target(target, subscriptions, report)
+                await self._refresh_target(guard, target, subscriptions, report)
             await self._mark_requests_handled()
             return report
 
@@ -63,11 +65,13 @@ class SourceRunUseCases:
 
     async def _refresh_target(
         self,
+        guard: SourceRunUnitOfWork,
         target: SourceTarget,
         subscriptions: Sequence[Subscription],
         report: RefreshReport,
     ) -> None:
-        postings, error = await self._read(target)
+        profiles = [await guard.profiles.get(sub.user_id) for sub in subscriptions]
+        postings, error = await self._read(target, _keep_for(profiles))
         report.targets += 1
         for subscription in subscriptions:
             try:
@@ -99,19 +103,31 @@ class SourceRunUseCases:
         return run
 
     async def _read(
-        self, target: SourceTarget
+        self, target: SourceTarget, keep: Keep
     ) -> tuple[list[Posting], FailureReason | None]:
         source = self._sources.get(target.kind)
         if source is None:
             return [], FailureReason.UNSUPPORTED
         try:
-            return await source.fetch(target), None
+            return await source.fetch(target, keep), None
         except SourceError as exc:
             return [], exc.reason
         except Exception:
             # Збій адаптера не обриває прогін. Текст винятку може містити шматок недовіреної
             # відповіді джерела, тому він нікуди не йде: у стан і аудит — лише код `invalid`.
             return [], FailureReason.INVALID
+
+
+def _keep_for(profiles: Sequence[Profile]) -> Keep:
+    """Попередній фільтр цілі: вакансія зі списку потрібна, якщо проходить фільтр профілю хоч
+    одного, хто на неї підписаний (ціль читається один раз для всіх)."""
+
+    def keep(posting: Posting) -> bool:
+        return any(
+            listing_skip_reason(posting, profile) is None for profile in profiles
+        )
+
+    return keep
 
 
 def _by_target(

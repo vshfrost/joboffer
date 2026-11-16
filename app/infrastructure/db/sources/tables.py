@@ -41,7 +41,8 @@ class SourceCompanyRow(Base):
             name="uq_source_companies_user_id_platform_slug",
         ),
         CheckConstraint(
-            "platform IN ('greenhouse', 'ashby', 'lever')", name="platform_known"
+            "platform IN ('greenhouse', 'ashby', 'lever', 'smartrecruiters', 'workable')",
+            name="platform_known",
         ),
     )
 

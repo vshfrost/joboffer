@@ -28,6 +28,8 @@
       | Greenhouse | ats:greenhouse |
       | Ashby      | ats:ashby      |
       | Lever      | ats:lever      |
+      | SmartRecruiters | ats:smartrecruiters |
+      | Workable   | ats:workable   |
 
   Структура сценарію: Вакансія зі стрічки RSS має джерело rss і компанію з самої вакансії
     Припустимо джерело віддає вакансію "Backend Engineer", компанією "Globex"

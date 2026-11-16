@@ -115,7 +115,7 @@ const REQUIRED = { dou: "category", djinni: "primary_keyword" } as const;
 
 function addCompany(backend: SourcesBackend, body: Record<string, string>): Response {
   const { platform = "", slug = "", name = "" } = body;
-  if (!["greenhouse", "ashby", "lever"].includes(platform)) {
+  if (!["greenhouse", "ashby", "lever", "smartrecruiters", "workable"].includes(platform)) {
     return problem(422, "invalid_value", "Невідома платформа.", [{ field: "platform", message: "Невідома платформа." }]);
   }
   if (!SLUG.test(slug)) {

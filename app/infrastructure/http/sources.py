@@ -27,7 +27,7 @@ from domain.sources.refresh_requests import MANUAL_REFRESH_LIMIT
 from domain.sources.run import SourceRun
 from infrastructure.http.auth import HttpAuth
 
-PlatformName = Literal["greenhouse", "ashby", "lever"]
+PlatformName = Literal["greenhouse", "ashby", "lever", "smartrecruiters", "workable"]
 FeedSourceName = Literal["dou", "djinni"]
 FailureName = Literal[
     "timeout",

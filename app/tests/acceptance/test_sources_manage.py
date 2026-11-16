@@ -50,14 +50,16 @@ KINDS: dict[str, SourceKind] = {
     "Greenhouse": Platform.GREENHOUSE,
     "Ashby": Platform.ASHBY,
     "Lever": Platform.LEVER,
+    "SmartRecruiters": Platform.SMARTRECRUITERS,
+    "Workable": Platform.WORKABLE,
     "DOU": FeedSource.DOU,
     "Djinni": FeedSource.DJINNI,
 }
 PLATFORMS = {name: kind for name, kind in KINDS.items() if isinstance(kind, Platform)}
 FEEDS = {name: kind for name, kind in KINDS.items() if isinstance(kind, FeedSource)}
-PLATFORM = r"(?P<kind>Greenhouse|Ashby|Lever)"
+PLATFORM = r"(?P<kind>Greenhouse|Ashby|Lever|SmartRecruiters|Workable)"
 FEED = r"(?P<kind>DOU|Djinni)"
-SOURCE = r'(?P<kind>Greenhouse|Ashby|Lever|DOU|Djinni) "(?P<ref>[^"]*)"'
+SOURCE = r'(?P<kind>Greenhouse|Ashby|Lever|SmartRecruiters|Workable|DOU|Djinni) "(?P<ref>[^"]*)"'
 OWNER = r'(?: користувача "(?P<owner>[^"]*)")?'
 SUMMARY = (
     r": знайдено (?P<found>\d+), імпортовано (?P<imported>\d+), відкинуто (?P<filtered>\d+),"
@@ -535,7 +537,7 @@ def toggled_answer(
 
 @bdd_then(
     rx(
-        r'^пробних запитів було (?P<count>\d+): (?P<kind>Greenhouse|Ashby|Lever) "(?P<ref>[^"]*)"$'
+        r'^пробних запитів було (?P<count>\d+): (?P<kind>Greenhouse|Ashby|Lever|SmartRecruiters|Workable) "(?P<ref>[^"]*)"$'
     )
 )
 def probed(world: World, count: str, kind: str, ref: str) -> None:

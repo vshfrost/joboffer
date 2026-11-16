@@ -21,6 +21,13 @@ def probe(script: Scripted) -> AtsProbe:
         (Platform.GREENHOUSE, "boards-api.greenhouse.io", "/v1/boards/acme", ""),
         (Platform.ASHBY, "api.ashbyhq.com", "/posting-api/job-board/acme", ""),
         (Platform.LEVER, "api.lever.co", "/v0/postings/acme", "mode=json&limit=1"),
+        (
+            Platform.SMARTRECRUITERS,
+            "api.smartrecruiters.com",
+            "/v1/companies/acme/postings",
+            "limit=1",
+        ),
+        (Platform.WORKABLE, "apply.workable.com", "/api/v1/widget/accounts/acme", ""),
     ],
 )
 def test_probe_makes_one_light_request_with_a_short_timeout(
@@ -51,6 +58,45 @@ def test_unknown_company_is_not_found_without_retry(
         portal.call(probe(script).check, platform, "nope")
 
     assert error.value.reason is FailureReason.NOT_FOUND
+    assert len(script.requests) == 1
+
+
+def test_smartrecruiters_answers_200_for_an_unknown_company_so_no_postings_is_not_found(
+    portal: BlockingPortal,
+) -> None:
+    script = Scripted(ok(b'{"offset": 0, "limit": 1, "totalFound": 0, "content": []}'))
+
+    with pytest.raises(SourceError) as error:
+        portal.call(probe(script).check, Platform.SMARTRECRUITERS, "nope")
+
+    assert error.value.reason is FailureReason.NOT_FOUND
+    assert len(script.requests) == 1
+
+
+def test_smartrecruiters_company_with_postings_passes(portal: BlockingPortal) -> None:
+    script = Scripted(ok(b'{"totalFound": 12, "content": [{"id": "1"}]}'))
+
+    portal.call(probe(script).check, Platform.SMARTRECRUITERS, "acme")
+
+    assert len(script.requests) == 1
+
+
+def test_smartrecruiters_unreadable_answer_is_invalid(portal: BlockingPortal) -> None:
+    script = Scripted(ok(b"<html>"))
+
+    with pytest.raises(SourceError) as error:
+        portal.call(probe(script).check, Platform.SMARTRECRUITERS, "acme")
+
+    assert error.value.reason is FailureReason.INVALID
+
+
+def test_a_sleeping_workable_account_with_no_vacancies_passes(
+    portal: BlockingPortal,
+) -> None:
+    script = Scripted(ok(b'{"name": "Quietdock", "description": null, "jobs": []}'))
+
+    portal.call(probe(script).check, Platform.WORKABLE, "quietdock")
+
     assert len(script.requests) == 1
 
 

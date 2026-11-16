@@ -49,6 +49,8 @@ PLATFORMS = {
     "Greenhouse": Platform.GREENHOUSE,
     "Ashby": Platform.ASHBY,
     "Lever": Platform.LEVER,
+    "SmartRecruiters": Platform.SMARTRECRUITERS,
+    "Workable": Platform.WORKABLE,
 }
 FEEDS = {"DOU": FeedSource.DOU, "Djinni": FeedSource.DJINNI}
 FIELDS = (
@@ -324,7 +326,7 @@ def source_offers_again(world: World) -> None:
 
 
 @action(
-    r'^я імпортую вакансії з (?P<platform>Greenhouse|Ashby|Lever) компанії "(?P<company>[^"]*)"$'
+    r'^я імпортую вакансії з (?P<platform>Greenhouse|Ashby|Lever|SmartRecruiters|Workable) компанії "(?P<company>[^"]*)"$'
 )
 def import_ats(world: World, platform: str, company: str) -> None:
     world.run_import(PLATFORMS[platform], company)

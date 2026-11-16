@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import {
   bannerTitle,
+  COMPANY_PLATFORMS,
   FAILURE_CODES,
   FAILURE_TEXT,
   feedName,
@@ -125,7 +126,16 @@ describe("тексти", () => {
   });
 
   test("платформи й стрічки мають назви", () => {
-    expect(PLATFORM_LABELS).toEqual({ greenhouse: "Greenhouse", ashby: "Ashby", lever: "Lever", dou: "DOU", djinni: "Djinni" });
+    expect(PLATFORM_LABELS).toEqual({
+      greenhouse: "Greenhouse",
+      ashby: "Ashby",
+      lever: "Lever",
+      smartrecruiters: "SmartRecruiters",
+      workable: "Workable",
+      dou: "DOU",
+      djinni: "Djinni",
+    });
+    expect(COMPANY_PLATFORMS).toEqual(["greenhouse", "ashby", "lever", "smartrecruiters", "workable"]);
     expect(platformLabel("ashby")).toBe("Ashby");
     expect(platformLabel("unknown")).toBe("unknown");
   });
