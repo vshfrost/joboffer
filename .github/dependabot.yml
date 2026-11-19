@@ -54,3 +54,7 @@ updates:
         update-types:
           - version-update:semver-major
           - version-update:semver-minor
+      # Node: версія синхронна з web/package.json (engines), scripts/web.sh і compose; новий мажор — окремим свідомим апгрейдом.
+      - dependency-name: node
+        update-types:
+          - version-update:semver-major
