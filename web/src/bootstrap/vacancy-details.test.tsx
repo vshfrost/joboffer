@@ -2,7 +2,7 @@ import { act, fireEvent, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 
-import { apiJob, jobsBackend, type ApiJob } from "./jobsBackend";
+import { apiJob, daysAgo, jobsBackend, type ApiJob } from "./jobsBackend";
 import { renderClient } from "./testClient";
 import { setViewport } from "./viewport";
 
@@ -139,7 +139,9 @@ describe("відкриття й повернення", () => {
   });
 
   test("Escape повертає список зі збереженими фільтрами й фокусом на назві", async () => {
-    const { user } = await openDetails([FULL, OTHER], "/vacancies?tab=all&days=30", "Вакансії");
+    // Фільтр days=30 рахується від сьогодні, тож дати вакансій — відносні, а не фіксовані.
+    const recent = [{ ...FULL, created_at: daysAgo(1) }, { ...OTHER, created_at: daysAgo(2) }];
+    const { user } = await openDetails(recent, "/vacancies?tab=all&days=30", "Вакансії");
     await user.click(await screen.findByRole("link", { name: "Senior Backend Engineer" }));
     await screen.findByRole("heading", { level: 1, name: "Senior Backend Engineer" });
     await user.keyboard("{Escape}");
