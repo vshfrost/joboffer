@@ -1,4 +1,4 @@
-/** Тема Pine: токени збігаються з design-system-pine (brain: projects/joboffer/design-system-pine). */
+/** Тема Pine: токени збігаються з дизайн-системою Pine. */
 import { describe, expect, test } from "vitest";
 
 import css from "./theme.css?raw";
