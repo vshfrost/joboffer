@@ -16,6 +16,9 @@ async function open(options: { job?: ApiJob; analysed?: boolean; application?: A
   }
   renderClient("/vacancies/1", backend.fetchFn);
   await screen.findByRole("heading", { level: 1, name: "Senior Backend Engineer" });
+  if (options.analysed !== true && options.failAnalysis !== true) {
+    await screen.findByText("Подача", { selector: "summary strong" });
+  }
   const region = await screen.findByRole("region", { name: "Подача" });
   return { user: userEvent.setup(), region: within(region) };
 }
