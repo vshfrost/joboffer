@@ -3,7 +3,7 @@ import { act, fireEvent, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 
-import { apiApplication, apiJob, jobsBackend, type ApiApplication } from "./jobsBackend";
+import { apiAnalysis, apiApplication, apiJob, jobsBackend, type ApiApplication } from "./jobsBackend";
 import { renderClient } from "./testClient";
 
 const JOB = apiJob(1, { title: "Senior Backend Engineer", company: "Northstar Labs" });
@@ -11,7 +11,7 @@ const OTHER = apiJob(2, { title: "Rust Developer", company: "Cedar Ledger" });
 const TODAY = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Madrid" }).format(new Date());
 
 async function openDetails(application: ApiApplication | null = null) {
-  const backend = jobsBackend([JOB, OTHER], [], [], application === null ? [] : [application]);
+  const backend = jobsBackend([JOB, OTHER], [apiAnalysis(1)], [], application === null ? [] : [application]);
   renderClient("/vacancies/1", backend.fetchFn);
   await screen.findByRole("heading", { level: 1, name: "Senior Backend Engineer" });
   return { backend, user: userEvent.setup() };
@@ -200,7 +200,7 @@ describe("помилки сервера", () => {
   });
 
   test("422 з полем, якого нема у формі, — загальне повідомлення; введене лишається", async () => {
-    const backend = jobsBackend([JOB]);
+    const backend = jobsBackend([JOB], [apiAnalysis(1)]);
     const fetchFn: typeof fetch = (input, init) =>
       init?.method === "PUT"
         ? Promise.resolve(
