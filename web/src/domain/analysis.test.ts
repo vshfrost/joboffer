@@ -13,8 +13,8 @@ import {
 } from "./analysis";
 
 describe("scoreText", () => {
-  test("без оцінки — «Не оцінено»", () => {
-    expect(scoreText(null)).toBe("Не оцінено");
+  test("без оцінки — «Не проаналізовано»", () => {
+    expect(scoreText(null)).toBe("Не проаналізовано");
   });
 
   test.each([
@@ -22,7 +22,7 @@ describe("scoreText", () => {
     [1, "1%"],
     [78, "78%"],
     [100, "100%"],
-  ])("оцінка %i — %s (нуль — валідна оцінка, не «Не оцінено»)", (score, text) => {
+  ])("оцінка %i — %s (нуль — валідна оцінка, не «Не проаналізовано»)", (score, text) => {
     expect(scoreText(score)).toBe(text);
   });
 });
