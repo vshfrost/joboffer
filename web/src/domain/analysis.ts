@@ -80,9 +80,9 @@ export interface JobAnalysis {
 
 export const NOT_STATED = "не вказано";
 
-/** «Не оцінено» лише коли оцінки нема; 0 — валідна оцінка. */
+/** «Не проаналізовано» лише коли оцінки нема; 0 — валідна оцінка. */
 export function scoreText(score: number | null): string {
-  return score === null ? "Не оцінено" : `${score}%`;
+  return score === null ? "Не проаналізовано" : `${score}%`;
 }
 
 const AMOUNT = new Intl.NumberFormat("uk-UA");
