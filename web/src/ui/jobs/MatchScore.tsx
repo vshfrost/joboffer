@@ -1,7 +1,7 @@
 import { scoreText } from "../../domain/analysis";
 import { cn } from "../lib/cn";
 
-/** Оцінка відповідності: «Не оцінено» лише коли оцінки нема, 0 — валідна оцінка. Шкала 0–100 одна для всіх екранів. */
+/** Оцінка відповідності: «Не проаналізовано» лише коли оцінки нема, 0 — валідна оцінка. Шкала 0–100 одна для всіх екранів. */
 export function MatchScore({ score, className }: { score: number | null; className?: string }) {
   return (
     <div className={cn("flex flex-col gap-2", className)}>

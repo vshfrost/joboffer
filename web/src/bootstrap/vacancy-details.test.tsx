@@ -78,10 +78,10 @@ describe("деталі вакансії", () => {
     expect(screen.getByText("<u>Evil</u>")).toBeDefined();
   });
 
-  test("оцінка — «Не оцінено» з постійним застереженням, не 0 %", async () => {
+  test("оцінка — «Не проаналізовано» з постійним застереженням, не 0 %", async () => {
     await openDetails([FULL], "/vacancies/1");
     const section = screen.getByRole("region", { name: "Відповідність профілю" });
-    expect(await within(section).findByText("Не оцінено")).toBeDefined();
+    expect(await within(section).findByText("Не проаналізовано")).toBeDefined();
     expect(within(section).getByText("Оцінка за рубрикою 0–100. Це не ймовірність отримати оффер.")).toBeDefined();
     expect(section.textContent).not.toContain("0%");
   });

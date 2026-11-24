@@ -39,10 +39,10 @@ describe("повний аналіз", () => {
     expect(screen.getByText("Аналіз від 2026-10-22")).toBeDefined();
   });
 
-  test("оцінка 0 — це оцінка, а не «Не оцінено»", async () => {
+  test("оцінка 0 — це оцінка, а не «Не проаналізовано»", async () => {
     await open([JOB], [apiAnalysis(1, { score: 0 })]);
     await waitFor(() => expect(score()).toBe("0%"));
-    expect(screen.queryByText("Не оцінено")).toBeNull();
+    expect(screen.queryByText("Не проаналізовано")).toBeNull();
   });
 
   test("вакансія проходить фільтри профілю", async () => {
@@ -303,10 +303,10 @@ describe("клавіатура", () => {
 });
 
 describe("тріаж окремо від аналізу", () => {
-  test("лише тріаж: згорнутий блок, «Не оцінено» і порожній стан аналізу", async () => {
+  test("лише тріаж: згорнутий блок, «Не проаналізовано» і порожній стан аналізу", async () => {
     await open([apiJob(1, { title: "Senior Backend Engineer", triage: apiTriage({ score: 64, verdict: "maybe", reason: "Потрібно уточнити формат" }) })]);
     expect(await screen.findByText("Повного аналізу ще немає")).toBeDefined();
-    expect(score()).toBe("Не оцінено");
+    expect(score()).toBe("Не проаналізовано");
     const summary = screen.getByText("Попередній тріаж: 64/100 · Можливо");
     const details = summary.closest("details") as HTMLDetailsElement;
     expect(details.open).toBe(false);
@@ -336,12 +336,12 @@ describe("тріаж окремо від аналізу", () => {
     expect(details.open).toBe(false);
   });
 
-  test("нічого немає: «Не оцінено», порожній стан із блоком «Делегувати агенту», без блоку тріажу", async () => {
+  test("нічого немає: «Не проаналізовано», порожній стан із блоком «Делегувати агенту», без блоку тріажу", async () => {
     await open([JOB]);
     expect(await screen.findByText("Повного аналізу ще немає")).toBeDefined();
     await findDelegate(ANALYSE);
     expect(queryDelegate(REANALYSE)).toBeNull();
-    expect(score()).toBe("Не оцінено");
+    expect(score()).toBe("Не проаналізовано");
     expect(screen.getByText(NOTE)).toBeDefined();
     expect(screen.queryByText(/Попередній тріаж/)).toBeNull();
   });
@@ -352,7 +352,7 @@ describe("вакансія без тексту", () => {
     const waiting = apiJob(1, { title: "Python Engineer", text: null, source: "linkedin_alert" });
     await open([waiting], [], "/vacancies/1", "Python Engineer");
     expect(await screen.findByText(/Аналіз неможливий без тексту опису/)).toBeDefined();
-    expect(score()).toBe("Не оцінено");
+    expect(score()).toBe("Не проаналізовано");
     expect(queryDelegate(ANALYSE)).toBeNull();
     expect(queryDelegate(REANALYSE)).toBeNull();
     expect(screen.queryByRole("button", { name: "Підготувати запит для Claude" })).toBeNull();
