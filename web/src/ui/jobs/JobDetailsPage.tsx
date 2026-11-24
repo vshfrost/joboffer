@@ -160,7 +160,7 @@ function Details({ job, refresh, search }: { job: Job; refresh(): Promise<void>;
         )}
       </header>
       <div className="flex flex-col gap-8 border-t border-border pt-8">
-        <ApplicationPanel jobId={job.id} application={application} />
+        <ApplicationPanel jobId={job.id} application={application} analysis={analysis.state.status} />
         <Section title="Відповідність профілю">
           <Fit job={job} state={analysis.state} onRetry={analysis.reload} />
         </Section>

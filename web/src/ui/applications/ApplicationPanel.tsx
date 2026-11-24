@@ -15,7 +15,9 @@ import {
 import { REQUESTS } from "../../domain/prompts";
 import { DelegateToAgent } from "../agents/DelegateToAgent";
 import { Button } from "../components/button";
+import { CollapsibleBlock } from "../components/CollapsibleBlock";
 import { Skeleton } from "../components/skeleton";
+import type { AnalysisState } from "../jobs/useAnalysis";
 import { ApplicationForm } from "./ApplicationForm";
 import { useApplicationsServices } from "./ApplicationsServices";
 import { CloseDialog, type ClosingStatus } from "./CloseDialog";
@@ -35,15 +37,19 @@ function isClosing(status: ApplicationStatus): status is ClosingStatus {
 interface ApplicationPanelProps {
   jobId: number;
   application: ApplicationApi;
+  /** Без аналізу блок згорнутий до заголовка: подачу фіксують після аналізу. */
+  analysis: AnalysisState["status"];
 }
 
 /** Блок «Подача» в деталях вакансії: статус, лише дозволені переходи, усі дані під розкриттям, форма «Я подався». */
-export function ApplicationPanel({ jobId, application }: ApplicationPanelProps) {
+export function ApplicationPanel({ jobId, application, analysis }: ApplicationPanelProps) {
   const headingId = useId();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const refocus = useRef(false);
   const [message, setMessage] = useState("");
   const [formOpen, setFormOpen] = useState<"create" | "edit" | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const collapsible = analysis === "none" || analysis === "unavailable-for-job";
 
   // Після збереження форма зникає разом із фокусом: віддаємо його заголовку блоку.
   useEffect(() => {
@@ -60,48 +66,68 @@ export function ApplicationPanel({ jobId, application }: ApplicationPanelProps) 
     refocus.current = true;
   }
 
+  const needsAnalysis = collapsible && !(application.state.status === "ready" && application.state.application !== null);
+  const content = needsAnalysis ? (
+    <div className="flex flex-col items-center gap-2 px-4 py-6 text-center">
+      <h3 className="font-semibold">Спершу аналіз</h3>
+      <p className="text-caption text-muted-foreground">Щоб зафіксувати подачу, спершу потрібен аналіз вакансії.</p>
+    </div>
+  ) : (
+    <>
+      {application.state.status === "loading" ? (
+        <div role="status" aria-label="Завантажуємо подачу" aria-busy="true" className="flex flex-col gap-3">
+          <Skeleton className="h-6 w-28" />
+          <Skeleton className="h-5 w-2/3" />
+          <Skeleton className="h-9 w-48" />
+        </div>
+      ) : null}
+      {application.state.status === "error" ? (
+        <div role="alert" className="flex flex-wrap items-center gap-3 rounded-lg bg-status-danger p-3 text-status-danger-foreground">
+          <div>
+            <p className="text-nav font-medium">Не вдалося завантажити подачу.</p>
+            <p className="text-caption">Статус не змінено.</p>
+          </div>
+          <Button variant="secondary" onClick={application.reload}>
+            Спробувати подачу ще раз
+          </Button>
+        </div>
+      ) : null}
+      {application.state.status === "ready" ? (
+        <Ready
+          jobId={jobId}
+          current={application.state.application}
+          formOpen={formOpen}
+          setFormOpen={setFormOpen}
+          onSaved={saved}
+          onMoved={(next, status) => {
+            application.set(next);
+            setMessage(`Статус змінено: «${STATUS_LABELS[status]}».`);
+          }}
+          focusHeading={() => headingRef.current?.focus()}
+        />
+      ) : null}
+      <p role="status" aria-label="Результат подачі" className="text-caption font-medium text-status-success-foreground empty:hidden">
+        {message}
+      </p>
+
+    </>
+  );
+
+  if (collapsible) {
+    return (
+      <section aria-labelledby={headingId} className="min-w-0">
+        <CollapsibleBlock title="Подача" titleId={headingId} titleRef={headingRef} expanded={expanded} onToggle={() => setExpanded((open) => !open)}>
+          {expanded ? <div className="flex min-w-0 flex-col gap-3">{content}</div> : null}
+        </CollapsibleBlock>
+      </section>
+    );
+  }
   return (
     <section aria-labelledby={headingId} className="min-w-0">
       <h2 id={headingId} ref={headingRef} tabIndex={-1} className="mb-3 text-section font-semibold outline-none">
         Подача
       </h2>
-      <div className="flex min-w-0 flex-col gap-3 rounded-xl border border-border bg-card p-5">
-        {application.state.status === "loading" ? (
-          <div role="status" aria-label="Завантажуємо подачу" aria-busy="true" className="flex flex-col gap-3">
-            <Skeleton className="h-6 w-28" />
-            <Skeleton className="h-5 w-2/3" />
-            <Skeleton className="h-9 w-48" />
-          </div>
-        ) : null}
-        {application.state.status === "error" ? (
-          <div role="alert" className="flex flex-wrap items-center gap-3 rounded-lg bg-status-danger p-3 text-status-danger-foreground">
-            <div>
-              <p className="text-nav font-medium">Не вдалося завантажити подачу.</p>
-              <p className="text-caption">Статус не змінено.</p>
-            </div>
-            <Button variant="secondary" onClick={application.reload}>
-              Спробувати подачу ще раз
-            </Button>
-          </div>
-        ) : null}
-        {application.state.status === "ready" ? (
-          <Ready
-            jobId={jobId}
-            current={application.state.application}
-            formOpen={formOpen}
-            setFormOpen={setFormOpen}
-            onSaved={saved}
-            onMoved={(next, status) => {
-              application.set(next);
-              setMessage(`Статус змінено: «${STATUS_LABELS[status]}».`);
-            }}
-            focusHeading={() => headingRef.current?.focus()}
-          />
-        ) : null}
-        <p role="status" aria-label="Результат подачі" className="text-caption font-medium text-status-success-foreground empty:hidden">
-          {message}
-        </p>
-      </div>
+      <div className="flex min-w-0 flex-col gap-3 rounded-xl border border-border bg-card p-5">{content}</div>
     </section>
   );
 }

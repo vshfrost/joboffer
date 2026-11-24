@@ -1,10 +1,11 @@
-import { useCallback, type KeyboardEvent, type MouseEvent } from "react";
+import { useCallback } from "react";
 import { Link } from "react-router";
 
 import { gapOf, progressText, readinessText, type JobPrep, type TopicRow } from "../../domain/prep";
 import { REQUESTS } from "../../domain/prompts";
 import { DelegateToAgent } from "../agents/DelegateToAgent";
 import { Button } from "../components/button";
+import { CollapsibleBlock } from "../components/CollapsibleBlock";
 import { Skeleton } from "../components/skeleton";
 import { cn } from "../lib/cn";
 import { usePrepServices } from "../prep/PrepServices";
@@ -31,52 +32,35 @@ export function JobPrepBlock({ jobId, analysis }: JobPrepBlockProps) {
   const { state, reload } = useLoaded(load);
   const [expanded, toggle] = usePrepExpanded();
 
-  // Згортанням керуємо самі: у jsdom і в частини браузерів Enter/Space на <summary> не перемикають <details> надійно, а aria-expanded має збігатися зі станом.
-  function onClick(event: MouseEvent) {
-    event.preventDefault();
-    toggle();
-  }
-  function onKeyDown(event: KeyboardEvent) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      toggle();
-    }
-  }
-  function onKeyUp(event: KeyboardEvent) {
-    // Пробіл спрацьовує на keydown; браузер не має додати власний клік на keyup.
-    if (event.key === " ") {
-      event.preventDefault();
-    }
-  }
-
   return (
-    <details open={expanded} className="group min-w-0 rounded-xl border border-border bg-card">
-      <summary aria-expanded={expanded} onClick={onClick} onKeyDown={onKeyDown} onKeyUp={onKeyUp} className={cn(SUMMARY, "justify-between p-4")}>
-        <strong className="text-section font-semibold">Підготовка</strong>
-        {state.status === "ready" ? (
+    <CollapsibleBlock
+      title="Підготовка"
+      expanded={expanded}
+      onToggle={toggle}
+      aside={
+        state.status === "ready" ? (
           <span className="text-caption text-muted-foreground">
             Готовність <span className="sr-count">{readinessText(state.data.readiness)}</span>
           </span>
-        ) : null}
-      </summary>
-      <div className="px-4 pb-4">
-        {state.status === "loading" ? (
-          <div role="status" aria-label="Завантажуємо підготовку" aria-busy="true" className="flex flex-col gap-3">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        ) : state.status === "error" ? (
-          <div role="alert" className={ALERT}>
-            <p className="text-nav font-medium">Не вдалося завантажити підготовку.</p>
-            <Button type="button" variant="secondary" onClick={reload}>
-              Спробувати підготовку ще раз
-            </Button>
-          </div>
-        ) : (
-          <Topics jobId={jobId} jobPrep={state.data} analysis={analysis} />
-        )}
-      </div>
-    </details>
+        ) : null
+      }
+    >
+      {state.status === "loading" ? (
+        <div role="status" aria-label="Завантажуємо підготовку" aria-busy="true" className="flex flex-col gap-3">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      ) : state.status === "error" ? (
+        <div role="alert" className={ALERT}>
+          <p className="text-nav font-medium">Не вдалося завантажити підготовку.</p>
+          <Button type="button" variant="secondary" onClick={reload}>
+            Спробувати підготовку ще раз
+          </Button>
+        </div>
+      ) : (
+        <Topics jobId={jobId} jobPrep={state.data} analysis={analysis} />
+      )}
+    </CollapsibleBlock>
   );
 }
 

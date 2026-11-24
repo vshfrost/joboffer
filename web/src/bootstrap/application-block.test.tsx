@@ -3,7 +3,7 @@ import { act, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test, vi } from "vitest";
 
-import { apiApplication, apiDocument, apiJob, jobsBackend, type ApiApplication } from "./jobsBackend";
+import { apiAnalysis, apiApplication, apiDocument, apiJob, jobsBackend, type ApiApplication } from "./jobsBackend";
 import { COPIED, findDelegate, queryDelegate } from "./delegateHarness";
 import { connectPrompts } from "./promptsBackend";
 import { renderClient } from "./testClient";
@@ -11,7 +11,7 @@ import { renderClient } from "./testClient";
 const JOB = apiJob(1, { title: "Senior Backend Engineer", company: "Northstar Labs", text: "Розробка API на Python." });
 
 async function openDetails(application: ApiApplication | null, options: { documents?: boolean; job?: typeof JOB } = {}) {
-  const backend = jobsBackend([options.job ?? JOB], [], options.documents === true ? [apiDocument(1, "cv", 3)] : [], application === null ? [] : [application]);
+  const backend = jobsBackend([options.job ?? JOB], [apiAnalysis(1)], options.documents === true ? [apiDocument(1, "cv", 3)] : [], application === null ? [] : [application]);
   connectPrompts(backend);
   const view = renderClient("/vacancies/1", backend.fetchFn);
   await screen.findByRole("heading", { level: 1, name: options.job?.title ?? "Senior Backend Engineer" });
@@ -43,7 +43,7 @@ describe("не подано", () => {
   });
 
   test("поки подача вантажиться — скелетон, а «Не цікаво» ще недоступне", async () => {
-    const backend = jobsBackend([JOB]);
+    const backend = jobsBackend([JOB], [apiAnalysis(1)]);
     const hold = backend.holdApplication();
     renderClient("/vacancies/1", backend.fetchFn);
     await screen.findByRole("heading", { level: 1, name: "Senior Backend Engineer" });
@@ -55,7 +55,7 @@ describe("не подано", () => {
   });
 
   test("помилка завантаження — повідомлення з повтором; повтор показує блок", async () => {
-    const backend = jobsBackend([JOB]);
+    const backend = jobsBackend([JOB], [apiAnalysis(1)]);
     backend.failures.application = 1;
     renderClient("/vacancies/1", backend.fetchFn);
     const user = userEvent.setup();
